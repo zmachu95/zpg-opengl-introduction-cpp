@@ -4,14 +4,15 @@
 
 #pragma once
 
+#include <memory>
+#include <shaders/UniformVariableManager.h>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 
-#include <shaders/UniformVariableManager.h>
-
 class VertexShader;
 class FragmentShader;
+class ICameraUpdateListener;
 
 using GLuint = unsigned int;
 
@@ -111,10 +112,10 @@ class ShaderProgram {
     const FragmentShader& getFragmentShader() const;
 
     /**
-     * @brief Gets the shader's Uniform variable manager.
-     * @return Reference to UniformVariableManager object.
+     * @brief Converts the shader program to camera update event listener.
+     * @return Weak pointer to ICameraUpdateListener object.
      */
-    UniformVariableManager& getUniformVariableManager();
+    std::weak_ptr<ICameraUpdateListener> asCameraUpdateListener();
 
     /*
      *
@@ -123,7 +124,7 @@ class ShaderProgram {
     /**
      * @brief Uses the shader program in currently active scene.
      */
-    void use();
+    void use(const glm::mat4& transformationMatrix);
 
     /**
      * @brief Removes the currently active shader program from OpenGL, but does
@@ -135,7 +136,7 @@ class ShaderProgram {
     static GLuint s_activeProgramId;
 
     GLuint m_id;
-    UniformVariableManager m_uniformVarManager;
+    std::shared_ptr<UniformVariableManager> m_uniformVarManager;
     std::reference_wrapper<VertexShader> m_vertexShader;
     std::reference_wrapper<FragmentShader> m_fragmentShader;
 
@@ -146,7 +147,8 @@ class ShaderProgram {
      * @param vertexShader Used vertex shader.
      * @param fragmentShader Used fragment shader.
      */
-    ShaderProgram(GLuint id, UniformVariableManager&& uniformVariableManager,
+    ShaderProgram(GLuint id,
+            std::shared_ptr<UniformVariableManager>&& uniformVariableManager,
             std::reference_wrapper<VertexShader> vertexShader,
             std::reference_wrapper<FragmentShader> fragmentShader);
 };

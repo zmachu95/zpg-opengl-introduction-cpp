@@ -15,9 +15,7 @@ void DrawableObject::draw(
         ShaderProgram& shaderProgram) {
     if (this->m_model.get().getVao() != 0
             && this->m_model.get().getVbo() != 0) {
-        shaderProgram.use();
-        shaderProgram.getUniformVariableManager().setMat4UniformVar(
-                "transformation", this->m_transformation.getMatrix());
+        shaderProgram.use(this->m_transformation.getMatrix());
         glBindVertexArray(this->m_model.get().getVao());
         glDrawArrays(GL_TRIANGLES, 0,
                 this->m_model.get().getVerticesCount()); // mode,first,count

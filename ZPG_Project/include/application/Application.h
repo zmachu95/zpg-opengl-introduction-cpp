@@ -4,12 +4,11 @@
 
 #pragma once
 
-#include <scenes/IScene.h>
-
 #include <memory>
 #include <stdexcept>
 #include <vector>
 
+class IScene;
 struct GLFWwindow;
 
 /**
@@ -90,14 +89,32 @@ class Application {
     GLFWwindow* m_window;
     std::vector<ScenePtr> m_scenes;
     IScene* m_activeScene;
+    int m_halfWindowWidth;
+    int m_halfWindowHeight;
 
-    void applyOrthogonalProjection();
+    /*
+     *
+     */
 
     /**
      * @brief Handler function for key press event.
      */
-    void keyPressesHandler(
+    void handleKeyPresses(
             GLFWwindow* window, int key, int scancode, int action, int mods);
+
+    /**
+     * @brief Handler function for mouse move event.
+     */
+    void handleMouseMovement(GLFWwindow* window, double x, double y);
+
+    /**
+     * @brief Handler function for window resize event.
+     */
+    void handleWindowResizeCallback(GLFWwindow* window, int width, int height);
+
+    /*
+     *
+     */
 
     /**
      * @brief Subscribes all OpenGL application listeners.

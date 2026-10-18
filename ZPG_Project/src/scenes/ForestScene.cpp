@@ -84,3 +84,12 @@ void ForestScene::draw(
         ptr->draw(*this->m_shaderProgram.get());
     }
 }
+
+void ForestScene::handleMouseMovement(
+        int cursorDeltaX, int cursorDeltaY) {}
+
+void ForestScene::handleKeyPresses(
+        KeyCodes button, KeyActions action, KeyModifierFlags mode) {}
+
+void ForestScene::handleWindowResize(
+        int width, int height) {}

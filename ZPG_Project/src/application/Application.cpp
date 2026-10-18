@@ -4,17 +4,17 @@
 
 #include <application/Application.h>
 #include <application/EventManager.h>
+#include <constants/KeyActions.h>
+#include <constants/KeyCodes.h>
+#include <constants/KeyModifiers.h>
 #include <cstdlib>
-#include <drawables/ModelManager.h>
-#include <shaders/ShaderManager.h>
-
 #include <ctime>
+#include <drawables/ModelManager.h>
 #include <scenes/ForestScene.h>
 #include <scenes/LoginScene.h>
 #include <scenes/SolarSystemScene.h>
 #include <scenes/TriangleScene.h>
-
-#include <iostream>
+#include <shaders/ShaderManager.h>
 
 #ifndef GLAD_GL_H_
 #include <glad/gl.h>
@@ -41,28 +41,6 @@ static void window_focus_callback(
 static void window_iconify_callback(
         GLFWwindow* window, int iconified) {
     printf("window_iconify_callback \n");
-}
-
-static void window_size_callback(
-        GLFWwindow* window, int width, int height) {
-    printf("resize %d, %d \n", width, height);
-    glViewport(0, 0, width, height);
-}
-
-static void cursor_callback(
-        GLFWwindow* window, double x, double y) {
-    printf("cursor_callback \n");
-}
-
-static void button_callback(
-        GLFWwindow* window, int button, int action, int mode) {
-    if (action == GLFW_PRESS)
-        printf("button_callback [%d,%d,%d]\n", button, action, mode);
-}
-
-static void button_callback2(
-        GLFWwindow* window, int button, int action, int mode) {
-    printf("And this is another button callback!\n");
 }
 
 static GLFWwindow* initializeGlfw() {
@@ -100,7 +78,7 @@ static void initializeGlad() {
 
 Application::Application()
     : m_initialized{false}, m_pause{false}, m_window{nullptr}, m_scenes{},
-      m_activeScene{nullptr} {}
+      m_activeScene{nullptr}, m_halfWindowWidth{0}, m_halfWindowHeight{0} {}
 
 Application::~Application() {
     ModelManager::destroy();
@@ -119,6 +97,12 @@ void Application::initialize() {
     this->m_window = initializeGlfw();
     initializeGlad();
 
+    // save current window half-size
+    int width, height;
+    glfwGetWindowSize(this->m_window, &width, &height);
+    this->m_halfWindowHeight = height / 2;
+    this->m_halfWindowWidth = width / 2;
+
     ModelManager::initialize();
 
     EventManager::initialize(this->m_window);
@@ -131,6 +115,7 @@ void Application::initialize() {
     this->m_scenes.push_back(std::make_unique<SolarSystemScene>());
     this->m_activeScene = this->m_scenes.front().get();
 
+    glfwSetInputMode(this->m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glEnable(GL_DEPTH_TEST);
     this->m_initialized = true;
 }
@@ -141,7 +126,7 @@ void Application::run() {
     }
 
     glEnable(GL_DEPTH_TEST);
-    applyOrthogonalProjection();
+    // applyOrthogonalProjection();
     float lastTimeUpdate = (float)glfwGetTime();
     while (!glfwWindowShouldClose(this->m_window)) {
         float deltaT = (float)glfwGetTime() - lastTimeUpdate;
@@ -161,62 +146,80 @@ void Application::run() {
     }
 }
 
-void Application::applyOrthogonalProjection() {
-    int width, height;
-    glfwGetFramebufferSize(this->m_window, &width, &height);
-    float ratio = width / (float)height;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-}
-
 void Application::subscribeListeners() {
     EventManager::subscribeKeyListener(
             KeyCallback{[this](GLFWwindow* window, int key, int scancode,
                                 int action, int mods) {
-                this->keyPressesHandler(window, key, scancode, action, mods);
+                this->handleKeyPresses(window, key, scancode, action, mods);
             }});
     EventManager::subscribeWindowFocusListener(
             WindowFocusCallback{window_focus_callback});
     EventManager::subscribeWindowIconifyListener(
             WindowIconifyCallback{window_iconify_callback});
-    EventManager::subscribeWindowSizeListener(
-            WindowSizeCallback{window_size_callback});
+    EventManager::subscribeWindowSizeListener(WindowSizeCallback{
+            [this](GLFWwindow* window, int width, int height) {
+                this->handleWindowResizeCallback(window, width, height);
+            }});
     EventManager::subscribeMouseCursorListener(
-            MouseCursorCallback{cursor_callback});
-    EventManager::subscribeMouseButtonListener(
-            MouseButtonCallback{button_callback});
-    EventManager::subscribeMouseButtonListener(
-            MouseButtonCallback{button_callback2});
+            MouseCursorCallback{[this](GLFWwindow* window, double x, double y) {
+                this->handleMouseMovement(window, x, y);
+            }});
 }
 
-void Application::keyPressesHandler(
+void Application::handleKeyPresses(
         GLFWwindow* window, int key, int scancode, int action, int mods) {
-    printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-    if (action == GLFW_PRESS) {
-        switch (key) {
-        case GLFW_KEY_1:
-            this->m_activeScene = this->m_scenes[0].get();
-            break;
-        case GLFW_KEY_2:
-            this->m_activeScene = this->m_scenes[1].get();
-            break;
-        case GLFW_KEY_3:
-            this->m_activeScene = this->m_scenes[2].get();
-            break;
-        case GLFW_KEY_4:
-            this->m_activeScene = this->m_scenes[3].get();
-            break;
-        case GLFW_KEY_ESCAPE:
-            glfwSetWindowShouldClose(window, GL_TRUE);
-            std::cout << "Shutting application down ...\n";
-            break;
-        case GLFW_KEY_SPACE:
-            this->m_pause = !this->m_pause;
-            std::cout << (this->m_pause ? "Application is now paused..."
-                                        : "Application is running again...")
-                      << "\n";
-            break;
+    if ((KeyActions)action == KeyActions::PRESSED) {
+        switch ((KeyCodes)key) {
+            case KeyCodes::KEY_KP_1:
+                this->m_activeScene = this->m_scenes[0].get();
+                return;
+            case KeyCodes::KEY_KP_2:
+                this->m_activeScene = this->m_scenes[1].get();
+                return;
+            case KeyCodes::KEY_KP_3:
+                this->m_activeScene = this->m_scenes[2].get();
+                return;
+            case KeyCodes::KEY_KP_4:
+                this->m_activeScene = this->m_scenes[3].get();
+                return;
+            case KeyCodes::KEY_ESCAPE:
+                glfwSetWindowShouldClose(window, GL_TRUE);
+                printf("Shutting application down ...\n");
+                return;
+            case KeyCodes::KEY_SPACE:
+                this->m_pause = !this->m_pause;
+                printf("%s\n",
+                        (this->m_pause ? "Application is now paused..."
+                                       : "Application is running again..."));
+                return;
         }
+    }
+
+    if (this->m_activeScene) {
+        this->m_activeScene->handleKeyPresses(
+                (KeyCodes)key, (KeyActions)action, (KeyModifierFlags)mods);
+    }
+}
+
+void Application::handleMouseMovement(
+        GLFWwindow* window, double x, double y) {
+    if (this->m_activeScene) {
+        this->m_activeScene->handleMouseMovement(
+                (int)x - this->m_halfWindowWidth,
+                (int)y - this->m_halfWindowHeight);
+    }
+
+    // reset cursor to the middle of screen
+    glfwSetCursorPos(window, this->m_halfWindowWidth, this->m_halfWindowHeight);
+}
+
+void Application::handleWindowResizeCallback(
+        GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+    this->m_halfWindowHeight = height / 2;
+    this->m_halfWindowWidth = width / 2;
+
+    if (this->m_activeScene && width > 0 && height > 0) {
+        this->m_activeScene->handleWindowResize(width, height);
     }
 }

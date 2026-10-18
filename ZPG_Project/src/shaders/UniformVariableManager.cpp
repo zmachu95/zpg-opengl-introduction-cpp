@@ -13,12 +13,29 @@
 #include <shaders/UniformVariableManager.h>
 #include <string>
 
+/**
+ * @brief Name of transformation matrix shader uniform variable.
+ */
+static constexpr const char* TRANSFORMATION_MATRIX_UNIFORM_VAR =
+        "transformation";
+
+/**
+ * @brief Name of projection matrix shader uniform variable.
+ */
+static constexpr const char* PROJECTION_MATRIX_UNIFORM_VAR = "projectionMatrix";
+
+/**
+ * @brief Name of view matrix shader uniform variable.
+ */
+static constexpr const char* VIEW_MATRIX_UNIFORM_VAR = "viewMatrix";
+
 using namespace std::string_literals;
 
 UniformVariableManager::UniformVariableManager(
         GLuint parentShaderProgramId)
     : m_parentShaderProgramId{parentShaderProgramId},
-      m_isParentShaderProgramActive{false} {}
+      m_isParentShaderProgramActive{false}, m_cameraUpdated{false},
+      m_projectionMatrix{glm::mat4{1.0f}}, m_viewMatrix{glm::mat4{1.0f}} {}
 
 void UniformVariableManager::throwIfNotActive(
         const std::string& variableName) const {
@@ -85,4 +102,28 @@ void UniformVariableManager::setMat4UniformVar(
     glUniformMatrix4fv(variableLocation, 1, GL_FALSE, glm::value_ptr(value));
     // std::cout << "Successfully set uniform variable `" << variableName <<
     // "`.\n";
+}
+
+void UniformVariableManager::handleCameraUpdate(
+        const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix) {
+    this->m_projectionMatrix = projectionMatrix;
+    this->m_viewMatrix = viewMatrix;
+    this->m_cameraUpdated = true;
+}
+
+bool UniformVariableManager::isCameraUpdated() const {
+    return this->m_cameraUpdated;
+}
+
+void UniformVariableManager::setTransformation(
+        const glm::mat4& transformationMatrix) {
+    this->setMat4UniformVar(
+            TRANSFORMATION_MATRIX_UNIFORM_VAR, transformationMatrix);
+}
+
+void UniformVariableManager::setCameraMatrices() {
+    this->m_cameraUpdated = false;
+    this->setMat4UniformVar(
+            PROJECTION_MATRIX_UNIFORM_VAR, this->m_projectionMatrix);
+    this->setMat4UniformVar(VIEW_MATRIX_UNIFORM_VAR, this->m_viewMatrix);
 }

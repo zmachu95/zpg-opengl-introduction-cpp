@@ -42,3 +42,12 @@ void LoginScene::draw(
     this->m_rotation->incrementAngle(omega * deltaT);
     this->m_login->draw(*this->m_shaderProgram);
 }
+
+void LoginScene::handleMouseMovement(
+        int cursorDeltaX, int cursorDeltaY) {}
+
+void LoginScene::handleKeyPresses(
+        KeyCodes button, KeyActions action, KeyModifierFlags mode) {}
+
+void LoginScene::handleWindowResize(
+        int width, int height) {}

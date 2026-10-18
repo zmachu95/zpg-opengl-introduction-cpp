@@ -7,6 +7,8 @@
 #endif
 
 #include <iostream>
+#include <listeners/ICameraUpdateListener.h>
+#include <memory>
 #include <shaders/FragmentShader.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/UniformVariableManager.h>
@@ -42,7 +44,8 @@ static void verifyShaderProgramLinking(
 }
 
 ShaderProgram::ShaderProgram(
-        GLuint id, UniformVariableManager&& uniformVariableManager,
+        GLuint id,
+        std::shared_ptr<UniformVariableManager>&& uniformVariableManager,
         std::reference_wrapper<VertexShader> vertexShader,
         std::reference_wrapper<FragmentShader> fragmentShader)
     : m_id{id}, m_uniformVarManager{std::move(uniformVariableManager)},
@@ -64,7 +67,7 @@ ShaderProgram ShaderProgram::createFromShaders(
     verifyShaderProgramLinking(shaderProgramId);
 
     return ShaderProgram{shaderProgramId,
-            UniformVariableManager{shaderProgramId},
+            std::make_shared<UniformVariableManager>(shaderProgramId),
             std::reference_wrapper<VertexShader>{vertexShader},
             std::reference_wrapper<FragmentShader>{fragmentShader}};
 }
@@ -74,7 +77,7 @@ void ShaderProgram::remove() {
         // std::cout << "Shader program: " << s_activeProgramId << "
         // deactivated.\n";
         s_activeProgramId = 0;
-        this->m_uniformVarManager.setIsParentShaderProgramActive(false);
+        this->m_uniformVarManager->setIsParentShaderProgramActive(false);
         glUseProgram(0);
     } else {
         std::cout << "Cannot remove shader program with ID " << this->m_id
@@ -116,15 +119,20 @@ const FragmentShader& ShaderProgram::getFragmentShader() const {
     return this->m_fragmentShader;
 }
 
-UniformVariableManager& ShaderProgram::getUniformVariableManager() {
-    return this->m_uniformVarManager;
+std::weak_ptr<ICameraUpdateListener> ShaderProgram::asCameraUpdateListener() {
+    return std::weak_ptr<UniformVariableManager>(this->m_uniformVarManager);
 }
 
-void ShaderProgram::use() {
+void ShaderProgram::use(
+        const glm::mat4& transformationMatrix) {
     if (this->m_id != 0 && s_activeProgramId == 0) {
         glUseProgram(this->m_id);
         s_activeProgramId = this->m_id;
-        this->m_uniformVarManager.setIsParentShaderProgramActive(true);
+        this->m_uniformVarManager->setIsParentShaderProgramActive(true);
+        this->m_uniformVarManager->setTransformation(transformationMatrix);
+        if (this->m_uniformVarManager->isCameraUpdated()) {
+            this->m_uniformVarManager->setCameraMatrices();
+        }
         // std::cout << "Activated shader program: " << this->m_id << ".\n";
     } else {
         std::cout << "Cannot use shader program with ID " << this->m_id

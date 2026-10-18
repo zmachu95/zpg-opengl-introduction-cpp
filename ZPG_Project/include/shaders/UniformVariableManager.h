@@ -6,7 +6,7 @@
 #pragma once
 
 #include <glm/ext/matrix_float4x4.hpp>
-#include <glm/ext/vector_float4.hpp>
+#include <listeners/ICameraUpdateListener.h>
 #include <stdexcept>
 #include <string>
 
@@ -36,13 +36,19 @@ using GLint = int;
 /**
  * @brief Allows setting of shader Uniform variables.
  */
-class UniformVariableManager {
+class UniformVariableManager : public ICameraUpdateListener {
   public:
     /**
      * @brief UniformVariableManager default constructor.
      * @param parentShaderProgramId The ID of parent shader program.
      */
     UniformVariableManager(GLuint parentShaderProgramId);
+
+    /*
+     *
+     */
+
+    bool isCameraUpdated() const;
 
     /*
      *
@@ -57,6 +63,45 @@ class UniformVariableManager {
     /*
      *
      */
+
+    /**
+     * @brief Sets the transformation matrix to shader program.
+     * @param transformationMatrix The transformation matrix.
+     */
+    void setTransformation(const glm::mat4& transformationMatrix);
+
+    /**
+     * @brief Sets cached camera matrices to shader program.
+     *
+     */
+    void setCameraMatrices();
+
+  private:
+    GLuint m_parentShaderProgramId;
+    bool m_isParentShaderProgramActive;
+    bool m_cameraUpdated;
+    glm::mat4 m_projectionMatrix;
+    glm::mat4 m_viewMatrix;
+
+    /**
+     * @brief Gets the location of uniform shader variable.
+     * @param variableName The variable name.
+     * @return GLint with the variable name.
+     * @throw UniformVariableNotFoundException - Thrown if the variable could
+     * not be found.
+     */
+    GLint getUniformVariableLocation(const std::string& variableName) const;
+
+    /*
+     *
+     */
+
+    /**
+     * @brief Helper function which throws ShaderProgramNotActiveException if
+     * the shader is not activated in OpenGL.
+     * @param variableName The variable name.
+     */
+    void throwIfNotActive(const std::string& variableName) const;
 
     /**
      * @brief Sets new bool value to given uniform variable.
@@ -118,23 +163,15 @@ class UniformVariableManager {
     void setMat4UniformVar(
             const std::string& variableName, const glm::mat4& value) const;
 
-  private:
-    GLuint m_parentShaderProgramId;
-    bool m_isParentShaderProgramActive;
+    /*
+     *
+     */
 
     /**
-     * @brief Gets the location of uniform shader variable.
-     * @param variableName The variable name.
-     * @return GLint with the variable name.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
+     * @brief Handles the camera update.
+     * @param projectionMatrix The new camera projection matrix.
+     * @param viewMatrix The new camera view matrix.
      */
-    GLint getUniformVariableLocation(const std::string& variableName) const;
-
-    /**
-     * @brief Helper function which throws ShaderProgramNotActiveException if
-     * the shader is not activated in OpenGL.
-     * @param variableName The variable name.
-     */
-    void throwIfNotActive(const std::string& variableName) const;
+    void handleCameraUpdate(
+            const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix);
 };

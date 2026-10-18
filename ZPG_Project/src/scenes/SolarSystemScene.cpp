@@ -115,3 +115,12 @@ void SolarSystemScene::draw(
     this->m_earthModel->draw(*this->m_shaderProgram);
     this->m_moonModel->draw(*this->m_shaderProgram);
 }
+
+void SolarSystemScene::handleMouseMovement(
+        int cursorDeltaX, int cursorDeltaY) {}
+
+void SolarSystemScene::handleKeyPresses(
+        KeyCodes button, KeyActions action, KeyModifierFlags mode) {}
+
+void SolarSystemScene::handleWindowResize(
+        int width, int height) {}

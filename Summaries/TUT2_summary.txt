@@ -1,0 +1,25 @@
+1) Splněno. Ve Vertex shaderu byla přidána uniformní proměnná typu mat4, která umožňuje nastavit transformaci. Přeposílání matice do shaderu zprostředkovává třída UniformVariableManager.
+
+2) Splněno. Třída DrawableObject využívá kompozice tříd Model a CompoundTransformation, kde Model je wrapper pro VAO a VBO objekty, CompoundTransformation je třída pro skládání transformací dle návrhového vzoru Composite.
+
+3) Splněno. Třídy Rotation, Scale a Translation představují jednotlivé elementární transformace, u kterých lze libovolně nastavit konečnou hodnotu posuvu, rotace okolo v konstruktoru předané osy, měřítka v jednotlivých osách. Třídy rovněž poskytují funkce pro inkrementální změnu transformací.
+
+4) Splněno. Na trojúhelník je aplikován posun dx = 0.5, rotace o 90° CCW.
+
+   a) T_final = T1 * R2 -> transformaci čteme zleva: Nejprve trojúhelník v jeho lokálním SS (který je shodný s globálním SS) posunu směrem k pravému okraji obrazovky (T1). Následně trojúhelníkem v jeho lokálním SS otočím o 90° CCW (R2). Očekávaná výsledná poloha trojúhelníku je u pravého okraje obrazovky s natočením o 90° CCW.
+
+   b) T_final = R1 * T2 -> transformaci čteme zleva: Nejprve trojúhelník spolu s jeho lokálním SS natočím o 90° CCW (R1). Pak trojúhelníkem v jeho lokálním SS (který je nyní vůči globálnímu SS natočen o 90° CCW) posunu o dx = 0.5. Očekávaná výsledná poloha trojúhelníka je u horního okraje obrazovky s natočením o 90° CCW.
+
+5) Splněno. Interface ITransformation poskytuje rozhraní pro návrhový vzor Composite - metodu getMatrix(). Třída GroupedTransformation pak představuje skupinu; třídy Rotation, Scale, Translation pak jednotlivé lístky.
+
+6) Splněno. Ve scéně je vygenerováno 8 stromů s náhodnými měřítky a 20 keřů s náhodnými měřítky a pozicemi.
+
+7) Splněno. Login MAC0690 byl vytvořen v Blenderu pomocí AI.
+
+8) Splněno. Scéna obsahuje Slunce, Zemi a Měsíc. Transformace použité pro planety jsou následující:
+
+   Slunce - Zde stačí pouze zmenšení modelu (S_sun) a rotace okolo vlastní osy (R_sun). Slunce nejprve pootočím, pak jej v jeho lokálním SS zmenšín: T_final_sun = R_sun * S_sun.
+
+   Země - Zemi musím zmenšit (S_earth), přemístit na oběžnou dráhu Slunce (T_earth_orbit), provést rotaci okolo Slunce (R_earth_orbit) a nakonec s ní otočit okolo vlastní osy (R_earth). Posloupnost je následující: Nejprve Zemi otočím rotací okolo Slunce (R_earth_orbit), pak ji v jejím natočeném lokálním SS vynesu na orbit (T_earth_orbit), pak ji natočím v jejím lokálním SS okolo vlastní osy (R_earth) a nakonec ji zmenším (S_earth). Výsledná transformace: T_final_earth = R_earth_orbit * T_earth_orbit * R_earth * S_earth.
+
+   Měsíc - Měsíc je nejjednoduší popsat relativně vůči transformaci Země. Pomocí relativního popisu mi stačí Měsíc přemístit na stejnou pozici jako Země (T_earth*), vynést jej na orbit (T_moon_orbit), provést rotaci okolo Země (R_moon_orbit), otočit jej kolem vlastní osy (R_moon) a zmenšit jej (S_moon). Posloupnost transformací je: aplikovat transformaci Země (T_earth*), otočit Měsíc s jeho lokálním SS vůči Zemi (R_moon_orbit), vynést jej na orbitu posunem v natočeném lokálním SS Měsíce (T_moon_orbit), natočit Měsíc okolo jeho vlastní osy (R_moon) a nakonec jej zmenšit (S_moon). Výsledná transformace: T_final_moon = T_earth* * R_moon_orbit * T_moon_orbit * R_moon * S_moon = R_earth_orbit * T_earth_orbit * R_moon_orbit * T_moon_orbit * R_moon * S_moon

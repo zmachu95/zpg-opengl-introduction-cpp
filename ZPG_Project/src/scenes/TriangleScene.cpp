@@ -5,13 +5,9 @@
 #include <scenes/TriangleScene.h>
 
 #include <drawables/DrawableObject.h>
-#include <drawables/Model.h>
-#include <drawables/ModelManager.h>
 #include <memory>
 #include <scenes/IScene.h>
-#include <shaders/FragmentShader.h>
 #include <shaders/ShaderProgram.h>
-#include <shaders/VertexShader.h>
 #include <transformations/Rotation.h>
 #include <transformations/Scale.h>
 #include <transformations/Translation.h>
@@ -19,14 +15,17 @@
 #include <cameras/CameraCommonSettings.h>
 #include <cameras/PerspectiveCamera.h>
 
+#include <drawables/DrawableObjectFactory.h>
+#include <resources/models/triangle.h>
+
 TriangleScene::TriangleScene()
     : IScene{}, m_program{}, m_rotation{}, m_translation{}, m_triangle{},
       m_cameraController{}, m_camera{} {
-    Model& triangleModel = ModelManager::getModel(AvailableModels::TRIANGLE);
-
-    this->m_program = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
-    this->m_triangle = std::make_unique<DrawableObject>(triangleModel);
+    this->m_program =
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
+    this->m_triangle =
+            DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                    triangle, sizeof(triangle) / sizeof(triangle[0]), 2);
 
     this->m_rotation =
             this->m_triangle->getTransformation().addNewRotation(0, 0, 1);

@@ -9,7 +9,6 @@
 #include <constants/KeyModifiers.h>
 #include <cstdlib>
 #include <ctime>
-#include <drawables/ModelManager.h>
 #include <scenes/ForestScene.h>
 #include <scenes/LoginScene.h>
 #include <scenes/SolarSystemScene.h>
@@ -80,7 +79,6 @@ Application::Application()
       m_activeScene{nullptr}, m_halfWindowWidth{0}, m_halfWindowHeight{0} {}
 
 Application::~Application() {
-    ModelManager::destroy();
     EventManager::destroy(this->m_window);
 
     // Clean up and terminate GLFW
@@ -100,8 +98,6 @@ void Application::initialize() {
     glfwGetWindowSize(this->m_window, &width, &height);
     this->m_halfWindowHeight = height / 2;
     this->m_halfWindowWidth = width / 2;
-
-    ModelManager::initialize();
 
     EventManager::initialize(this->m_window);
     this->subscribeListeners();

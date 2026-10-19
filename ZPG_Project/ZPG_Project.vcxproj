@@ -152,7 +152,7 @@
     <ClCompile Include="src\cameras\CameraCommonSettings.cpp" />
     <ClCompile Include="src\cameras\CameraGeometry.cpp" />
     <ClCompile Include="src\cameras\CameraUserInputController.cpp" />
-    <ClCompile Include="src\drawables\ModelManager.cpp" />
+    <ClCompile Include="src\drawables\DrawableObjectFactory.cpp" />
     <ClCompile Include="src\scenes\ForestScene.cpp" />
     <ClCompile Include="src\scenes\LoginScene.cpp" />
     <ClCompile Include="src\scenes\SolarSystemScene.cpp" />
@@ -178,9 +178,9 @@
     <ClInclude Include="include\cameras\CameraCommonSettings.h" />
     <ClInclude Include="include\cameras\MovementDirectionEnum.h" />
     <ClInclude Include="include\cameras\CameraGeometry.h" />
+    <ClInclude Include="include\drawables\DrawableObjectFactory.h" />
     <ClInclude Include="include\listeners\ICameraUpdateListener.h" />
     <ClInclude Include="include\cameras\CameraUserInputController.h" />
-    <ClInclude Include="include\drawables\ModelManager.h" />
     <ClInclude Include="include\scenes\ForestScene.h" />
     <ClInclude Include="include\scenes\IScene.h" />
     <ClInclude Include="include\scenes\LoginScene.h" />

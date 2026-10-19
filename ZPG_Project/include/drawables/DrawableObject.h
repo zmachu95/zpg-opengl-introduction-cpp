@@ -4,11 +4,13 @@
 
 #pragma once
 
+#include <memory>
 #include <transformations/GroupedTransformation.h>
-#include <type_traits>
 
 class Model;
 class ShaderProgram;
+
+using ModelPtr = std::shared_ptr<Model>;
 
 /**
  * @brief Represents a drawable object with its spatial transformation.
@@ -19,7 +21,7 @@ class DrawableObject {
      * @brief DrawableObject standard constructor.
      * @param model The model to bind.
      */
-    DrawableObject(std::reference_wrapper<Model> model);
+    DrawableObject(const ModelPtr& model);
 
     /*
      *
@@ -42,6 +44,6 @@ class DrawableObject {
     void draw(ShaderProgram& shaderProgram);
 
   private:
-    std::reference_wrapper<Model> m_model;
+    ModelPtr m_model;
     GroupedTransformation m_transformation;
 };

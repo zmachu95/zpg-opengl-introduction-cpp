@@ -12,11 +12,13 @@
 class VertexShader;
 class FragmentShader;
 class ICameraUpdateListener;
+class ShaderProgram;
 
 using GLuint = unsigned int;
 using VertexShaderPtr = std::shared_ptr<VertexShader>;
 using FragmentShaderPtr = std::shared_ptr<FragmentShader>;
 using UniformVariableManagerPtr = std::shared_ptr<UniformVariableManager>;
+using ShaderProgramPtr = std::unique_ptr<ShaderProgram>;
 
 /**
  * @brief Indicates that OpenGL could not create the shader program.
@@ -83,12 +85,12 @@ class ShaderProgram {
      * fragment shader.
      * @param vertexShader The vertex shader.
      * @param fragmentShader The fragment shader.
-     * @return
+     * @return Pointer to new shader program.
      * @throw std::invalid_argument - Thrown when the shader types are invalid.
      * @throw ShaderProgramNotCreatedException - Thrown when OpenGL could not
      * create the shader program.
      */
-    static ShaderProgram createFromShaderFiles(
+    static ShaderProgramPtr createFromShaderFiles(
             const std::string& vertexShaderFile,
             const std::string& fragmentShaderFile);
 

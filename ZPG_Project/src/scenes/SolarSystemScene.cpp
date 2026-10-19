@@ -5,13 +5,13 @@
 #include <scenes/SolarSystemScene.h>
 
 #include <drawables/DrawableObject.h>
-#include <drawables/Model.h>
-#include <drawables/ModelManager.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
+#include <resources/models/earth.h>
+#include <resources/models/moon.h>
+#include <resources/models/sun.h>
 #include <scenes/IScene.h>
-#include <shaders/FragmentShader.h>
 #include <shaders/ShaderProgram.h>
-#include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
 #include <transformations/Rotation.h>
 #include <transformations/Scale.h>
@@ -80,15 +80,17 @@ SolarSystemScene::SolarSystemScene()
       m_sunOwnAxisRotation{}, m_earthAroundSunRotation{},
       m_earthOrbitTransformation{}, m_earthOwnAxisRotation{},
       m_moonAroundEarthRotation{}, m_moonOwnAxisRotation{} {
-    Model& sunModel = ModelManager::getModel(AvailableModels::SUN);
-    Model& earthModel = ModelManager::getModel(AvailableModels::EARTH);
-    Model& moonModel = ModelManager::getModel(AvailableModels::MOON);
-
-    this->m_sunModel = std::make_unique<DrawableObject>(sunModel);
-    this->m_earthModel = std::make_unique<DrawableObject>(earthModel);
-    this->m_moonModel = std::make_unique<DrawableObject>(moonModel);
-    this->m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
+    this->m_sunModel =
+            DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                    sun, sizeof(sun) / sizeof(sun[0]), 3);
+    this->m_earthModel =
+            DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                    earth, sizeof(earth) / sizeof(earth[0]), 3);
+    this->m_moonModel =
+            DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                    moon, sizeof(moon) / sizeof(moon[0]), 3);
+    this->m_shaderProgram =
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
 
     this->createSunTransformations(this->m_sunModel->getTransformation());
     this->createEarthTransformations(this->m_earthModel->getTransformation());

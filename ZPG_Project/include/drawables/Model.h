@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include <glm/fwd.hpp>
+
+class ShaderProgram;
+
 using GLuint = unsigned int;
 using GLsizei = int;
 
@@ -57,23 +61,8 @@ class Model {
      * @throw std::invalid_argument Thrown when the supplied array is not
      * divisible by 6 (3 position floats + 3 color floats).
      */
-    static Model fromVerticePositionsAndColors(
-            const float* verticesPositionsAndColors,
-            const size_t elementsCount);
-
-    /**
-     * @brief Factory method for creating new model from supplied vertices data
-     * array.
-     * @param verticesPositionsColorsNormals Array containing vertice positions,
-     * colors and normals.
-     * @param elementsCount The total number of floats in the array.
-     * @return New Model object.
-     * @throw std::invalid_argument Thrown when the supplied array is not
-     * divisible by 9 (3 position floats + 3 color floats + 3 normal floats).
-     */
-    static Model fromVerticePositionsColorsNormals(
-            const float* verticesPositionsColorsNormals,
-            const size_t elementsCount);
+    static Model fromVerticesData(const float* verticesData,
+            size_t arrayElementsCount, int attributesCount);
 
     /*
      *
@@ -97,6 +86,18 @@ class Model {
      */
     const GLsizei getVerticesCount() const;
 
+    /*
+     *
+     */
+
+    /**
+     * @brief Draws the model in the currently active scene.
+     * @param shaderProgram Shader program to be used for drawing the model.
+     * @param transformation Transformation applied to the model.
+     */
+    void draw(ShaderProgram& shaderProgram,
+            const glm::mat4& transformation) const;
+
   private:
     GLuint m_vao;
     GLuint m_vbo;
@@ -109,4 +110,20 @@ class Model {
      * @param verticeCount Number of vertices in the model.
      */
     Model(GLuint vao, GLuint vbo, GLsizei verticeCount);
+
+    /**
+     * @brief Adds given number of attributes to currently active VAO object.
+     * @param attributesCount Number of attributes to add.
+     */
+    static void addVertexAttributes(GLuint attributesCount);
+
+    /**
+     * @brief Deletes the encapsulated VAO object from OpenGL.
+     */
+    void deleteVao();
+
+    /**
+     * @brief Deletes the encapsulated VBO object from OpenGL.
+     */
+    void deleteVbo();
 };

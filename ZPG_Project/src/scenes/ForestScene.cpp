@@ -6,30 +6,31 @@
 
 #include <cstdlib>
 #include <drawables/DrawableObject.h>
-#include <drawables/Model.h>
-#include <drawables/ModelManager.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <scenes/IScene.h>
-#include <shaders/FragmentShader.h>
 #include <shaders/ShaderProgram.h>
-#include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
 #include <transformations/Rotation.h>
 #include <transformations/Scale.h>
 #include <transformations/Translation.h>
 #include <vector>
 
+#include <resources/models/bushes.h>
+#include <resources/models/tree.h>
+
 const float groundYCoordinate = -0.9f;
 
 static void createRandomTrees(
-        const int treesCount, Model& treeModel,
-        std::vector<DrawableObjectPtr>& drawableObjects) {
+        const int treesCount, std::vector<DrawableObjectPtr>& drawableObjects) {
     for (int i = 0; i < treesCount; i++) {
         float scaleX = (float)(rand() % 4 + 4) / 100;
         float scaleY = (float)(rand() % 8 + 4) / 100;
         float positionX = -0.8f + (1.6f * i) / (treesCount - 1);
 
-        drawableObjects.push_back(std::make_unique<DrawableObject>(treeModel));
+        drawableObjects.push_back(
+                DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                        tree, sizeof(tree) / sizeof(tree[0]), 2));
         DrawableObject* drawableTree = drawableObjects.back().get();
         TranslationPtr translation =
                 drawableTree->getTransformation().addNewTranslation();
@@ -41,7 +42,7 @@ static void createRandomTrees(
 }
 
 static void createRandomBushes(
-        const int bushesCount, Model& bushModel,
+        const int bushesCount,
         std::vector<DrawableObjectPtr>& drawableObjects) {
     for (int i = 0; i < bushesCount; i++) {
         float scaleX = (float)(rand() % 5 + 10) / 100;
@@ -50,7 +51,9 @@ static void createRandomBushes(
                 -0.95f + (1.9f * i) / (bushesCount - 1)
                 + (rand() % 2 == 1 ? 1 : -1) * (float)(rand() % 4) / 100;
 
-        drawableObjects.push_back(std::make_unique<DrawableObject>(bushModel));
+        drawableObjects.push_back(
+                DrawableObjectFactory::createDrawableObjectFromVerticesData(
+                        bushes, sizeof(bushes) / sizeof(bushes[0]), 2));
         DrawableObject* drawableBush = drawableObjects.back().get();
         TranslationPtr translation =
                 drawableBush->getTransformation().addNewTranslation();
@@ -62,14 +65,11 @@ static void createRandomBushes(
 }
 
 ForestScene::ForestScene() : IScene{}, m_treesAndBushes{}, m_shaderProgram{} {
-    Model& treeModel = ModelManager::getModel(AvailableModels::TREE);
-    Model& bushModel = ModelManager::getModel(AvailableModels::BUSHES);
+    createRandomTrees(8, this->m_treesAndBushes);
+    createRandomBushes(20, this->m_treesAndBushes);
 
-    createRandomTrees(8, treeModel, this->m_treesAndBushes);
-    createRandomBushes(20, bushModel, this->m_treesAndBushes);
-
-    m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
+    m_shaderProgram =
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
 }
 
 void ForestScene::draw(

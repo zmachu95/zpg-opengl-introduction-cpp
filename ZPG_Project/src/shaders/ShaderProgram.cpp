@@ -51,7 +51,7 @@ ShaderProgram& ShaderProgram::operator=(
     return *this;
 }
 
-ShaderProgram ShaderProgram::createFromShaderFiles(
+ShaderProgramPtr ShaderProgram::createFromShaderFiles(
         const std::string& vertexShaderFile,
         const std::string& fragmentShaderFile) {
     VertexShaderPtr vertexShader =
@@ -59,7 +59,8 @@ ShaderProgram ShaderProgram::createFromShaderFiles(
     FragmentShaderPtr fragmentShader =
             ShaderFactory::createFragmentShaderFromFile(fragmentShaderFile);
 
-    return ShaderProgram::link(vertexShader, fragmentShader);
+    return std::make_unique<ShaderProgram>(
+            ShaderProgram::link(vertexShader, fragmentShader));
 }
 
 ShaderProgram ShaderProgram::link(

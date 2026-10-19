@@ -5,25 +5,23 @@
 #include <scenes/LoginScene.h>
 
 #include <drawables/DrawableObject.h>
-#include <drawables/Model.h>
-#include <drawables/ModelManager.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <scenes/IScene.h>
-#include <shaders/FragmentShader.h>
 #include <shaders/ShaderProgram.h>
-#include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
 #include <transformations/Rotation.h>
 #include <transformations/Scale.h>
 #include <transformations/Translation.h>
 
+#include <resources/models/mac0690.h>
+
 LoginScene::LoginScene()
     : IScene{}, m_login{}, m_shaderProgram{}, m_rotation{} {
-    Model& loginModel = ModelManager::getModel(AvailableModels::LOGIN);
-
-    this->m_login = std::make_unique<DrawableObject>(loginModel);
-    this->m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
+    this->m_login = DrawableObjectFactory::createDrawableObjectFromVerticesData(
+            mac0690, sizeof(mac0690) / sizeof(mac0690[0]), 2);
+    this->m_shaderProgram =
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
     this->m_rotation =
             this->m_login->getTransformation().addNewRotation(0.0f, 1.0f, 0.0f);
     ScalePtr scale = this->m_login->getTransformation().addNewScale();

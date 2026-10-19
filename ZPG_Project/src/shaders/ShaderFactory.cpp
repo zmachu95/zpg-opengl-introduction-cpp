@@ -30,7 +30,7 @@ const std::string VERTEX_SHADER_FILE_EXTENSION{".vert"};
  */
 const std::string SHADERS_FOLDER = "resources\\shaders\\";
 
-ShaderFactory ShaderFactory::s_instance = ShaderFactory{};
+ShaderFactory ShaderFactory::s_instance{};
 
 VertexShaderPtr ShaderFactory::createVertexShaderFromFile(
         const std::string& shaderFileName) {

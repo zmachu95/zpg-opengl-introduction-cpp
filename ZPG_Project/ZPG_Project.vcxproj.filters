@@ -18,9 +18,6 @@
     <ClCompile Include="src\application\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\shaders\ShaderBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\shaders\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,9 +25,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shaders\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\application\EventManager.cpp">
@@ -60,9 +54,6 @@
     <ClCompile Include="src\transformations\Rotation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\scenes\TriangleScene.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\scenes\ForestScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,16 +72,22 @@
     <ClCompile Include="src\scenes\TriangleScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera\CameraCommonSettings.cpp">
+    <ClCompile Include="src\cameras\PerspectiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera\CameraUserInputController.cpp">
+    <ClCompile Include="src\cameras\CameraCommonSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera\PerspectiveCamera.cpp">
+    <ClCompile Include="src\cameras\CameraGeometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera\CameraGeometry.cpp">
+    <ClCompile Include="src\cameras\CameraUserInputController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders\ShaderFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders\ShaderCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\drawables\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\shaders\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resources\models\sphere.h">
@@ -164,9 +158,6 @@
     <ClInclude Include="include\scenes\IScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaders\ShaderBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\scenes\ForestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -182,31 +173,40 @@
     <ClInclude Include="include\shaders\UniformVariableManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\camera\PerspectiveCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\camera\CameraUserInputController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\camera\CameraEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\camera\CameraCommonSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\listeners\ICameraUpdateListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\utilities\KeyCodes.h">
+    <ClInclude Include="include\cameras\CameraCommonSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\utilities\KeyModifiers.h">
+    <ClInclude Include="include\cameras\MovementDirectionEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\utilities\KeyActions.h">
+    <ClInclude Include="include\cameras\CameraGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\camera\CameraGeometry.h">
+    <ClInclude Include="include\cameras\CameraUserInputController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\TriangleScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\PerspectiveCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants\KeyActions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants\KeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants\KeyModifiers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaders\ShaderCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\shaders\ShaderFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

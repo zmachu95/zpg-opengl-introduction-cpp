@@ -10,27 +10,86 @@
 #include <listeners/ICameraUpdateListener.h>
 #include <memory>
 #include <shaders/FragmentShader.h>
+#include <shaders/ShaderFactory.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/UniformVariableManager.h>
 #include <shaders/VertexShader.h>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 using namespace std::string_literals;
-using GLuint = unsigned int;
 
-GLuint ShaderProgram::s_activeProgramId = 0;
+ShaderProgram::ShaderProgram(
+        GLuint id, const UniformVariableManagerPtr& uniformVariableManager,
+        const VertexShaderPtr& vertexShader,
+        const FragmentShaderPtr& fragmentShader)
+    : m_id{id}, m_uniformVarManager{uniformVariableManager},
+      m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader} {
+    std::cout << "Created shader program with ID " << id << ".\n";
+}
 
-static void deleteShaderProgram(
-        GLuint programId) {
-    if (programId != 0) {
-        std::cout << "Deleting shader program ID " << programId << ".\n";
-        glDeleteProgram(programId);
+ShaderProgram::ShaderProgram(
+        ShaderProgram&& other) noexcept
+    : m_id{std::exchange(other.m_id, 0)},
+      m_uniformVarManager{std::move(other.m_uniformVarManager)},
+      m_fragmentShader{std::move(other.m_fragmentShader)},
+      m_vertexShader{std::move(other.m_vertexShader)} {}
+
+ShaderProgram::~ShaderProgram() { this->deleteProgram(); }
+
+ShaderProgram& ShaderProgram::operator=(
+        ShaderProgram&& other) noexcept {
+    if (this != &other) {
+        this->deleteProgram();
+
+        this->m_id = std::exchange(other.m_id, 0);
+        this->m_uniformVarManager = std::move(other.m_uniformVarManager);
+        this->m_vertexShader = std::move(other.m_vertexShader);
+        this->m_fragmentShader = std::move(other.m_fragmentShader);
+    }
+
+    return *this;
+}
+
+ShaderProgram ShaderProgram::createFromShaderFiles(
+        const std::string& vertexShaderFile,
+        const std::string& fragmentShaderFile) {
+    VertexShaderPtr vertexShader =
+            ShaderFactory::createVertexShaderFromFile(vertexShaderFile);
+    FragmentShaderPtr fragmentShader =
+            ShaderFactory::createFragmentShaderFromFile(fragmentShaderFile);
+
+    return ShaderProgram::link(vertexShader, fragmentShader);
+}
+
+ShaderProgram ShaderProgram::link(
+        const VertexShaderPtr& vertexShader,
+        const FragmentShaderPtr& fragmentShader) {
+    GLuint shaderProgramId = glCreateProgram();
+    if (shaderProgramId == 0) {
+        throw ShaderProgramNotCreatedException{
+                "Unable to create shader program."};
+    }
+
+    glAttachShader(shaderProgramId, fragmentShader->getId());
+    glAttachShader(shaderProgramId, vertexShader->getId());
+    glLinkProgram(shaderProgramId);
+    verifyShaderProgramLinking(shaderProgramId);
+
+    return ShaderProgram{shaderProgramId,
+            std::make_shared<UniformVariableManager>(shaderProgramId),
+            vertexShader, fragmentShader};
+}
+
+void ShaderProgram::deleteProgram() {
+    if (this->m_id != 0) {
+        std::cout << "Deleting shader program ID " << this->m_id << ".\n";
+        glDeleteProgram(this->m_id);
+        this->m_id = 0;
     }
 }
 
-static void verifyShaderProgramLinking(
+void ShaderProgram::verifyShaderProgramLinking(
         const GLuint programId) {
     GLint success;
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
@@ -43,81 +102,7 @@ static void verifyShaderProgramLinking(
     }
 }
 
-ShaderProgram::ShaderProgram(
-        GLuint id,
-        std::shared_ptr<UniformVariableManager>&& uniformVariableManager,
-        std::reference_wrapper<VertexShader> vertexShader,
-        std::reference_wrapper<FragmentShader> fragmentShader)
-    : m_id{id}, m_uniformVarManager{std::move(uniformVariableManager)},
-      m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader} {
-    std::cout << "Created shader program with ID " << id << ".\n";
-}
-
-ShaderProgram ShaderProgram::createFromShaders(
-        VertexShader& vertexShader, FragmentShader& fragmentShader) {
-    GLuint shaderProgramId = glCreateProgram();
-    if (shaderProgramId == 0) {
-        throw ShaderProgramNotCreatedException{
-                "Unable to create shader program."};
-    }
-
-    glAttachShader(shaderProgramId, fragmentShader.getId());
-    glAttachShader(shaderProgramId, vertexShader.getId());
-    glLinkProgram(shaderProgramId);
-    verifyShaderProgramLinking(shaderProgramId);
-
-    return ShaderProgram{shaderProgramId,
-            std::make_shared<UniformVariableManager>(shaderProgramId),
-            std::reference_wrapper<VertexShader>{vertexShader},
-            std::reference_wrapper<FragmentShader>{fragmentShader}};
-}
-
-void ShaderProgram::remove() {
-    if (s_activeProgramId == this->m_id) {
-        // std::cout << "Shader program: " << s_activeProgramId << "
-        // deactivated.\n";
-        s_activeProgramId = 0;
-        this->m_uniformVarManager->setIsParentShaderProgramActive(false);
-        glUseProgram(0);
-    } else {
-        std::cout << "Cannot remove shader program with ID " << this->m_id
-                  << " because program with ID " << s_activeProgramId
-                  << " is currently in use!";
-    }
-}
-
-ShaderProgram::ShaderProgram(
-        ShaderProgram&& other) noexcept
-    : m_id{std::exchange(other.m_id, 0)},
-      m_uniformVarManager{std::move(other.m_uniformVarManager)},
-      m_fragmentShader{std::move(other.m_fragmentShader)},
-      m_vertexShader{std::move(other.m_vertexShader)} {}
-
-ShaderProgram::~ShaderProgram() { deleteShaderProgram(this->m_id); }
-
-ShaderProgram& ShaderProgram::operator=(
-        ShaderProgram&& other) noexcept {
-    if (this != &other) {
-        deleteShaderProgram(this->m_id);
-
-        this->m_id = std::exchange(other.m_id, 0);
-        this->m_uniformVarManager = std::move(other.m_uniformVarManager);
-        this->m_vertexShader = std::move(other.m_vertexShader);
-        this->m_fragmentShader = std::move(other.m_fragmentShader);
-    }
-
-    return *this;
-}
-
-const GLuint ShaderProgram::getId() const { return this->m_id; }
-
-const VertexShader& ShaderProgram::getVertexShader() const {
-    return this->m_vertexShader;
-}
-
-const FragmentShader& ShaderProgram::getFragmentShader() const {
-    return this->m_fragmentShader;
-}
+GLuint ShaderProgram::getId() const { return this->m_id; }
 
 std::weak_ptr<ICameraUpdateListener> ShaderProgram::asCameraUpdateListener() {
     return std::weak_ptr<UniformVariableManager>(this->m_uniformVarManager);
@@ -125,18 +110,9 @@ std::weak_ptr<ICameraUpdateListener> ShaderProgram::asCameraUpdateListener() {
 
 void ShaderProgram::use(
         const glm::mat4& transformationMatrix) {
-    if (this->m_id != 0 && s_activeProgramId == 0) {
-        glUseProgram(this->m_id);
-        s_activeProgramId = this->m_id;
-        this->m_uniformVarManager->setIsParentShaderProgramActive(true);
-        this->m_uniformVarManager->setTransformation(transformationMatrix);
-        if (this->m_uniformVarManager->isCameraUpdated()) {
-            this->m_uniformVarManager->setCameraMatrices();
-        }
-        // std::cout << "Activated shader program: " << this->m_id << ".\n";
-    } else {
-        std::cout << "Cannot use shader program with ID " << this->m_id
-                  << " because program with ID " << s_activeProgramId
-                  << " is currently in use!";
+    glUseProgram(this->m_id);
+    this->m_uniformVarManager->applyTransformation(transformationMatrix);
+    if (this->m_uniformVarManager->isCameraUpdated()) {
+        this->m_uniformVarManager->applyCameraMatrices();
     }
 }

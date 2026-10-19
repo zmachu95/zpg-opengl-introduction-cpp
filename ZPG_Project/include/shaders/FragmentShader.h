@@ -4,32 +4,27 @@
 
 #pragma once
 
-#include <shaders/ShaderBase.h>
+#include <shaders/ShaderCore.h>
 
 using GLuint = unsigned int;
 
 /**
- * @brief Represents a fragment shader.
+ * @brief Represents a vertex shader.
  */
-class FragmentShader : public ShaderBase {
+class FragmentShader {
   public:
     /**
-     * @brief Factory method for creating fragment shaders from text file.
-     * @param shaderFile Full path to the text file.
-     * @return New FragmentShader object.
-     * @throw ShaderNotCreatedException - Thrown when OpenGL refuses to create
-     * shader.
-     * @throw ShaderFileNotFoundException - Thrown when supplied file could not
-     * be found.
-     * @throw ShaderCompileErrorException - Thrown when shader could not be
-     * compiled.
+     * @brief FragmentShader standard constructor.
+     * @param shaderCore The raw OpenGL shader.
      */
-    static FragmentShader compileShaderFromFile(const char* shaderFile);
+    FragmentShader(ShaderCore&& shaderCore);
+
+    /**
+     * @brief Gets the ID of compiled shader.
+     * @return GLuint with shader ID.
+     */
+    GLuint getId() const;
 
   private:
-    /**
-     * @brief FragmentShader standard constructor.
-     * @param id The shader ID.
-     */
-    FragmentShader(const GLuint id);
+    ShaderCore m_shaderCore;
 };

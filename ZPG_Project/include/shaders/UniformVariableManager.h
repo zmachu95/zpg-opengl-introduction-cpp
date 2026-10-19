@@ -20,16 +20,6 @@ class UniformVariableNotFoundException : public std::runtime_error {
         : std::runtime_error(message) {};
 };
 
-/**
- * @brief Indicates that shader program is not active, thus the uniform variable
- * cannot be set.
- */
-class ShaderProgramNotActiveException : public std::runtime_error {
-  public:
-    ShaderProgramNotActiveException(const std::string& message)
-        : std::runtime_error(message) {};
-};
-
 using GLuint = unsigned int;
 using GLint = int;
 
@@ -48,6 +38,10 @@ class UniformVariableManager : public ICameraUpdateListener {
      *
      */
 
+    /**
+     * @brief Checks whether the camera matrices were updated.
+     * @return true if new matrices were received, otherwise returns false.
+     */
     bool isCameraUpdated() const;
 
     /*
@@ -55,30 +49,19 @@ class UniformVariableManager : public ICameraUpdateListener {
      */
 
     /**
-     * @brief Sets whether the parent shader program is active.
-     * @param value Value to set.
-     */
-    void setIsParentShaderProgramActive(bool value);
-
-    /*
-     *
-     */
-
-    /**
-     * @brief Sets the transformation matrix to shader program.
+     * @brief Applies the transformation matrix in shader program.
      * @param transformationMatrix The transformation matrix.
      */
-    void setTransformation(const glm::mat4& transformationMatrix);
+    void applyTransformation(const glm::mat4& transformationMatrix);
 
     /**
-     * @brief Sets cached camera matrices to shader program.
+     * @brief Applies cached camera matrices in shader program.
      *
      */
-    void setCameraMatrices();
+    void applyCameraMatrices();
 
   private:
     GLuint m_parentShaderProgramId;
-    bool m_isParentShaderProgramActive;
     bool m_cameraUpdated;
     glm::mat4 m_projectionMatrix;
     glm::mat4 m_viewMatrix;
@@ -92,25 +75,12 @@ class UniformVariableManager : public ICameraUpdateListener {
      */
     GLint getUniformVariableLocation(const std::string& variableName) const;
 
-    /*
-     *
-     */
-
-    /**
-     * @brief Helper function which throws ShaderProgramNotActiveException if
-     * the shader is not activated in OpenGL.
-     * @param variableName The variable name.
-     */
-    void throwIfNotActive(const std::string& variableName) const;
-
     /**
      * @brief Sets new bool value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
      * @throw UniformVariableNotFoundException - Thrown if the variable could
      * not be found.
-     * @throw ShaderProgramNotActiveException - Thrown if the shader program is
-     * not activated in OpenGL.
      */
     void setBoolUniformVar(
             const std::string& variableName, const bool value) const;
@@ -121,8 +91,6 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @param value The new value.
      * @throw UniformVariableNotFoundException - Thrown if the variable could
      * not be found.
-     * @throw ShaderProgramNotActiveException - Thrown if the shader program is
-     * not activated in OpenGL.
      */
     void setIntUniformVar(
             const std::string& variableName, const int value) const;
@@ -133,8 +101,6 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @param value The new value.
      * @throw UniformVariableNotFoundException - Thrown if the variable could
      * not be found.
-     * @throw ShaderProgramNotActiveException - Thrown if the shader program is
-     * not activated in OpenGL.
      */
     void setFloatUniformVar(
             const std::string& variableName, const float value) const;
@@ -145,8 +111,6 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @param value The new value.
      * @throw UniformVariableNotFoundException - Thrown if the variable could
      * not be found.
-     * @throw ShaderProgramNotActiveException - Thrown if the shader program is
-     * not activated in OpenGL.
      */
     void setVec4UniformVar(
             const std::string& variableName, const glm::vec4& value) const;
@@ -157,8 +121,6 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @param value The new value.
      * @throw UniformVariableNotFoundException - Thrown if the variable could
      * not be found.
-     * @throw ShaderProgramNotActiveException - Thrown if the shader program is
-     * not activated in OpenGL.
      */
     void setMat4UniformVar(
             const std::string& variableName, const glm::mat4& value) const;

@@ -11,7 +11,6 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/FragmentShader.h>
-#include <shaders/ShaderManager.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
@@ -66,16 +65,11 @@ ForestScene::ForestScene() : IScene{}, m_treesAndBushes{}, m_shaderProgram{} {
     Model& treeModel = ModelManager::getModel(AvailableModels::TREE);
     Model& bushModel = ModelManager::getModel(AvailableModels::BUSHES);
 
-    FragmentShader& fragmentShader =
-            ShaderManager::getFragmentShader(AvailableFragmentShaders::BASIC);
-    VertexShader& vertexShader =
-            ShaderManager::getVertexShader(AvailableVertexShaders::BASIC);
-
     createRandomTrees(8, treeModel, this->m_treesAndBushes);
     createRandomBushes(20, bushModel, this->m_treesAndBushes);
 
     m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaders(vertexShader, fragmentShader));
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
 }
 
 void ForestScene::draw(

@@ -10,7 +10,6 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/FragmentShader.h>
-#include <shaders/ShaderManager.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/VertexShader.h>
 #include <transformations/Rotation.h>
@@ -23,15 +22,10 @@
 TriangleScene::TriangleScene()
     : IScene{}, m_program{}, m_rotation{}, m_translation{}, m_triangle{},
       m_cameraController{}, m_camera{} {
-    FragmentShader& fragmentShader =
-            ShaderManager::getFragmentShader(AvailableFragmentShaders::BASIC);
-    VertexShader& vertexShader =
-            ShaderManager::getVertexShader(AvailableVertexShaders::BASIC);
-
     Model& triangleModel = ModelManager::getModel(AvailableModels::TRIANGLE);
 
     this->m_program = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaders(vertexShader, fragmentShader));
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
     this->m_triangle = std::make_unique<DrawableObject>(triangleModel);
 
     this->m_rotation =

@@ -10,7 +10,6 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/FragmentShader.h>
-#include <shaders/ShaderManager.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
@@ -85,16 +84,11 @@ SolarSystemScene::SolarSystemScene()
     Model& earthModel = ModelManager::getModel(AvailableModels::EARTH);
     Model& moonModel = ModelManager::getModel(AvailableModels::MOON);
 
-    FragmentShader& fragmentShader =
-            ShaderManager::getFragmentShader(AvailableFragmentShaders::BASIC);
-    VertexShader& vertexShader =
-            ShaderManager::getVertexShader(AvailableVertexShaders::BASIC);
-
     this->m_sunModel = std::make_unique<DrawableObject>(sunModel);
     this->m_earthModel = std::make_unique<DrawableObject>(earthModel);
     this->m_moonModel = std::make_unique<DrawableObject>(moonModel);
     this->m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaders(vertexShader, fragmentShader));
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
 
     this->createSunTransformations(this->m_sunModel->getTransformation());
     this->createEarthTransformations(this->m_earthModel->getTransformation());

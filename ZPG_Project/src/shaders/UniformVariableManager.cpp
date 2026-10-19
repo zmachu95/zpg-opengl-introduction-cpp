@@ -33,18 +33,8 @@ using namespace std::string_literals;
 
 UniformVariableManager::UniformVariableManager(
         GLuint parentShaderProgramId)
-    : m_parentShaderProgramId{parentShaderProgramId},
-      m_isParentShaderProgramActive{false}, m_cameraUpdated{false},
+    : m_parentShaderProgramId{parentShaderProgramId}, m_cameraUpdated{false},
       m_projectionMatrix{glm::mat4{1.0f}}, m_viewMatrix{glm::mat4{1.0f}} {}
-
-void UniformVariableManager::throwIfNotActive(
-        const std::string& variableName) const {
-    if (!this->m_isParentShaderProgramActive) {
-        throw ShaderProgramNotActiveException(
-                "Cannot set uniform variable `"s + variableName
-                + "` because the shader program is not active!");
-    }
-}
 
 GLint UniformVariableManager::getUniformVariableLocation(
         const std::string& variableName) const {
@@ -58,18 +48,10 @@ GLint UniformVariableManager::getUniformVariableLocation(
     return location;
 }
 
-void UniformVariableManager::setIsParentShaderProgramActive(
-        bool value) {
-    this->m_isParentShaderProgramActive = value;
-}
-
 void UniformVariableManager::setIntUniformVar(
         const std::string& variableName, const int value) const {
-    throwIfNotActive(variableName);
     GLint variableLocation = this->getUniformVariableLocation(variableName);
     glUniform1i(variableLocation, (GLint)value);
-    // std::cout << "Successfully set uniform variable `" << variableName <<
-    // "`.\n";
 }
 
 void UniformVariableManager::setBoolUniformVar(
@@ -79,29 +61,20 @@ void UniformVariableManager::setBoolUniformVar(
 
 void UniformVariableManager::setFloatUniformVar(
         const std::string& variableName, const float value) const {
-    throwIfNotActive(variableName);
     GLint variableLocation = this->getUniformVariableLocation(variableName);
     glUniform1f(variableLocation, (GLfloat)value);
-    // std::cout << "Successfully set uniform variable `" << variableName <<
-    // "`.\n";
 }
 
 void UniformVariableManager::setVec4UniformVar(
         const std::string& variableName, const glm::vec4& value) const {
-    throwIfNotActive(variableName);
     GLint variableLocation = this->getUniformVariableLocation(variableName);
     glUniform4fv(variableLocation, 1, glm::value_ptr(value));
-    // std::cout << "Successfully set uniform variable `" << variableName <<
-    // "`.\n";
 }
 
 void UniformVariableManager::setMat4UniformVar(
         const std::string& variableName, const glm::mat4& value) const {
-    throwIfNotActive(variableName);
     GLint variableLocation = this->getUniformVariableLocation(variableName);
     glUniformMatrix4fv(variableLocation, 1, GL_FALSE, glm::value_ptr(value));
-    // std::cout << "Successfully set uniform variable `" << variableName <<
-    // "`.\n";
 }
 
 void UniformVariableManager::handleCameraUpdate(
@@ -115,13 +88,13 @@ bool UniformVariableManager::isCameraUpdated() const {
     return this->m_cameraUpdated;
 }
 
-void UniformVariableManager::setTransformation(
+void UniformVariableManager::applyTransformation(
         const glm::mat4& transformationMatrix) {
     this->setMat4UniformVar(
             TRANSFORMATION_MATRIX_UNIFORM_VAR, transformationMatrix);
 }
 
-void UniformVariableManager::setCameraMatrices() {
+void UniformVariableManager::applyCameraMatrices() {
     this->m_cameraUpdated = false;
     this->setMat4UniformVar(
             PROJECTION_MATRIX_UNIFORM_VAR, this->m_projectionMatrix);

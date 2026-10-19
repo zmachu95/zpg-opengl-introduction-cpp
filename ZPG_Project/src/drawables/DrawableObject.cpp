@@ -21,7 +21,7 @@ void DrawableObject::draw(
                 this->m_model.get().getVerticesCount()); // mode,first,count
 
         glBindVertexArray(0);
-        shaderProgram.remove();
+        glUseProgram(0);
     }
 }
 

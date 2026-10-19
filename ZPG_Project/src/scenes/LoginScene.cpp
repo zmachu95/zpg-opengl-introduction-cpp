@@ -10,7 +10,6 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/FragmentShader.h>
-#include <shaders/ShaderManager.h>
 #include <shaders/ShaderProgram.h>
 #include <shaders/VertexShader.h>
 #include <transformations/GroupedTransformation.h>
@@ -22,14 +21,9 @@ LoginScene::LoginScene()
     : IScene{}, m_login{}, m_shaderProgram{}, m_rotation{} {
     Model& loginModel = ModelManager::getModel(AvailableModels::LOGIN);
 
-    FragmentShader& fragmentShader =
-            ShaderManager::getFragmentShader(AvailableFragmentShaders::LOGIN);
-    VertexShader& vertexShader =
-            ShaderManager::getVertexShader(AvailableVertexShaders::BASIC);
-
     this->m_login = std::make_unique<DrawableObject>(loginModel);
     this->m_shaderProgram = std::make_unique<ShaderProgram>(
-            ShaderProgram::createFromShaders(vertexShader, fragmentShader));
+            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag"));
     this->m_rotation =
             this->m_login->getTransformation().addNewRotation(0.0f, 1.0f, 0.0f);
     ScalePtr scale = this->m_login->getTransformation().addNewScale();

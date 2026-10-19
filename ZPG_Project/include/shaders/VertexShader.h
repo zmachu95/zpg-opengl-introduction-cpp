@@ -4,32 +4,27 @@
 
 #pragma once
 
-#include <shaders/ShaderBase.h>
+#include <shaders/ShaderCore.h>
 
 using GLuint = unsigned int;
 
 /**
  * @brief Represents a vertex shader.
  */
-class VertexShader : public ShaderBase {
+class VertexShader {
   public:
     /**
-     * @brief Factory method for creating vertex shaders from text file.
-     * @param shaderFile Full path to the text file.
-     * @return New vertex shader object.
-     * @throw ShaderNotCreatedException - Thrown when OpenGL refuses to create
-     * shader.
-     * @throw ShaderFileNotFoundException - Thrown when supplied file could not
-     * be found.
-     * @throw ShaderCompileErrorException - Thrown when shader could not be
-     * compiled.
+     * @brief VertexShader standard constructor.
+     * @param shaderCore The raw OpenGL shader.
      */
-    static VertexShader compileShaderFromFile(const char* shaderFile);
+    VertexShader(ShaderCore&& shaderCore);
+
+    /**
+     * @brief Gets the ID of compiled shader.
+     * @return GLuint with shader ID.
+     */
+    GLuint getId() const;
 
   private:
-    /**
-     * @brief VertexShader standard constructor.
-     * @param id The shader ID.
-     */
-    VertexShader(const GLuint id);
+    ShaderCore m_shaderCore;
 };

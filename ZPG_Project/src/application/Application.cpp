@@ -14,7 +14,6 @@
 #include <scenes/LoginScene.h>
 #include <scenes/SolarSystemScene.h>
 #include <scenes/TriangleScene.h>
-#include <shaders/ShaderManager.h>
 
 #ifndef GLAD_GL_H_
 #include <glad/gl.h>
@@ -82,7 +81,6 @@ Application::Application()
 
 Application::~Application() {
     ModelManager::destroy();
-    ShaderManager::destroy();
     EventManager::destroy(this->m_window);
 
     // Clean up and terminate GLFW

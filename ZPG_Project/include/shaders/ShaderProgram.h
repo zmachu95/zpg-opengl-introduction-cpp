@@ -8,13 +8,15 @@
 #include <shaders/UniformVariableManager.h>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 
 class VertexShader;
 class FragmentShader;
 class ICameraUpdateListener;
 
 using GLuint = unsigned int;
+using VertexShaderPtr = std::shared_ptr<VertexShader>;
+using FragmentShaderPtr = std::shared_ptr<FragmentShader>;
+using UniformVariableManagerPtr = std::shared_ptr<UniformVariableManager>;
 
 /**
  * @brief Indicates that OpenGL could not create the shader program.
@@ -86,8 +88,9 @@ class ShaderProgram {
      * @throw ShaderProgramNotCreatedException - Thrown when OpenGL could not
      * create the shader program.
      */
-    static ShaderProgram createFromShaders(
-            VertexShader& vertexShader, FragmentShader& fragmentShader);
+    static ShaderProgram createFromShaderFiles(
+            const std::string& vertexShaderFile,
+            const std::string& fragmentShaderFile);
 
     /*
      *
@@ -97,19 +100,7 @@ class ShaderProgram {
      * @brief Gets the ID of compiled shader program.
      * @return GLuint with shader program ID.
      */
-    const GLuint getId() const;
-
-    /**
-     * @brief Gets the used vertex shader.
-     * @return VertexShader object.
-     */
-    const VertexShader& getVertexShader() const;
-
-    /**
-     * @brief Gets the used fragment shader.
-     * @return FragmentShader object.
-     */
-    const FragmentShader& getFragmentShader() const;
+    GLuint getId() const;
 
     /**
      * @brief Converts the shader program to camera update event listener.
@@ -126,29 +117,46 @@ class ShaderProgram {
      */
     void use(const glm::mat4& transformationMatrix);
 
-    /**
-     * @brief Removes the currently active shader program from OpenGL, but does
-     * not destroy it.
-     */
-    void remove();
-
   private:
-    static GLuint s_activeProgramId;
-
     GLuint m_id;
-    std::shared_ptr<UniformVariableManager> m_uniformVarManager;
-    std::reference_wrapper<VertexShader> m_vertexShader;
-    std::reference_wrapper<FragmentShader> m_fragmentShader;
+    UniformVariableManagerPtr m_uniformVarManager;
+    VertexShaderPtr m_vertexShader;
+    FragmentShaderPtr m_fragmentShader;
 
     /**
      * @brief ShaderProgram default constructor.
      * @param id The shader program ID.
      * @param uniformVariableManager The uniform variable manager.
-     * @param vertexShader Used vertex shader.
-     * @param fragmentShader Used fragment shader.
+     * @param vertexShader The vertex shader.
+     * @param fragmentShader The fragment shader.
      */
     ShaderProgram(GLuint id,
-            std::shared_ptr<UniformVariableManager>&& uniformVariableManager,
-            std::reference_wrapper<VertexShader> vertexShader,
-            std::reference_wrapper<FragmentShader> fragmentShader);
+            const UniformVariableManagerPtr& uniformVariableManager,
+            const VertexShaderPtr& vertexShader,
+            const FragmentShaderPtr& fragmentShader);
+
+    /**
+     * @brief Verifies the shader program linking status.
+     * @throw ShaderProgramLinkErrorException - Thrown if the shader program was
+     * not linked successfully.
+     */
+    static void verifyShaderProgramLinking(GLuint programId);
+
+    /**
+     * @brief Links the new shader program with supplied shaders.
+     * @param vertexShader The vertex shader to use.
+     * @param fragmentShader The fragment shader to use.
+     * @return New shader program.
+     * @throw ShaderProgramLinkErrorException - Thrown if the shader program was
+     * not linked successfully.
+     * @throw ShaderProgramNotCreatedException - Thrown when OpenGL could not
+     * create the shader program.
+     */
+    static ShaderProgram link(const VertexShaderPtr& vertexShader,
+            const FragmentShaderPtr& fragmentShader);
+
+    /**
+     * @brief Deletes the shader program from OpenGL.
+     */
+    void deleteProgram();
 };

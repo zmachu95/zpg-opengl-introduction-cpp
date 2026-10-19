@@ -157,6 +157,8 @@
     <ClCompile Include="src\scenes\LoginScene.cpp" />
     <ClCompile Include="src\scenes\SolarSystemScene.cpp" />
     <ClCompile Include="src\scenes\TriangleScene.cpp" />
+    <ClCompile Include="src\shaders\ShaderCore.cpp" />
+    <ClCompile Include="src\shaders\ShaderFactory.cpp" />
     <ClCompile Include="src\shaders\UniformVariableManager.cpp" />
     <ClCompile Include="src\transformations\GroupedTransformation.cpp" />
     <ClCompile Include="src\drawables\DrawableObject.cpp" />
@@ -164,8 +166,6 @@
     <ClCompile Include="src\shaders\FragmentShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\drawables\Model.cpp" />
-    <ClCompile Include="src\shaders\ShaderBase.cpp" />
-    <ClCompile Include="src\shaders\ShaderManager.cpp" />
     <ClCompile Include="src\shaders\ShaderProgram.cpp" />
     <ClCompile Include="src\transformations\Rotation.cpp" />
     <ClCompile Include="src\transformations\Scale.cpp" />
@@ -186,7 +186,8 @@
     <ClInclude Include="include\scenes\LoginScene.h" />
     <ClInclude Include="include\scenes\SolarSystemScene.h" />
     <ClInclude Include="include\scenes\TriangleScene.h" />
-    <ClInclude Include="include\shaders\ShaderBase.h" />
+    <ClInclude Include="include\shaders\ShaderCore.h" />
+    <ClInclude Include="include\shaders\ShaderFactory.h" />
     <ClInclude Include="include\shaders\UniformVariableManager.h" />
     <ClInclude Include="include\cameras\PerspectiveCamera.h" />
     <ClInclude Include="include\transformations\GroupedTransformation.h" />
@@ -207,7 +208,6 @@
     <ClInclude Include="resources\models\suzi_flat.h" />
     <ClInclude Include="resources\models\suzi_smooth.h" />
     <ClInclude Include="resources\models\tree.h" />
-    <ClInclude Include="include\shaders\ShaderManager.h" />
     <ClInclude Include="include\shaders\ShaderProgram.h" />
     <ClInclude Include="resources\models\sphere.h" />
     <ClInclude Include="include\transformations\SingleTransformationBase.h" />

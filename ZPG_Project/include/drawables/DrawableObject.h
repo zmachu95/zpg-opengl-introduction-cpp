@@ -5,11 +5,14 @@
 #pragma once
 
 #include <memory>
-#include <transformations/GroupedTransformation.h>
+#include <transformations/IGroupedTransformation.h>
 
 class Model;
 class ShaderProgram;
 
+/**
+ * @brief Pointer to Model object.
+ */
 using ModelPtr = std::shared_ptr<Model>;
 
 /**
@@ -31,7 +34,7 @@ class DrawableObject {
      * @brief Gets the spatial transformation.
      * @return Reference to GroupedTransformation object.
      */
-    GroupedTransformation& getTransformation();
+    GroupedTransformationPtr getTransformation();
 
     /*
      *
@@ -45,5 +48,5 @@ class DrawableObject {
 
   private:
     ModelPtr m_model;
-    GroupedTransformation m_transformation;
+    GroupedTransformationPtr m_transformation;
 };

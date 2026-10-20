@@ -12,7 +12,7 @@
  */
 class ICameraUpdateListener {
   public:
-    virtual ~ICameraUpdateListener() {};
+    virtual ~ICameraUpdateListener() = default;
 
     /**
      * @brief Handles the camera update.

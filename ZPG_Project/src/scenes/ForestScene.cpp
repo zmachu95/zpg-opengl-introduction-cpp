@@ -10,10 +10,10 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
-#include <transformations/GroupedTransformation.h>
-#include <transformations/Rotation.h>
-#include <transformations/Scale.h>
-#include <transformations/Translation.h>
+#include <transformations/IGroupedTransformation.h>
+#include <transformations/IRotation.h>
+#include <transformations/IScale.h>
+#include <transformations/ITranslation.h>
 #include <vector>
 
 #include <resources/models/bushes.h>
@@ -33,8 +33,8 @@ static void createRandomTrees(
                         tree, sizeof(tree) / sizeof(tree[0]), 2));
         DrawableObject* drawableTree = drawableObjects.back().get();
         TranslationPtr translation =
-                drawableTree->getTransformation().addNewTranslation();
-        ScalePtr scale = drawableTree->getTransformation().addNewScale();
+                drawableTree->getTransformation()->addNewTranslation();
+        ScalePtr scale = drawableTree->getTransformation()->addNewScale();
 
         translation->translateTo(positionX, groundYCoordinate, 0.f);
         scale->setScaleTo(scaleX, scaleY, scaleX);
@@ -56,8 +56,8 @@ static void createRandomBushes(
                         bushes, sizeof(bushes) / sizeof(bushes[0]), 2));
         DrawableObject* drawableBush = drawableObjects.back().get();
         TranslationPtr translation =
-                drawableBush->getTransformation().addNewTranslation();
-        ScalePtr scale = drawableBush->getTransformation().addNewScale();
+                drawableBush->getTransformation()->addNewTranslation();
+        ScalePtr scale = drawableBush->getTransformation()->addNewScale();
 
         translation->translateTo(positionX, groundYCoordinate, 0.f);
         scale->setScaleTo(scaleX, scaleY, scaleX);

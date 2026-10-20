@@ -34,6 +34,8 @@ class UniformVariableManager : public ICameraUpdateListener {
      */
     UniformVariableManager(GLuint parentShaderProgramId);
 
+    virtual ~UniformVariableManager() = default;
+
     /*
      *
      */

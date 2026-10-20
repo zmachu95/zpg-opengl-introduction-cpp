@@ -10,9 +10,9 @@
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
 #include <transformations/GroupedTransformation.h>
-#include <transformations/Rotation.h>
-#include <transformations/Scale.h>
-#include <transformations/Translation.h>
+#include <transformations/IRotation.h>
+#include <transformations/IScale.h>
+#include <transformations/ITranslation.h>
 
 #include <resources/models/mac0690.h>
 
@@ -22,9 +22,9 @@ LoginScene::LoginScene()
             mac0690, sizeof(mac0690) / sizeof(mac0690[0]), 2);
     this->m_shaderProgram =
             ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
-    this->m_rotation =
-            this->m_login->getTransformation().addNewRotation(0.0f, 1.0f, 0.0f);
-    ScalePtr scale = this->m_login->getTransformation().addNewScale();
+    this->m_rotation = this->m_login->getTransformation()->addNewRotation(
+            0.0f, 1.0f, 0.0f);
+    ScalePtr scale = this->m_login->getTransformation()->addNewScale();
     scale->setScaleTo(0.7f, 0.7f, 0.7f);
 }
 

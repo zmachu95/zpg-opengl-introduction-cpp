@@ -74,19 +74,19 @@ class SolarSystemScene : public IScene {
      * @param sunModelRootTransformation
      */
     void createSunTransformations(
-            GroupedTransformation& sunModelRootTransformation);
+            GroupedTransformationPtr sunModelRootTransformation);
 
     /**
      * @brief Creates transformations for Earth.
      * @param earthModelRootTransformation
      */
     void createEarthTransformations(
-            GroupedTransformation& earthModelRootTransformation);
+            GroupedTransformationPtr earthModelRootTransformation);
 
     /**
      * @brief Creates transformations for Moon.
      * @param moonModelRootTransformation
      */
     void createMoonTransformations(
-            GroupedTransformation& moonModelRootTransformation);
+            GroupedTransformationPtr moonModelRootTransformation);
 };

@@ -8,9 +8,9 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
-#include <transformations/Rotation.h>
-#include <transformations/Scale.h>
-#include <transformations/Translation.h>
+#include <transformations/IRotation.h>
+#include <transformations/IScale.h>
+#include <transformations/ITranslation.h>
 
 #include <cameras/CameraCommonSettings.h>
 #include <cameras/PerspectiveCamera.h>
@@ -28,9 +28,9 @@ TriangleScene::TriangleScene()
                     triangle, sizeof(triangle) / sizeof(triangle[0]), 2);
 
     this->m_rotation =
-            this->m_triangle->getTransformation().addNewRotation(0, 0, 1);
+            this->m_triangle->getTransformation()->addNewRotation(0, 0, 1);
     this->m_translation =
-            this->m_triangle->getTransformation().addNewTranslation();
+            this->m_triangle->getTransformation()->addNewTranslation();
 
     std::shared_ptr<CameraCommonSettings> commonSettings =
             std::make_shared<CameraCommonSettings>();

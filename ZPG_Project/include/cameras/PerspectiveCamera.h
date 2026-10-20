@@ -5,20 +5,13 @@
 #pragma once
 
 #include <cameras/CameraGeometry.h>
+#include <cameras/CameraUpdatePublisher.h>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/fwd.hpp>
-#include <list>
 #include <memory>
-#include <utility>
 
-class ICameraUpdateListener;
 class CameraCommonSettings;
 enum class MovementDirection;
-
-/**
- * @brief Pointer to ICameraUpdateListener instance.
- */
-using CameraUpdateListenerPtr = std::weak_ptr<ICameraUpdateListener>;
 
 /**
  * @brief Camera with perspective projection.
@@ -181,8 +174,7 @@ class PerspectiveCamera {
 
   private:
     CameraGeometry m_cameraGeometry;
-    std::list<std::pair<int, CameraUpdateListenerPtr>> m_cameraUpdateListeners;
-    int m_lastListenerId;
+    CameraUpdatePublisher m_publisher;
     float m_fov_deg;
     float m_aspectRatio;
     float m_nearClippingPlaneDistance;

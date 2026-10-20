@@ -152,6 +152,7 @@
     <ClCompile Include="src\cameras\CameraCommonSettings.cpp" />
     <ClCompile Include="src\cameras\CameraGeometry.cpp" />
     <ClCompile Include="src\cameras\CameraUserInputController.cpp" />
+    <ClCompile Include="src\cameras\CameraUpdatePublisher.cpp" />
     <ClCompile Include="src\drawables\DrawableObjectFactory.cpp" />
     <ClCompile Include="src\scenes\ForestScene.cpp" />
     <ClCompile Include="src\scenes\LoginScene.cpp" />
@@ -169,7 +170,7 @@
     <ClCompile Include="src\shaders\ShaderProgram.cpp" />
     <ClCompile Include="src\transformations\Rotation.cpp" />
     <ClCompile Include="src\transformations\Scale.cpp" />
-    <ClCompile Include="src\transformations\SingleTransformationBase.cpp" />
+    <ClCompile Include="src\transformations\TransformationChangePublisher.cpp" />
     <ClCompile Include="src\transformations\Translation.cpp" />
     <ClCompile Include="src\shaders\VertexShader.cpp" />
   </ItemGroup>
@@ -178,9 +179,11 @@
     <ClInclude Include="include\cameras\CameraCommonSettings.h" />
     <ClInclude Include="include\cameras\MovementDirectionEnum.h" />
     <ClInclude Include="include\cameras\CameraGeometry.h" />
+    <ClInclude Include="include\cameras\CameraUpdatePublisher.h" />
     <ClInclude Include="include\drawables\DrawableObjectFactory.h" />
     <ClInclude Include="include\listeners\ICameraUpdateListener.h" />
     <ClInclude Include="include\cameras\CameraUserInputController.h" />
+    <ClInclude Include="include\listeners\ITransformationChangedListener.h" />
     <ClInclude Include="include\scenes\ForestScene.h" />
     <ClInclude Include="include\scenes\IScene.h" />
     <ClInclude Include="include\scenes\LoginScene.h" />
@@ -194,9 +197,15 @@
     <ClInclude Include="include\drawables\DrawableObject.h" />
     <ClInclude Include="include\application\EventManager.h" />
     <ClInclude Include="include\shaders\FragmentShader.h" />
+    <ClInclude Include="include\transformations\IGroupedTransformation.h" />
+    <ClInclude Include="include\transformations\IRotation.h" />
+    <ClInclude Include="include\transformations\IScale.h" />
     <ClInclude Include="include\transformations\ITransformation.h" />
+    <ClInclude Include="include\transformations\ITransformationChangeListenable.h" />
+    <ClInclude Include="include\transformations\ITranslation.h" />
     <ClInclude Include="include\transformations\Rotation.h" />
     <ClInclude Include="include\transformations\Scale.h" />
+    <ClInclude Include="include\transformations\TransformationChangePublisher.h" />
     <ClInclude Include="include\transformations\Translation.h" />
     <ClInclude Include="include\drawables\Model.h" />
     <ClInclude Include="include\constants\KeyActions.h" />
@@ -210,7 +219,6 @@
     <ClInclude Include="resources\models\tree.h" />
     <ClInclude Include="include\shaders\ShaderProgram.h" />
     <ClInclude Include="resources\models\sphere.h" />
-    <ClInclude Include="include\transformations\SingleTransformationBase.h" />
     <ClInclude Include="include\shaders\VertexShader.h" />
     <ClInclude Include="resources\models\triangle.h" />
   </ItemGroup>

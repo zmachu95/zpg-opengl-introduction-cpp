@@ -7,11 +7,9 @@
 #include <cameras/PerspectiveCamera.h>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <listeners/ICameraUpdateListener.h>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <utility>
 
 /**
  * @brief Default value of field of view angle in [deg].
@@ -43,12 +41,11 @@ PerspectiveCamera::PerspectiveCamera(
         float aspectRatio, const glm::vec3& cameraPosition,
         const glm::vec3& viewDirection, float fov_deg,
         float nearClippingPlaneDistance, float farClippingPlaneDistance)
-    : m_cameraUpdateListeners{},
+    : m_publisher{},
       m_cameraGeometry{commonSettings, cameraPosition, viewDirection},
       m_fov_deg{fov_deg}, m_aspectRatio{aspectRatio},
       m_nearClippingPlaneDistance{nearClippingPlaneDistance},
-      m_farClippingPlaneDistance{farClippingPlaneDistance},
-      m_lastListenerId{0} {
+      m_farClippingPlaneDistance{farClippingPlaneDistance} {
     if (aspectRatio <= 0) {
         throw std::invalid_argument("Aspect ration cannot be <= 0!");
     } else if (fov_deg < MIN_FOV_DEG || fov_deg > MAX_FOV_DEG) {
@@ -159,30 +156,14 @@ void PerspectiveCamera::setFarClippingPlaneDistance(
 
 int PerspectiveCamera::registerCameraUpdateListener(
         const CameraUpdateListenerPtr& listener) {
-    this->m_lastListenerId += 1;
-
-    this->m_cameraUpdateListeners.push_back(
-            std::pair<int, CameraUpdateListenerPtr>(
-                    this->m_lastListenerId, CameraUpdateListenerPtr{listener}));
-
-    /* make sure that the just registered listener uses the current camera
-     * matrices */
-    listener.lock()->handleCameraUpdate(this->calculateProjectionMatrix(),
+    return this->m_publisher.registerCameraUpdateListener(listener,
+            this->calculateProjectionMatrix(),
             this->m_cameraGeometry.calculateViewMatrix());
-    return this->m_lastListenerId;
 }
 
 bool PerspectiveCamera::unregisterCameraUpdateListener(
         int listenerId) {
-    for (auto listenerIt = this->m_cameraUpdateListeners.begin();
-            listenerIt != this->m_cameraUpdateListeners.end(); listenerIt++) {
-        if (listenerIt->first == listenerId) {
-            this->m_cameraUpdateListeners.erase(listenerIt);
-            return true;
-        }
-    }
-
-    return false;
+    return this->m_publisher.unregisterCameraUpdateListener(listenerId);
 }
 
 void PerspectiveCamera::update(
@@ -197,19 +178,8 @@ void PerspectiveCamera::update(
 }
 
 void PerspectiveCamera::notifyCameraUpdateListeners() {
-    const glm::mat4 viewMatrix = this->m_cameraGeometry.calculateViewMatrix();
-    const glm::mat4 projectionMatrix = this->calculateProjectionMatrix();
-
-    for (auto listenerIt = this->m_cameraUpdateListeners.begin();
-            listenerIt != this->m_cameraUpdateListeners.end(); listenerIt++) {
-        if (ICameraUpdateListener* listener = listenerIt->second.lock().get();
-                listener != nullptr) {
-            /* remove the listener if it no longer exists */
-            listener->handleCameraUpdate(projectionMatrix, viewMatrix);
-        } else {
-            listenerIt = this->m_cameraUpdateListeners.erase(listenerIt);
-        }
-    }
+    this->m_publisher.notifyListeners(this->calculateProjectionMatrix(),
+            this->m_cameraGeometry.calculateViewMatrix());
 }
 
 glm::mat4 PerspectiveCamera::calculateProjectionMatrix() const {

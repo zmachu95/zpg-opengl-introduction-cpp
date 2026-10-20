@@ -4,21 +4,44 @@
 
 #pragma once
 
-#include <transformations/SingleTransformationBase.h>
+#include <glm/ext/matrix_float4x4.hpp>
+#include <transformations/ITransformationChangeListenable.h>
+#include <transformations/ITranslation.h>
+#include <transformations/TransformationChangePublisher.h>
 
 /**
  * @brief A translation transformation matrix.
  */
-class Translation : public SingleTransformationBase {
+class Translation : public ITranslation,
+                    public ITransformationChangeListenable {
   public:
     /**
      * @brief Standard Translation constructor.
      */
     Translation();
 
+    virtual ~Translation() = default;
+
     /*
      *
      */
+
+    /**
+     * @brief Gets the transformation matrix.
+     * @return The transformation matrix.
+     */
+    virtual const glm::mat4& getMatrix();
+
+    /*
+     *
+     */
+
+    /**
+     * @brief Registers listener for transformation change event.
+     * @param listener Listener to register.
+     */
+    virtual void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener);
 
     /**
      * @brief Moves relative to current position.
@@ -26,7 +49,7 @@ class Translation : public SingleTransformationBase {
      * @param dy Y component of relative movement.
      * @param dz Z component of relative movement.
      */
-    void move(const float dx, const float dy, const float dz);
+    virtual void move(const float dx, const float dy, const float dz);
 
     /**
      * @brief Performs translation to supplied coordinates.
@@ -34,10 +57,23 @@ class Translation : public SingleTransformationBase {
      * @param y Target y coordinate.
      * @param z Target z coordinate.
      */
-    void translateTo(const float x, const float y, const float z);
+    virtual void translateTo(const float x, const float y, const float z);
 
   private:
     float m_x;
     float m_y;
     float m_z;
+    glm::mat4 m_matrix;
+    TransformationChangePublisher m_publisher;
+
+    /**
+     * @brief Calculates and stores new translation matrix based on current
+     * configuration.
+     */
+    void calculateTranslationMatrix();
+
+    /**
+     * @brief Notifies all listeners that the translation matrix changed.
+     */
+    void notifyListeners();
 };

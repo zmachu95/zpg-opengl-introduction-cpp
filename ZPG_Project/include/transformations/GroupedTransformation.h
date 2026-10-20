@@ -5,32 +5,29 @@
 
 #pragma once
 
-#include <glm/fwd.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
+#include <listeners/ITransformationChangedListener.h>
 #include <memory>
-#include <transformations/ITransformation.h>
+#include <transformations/IGroupedTransformation.h>
+#include <transformations/ITransformationChangeListenable.h>
+#include <transformations/TransformationChangePublisher.h>
 #include <vector>
-
-class GroupedTransformation; // declaration is needed here for correct aliasing
-                             // below
-class Rotation;
-class Scale;
-class Translation;
-
-using RotationPtr = std::shared_ptr<Rotation>;
-using ScalePtr = std::shared_ptr<Scale>;
-using TranslationPtr = std::shared_ptr<Translation>;
-using GroupedTransformationPtr = std::shared_ptr<GroupedTransformation>;
-using TransformationPtr = std::shared_ptr<ITransformation>;
 
 /**
  * @brief Groups multiple transformations into a single object.
  */
-class GroupedTransformation : public ITransformation {
+class GroupedTransformation
+    : public std::enable_shared_from_this<GroupedTransformation>,
+      public IGroupedTransformation,
+      public ITransformationChangedListener,
+      public ITransformationChangeListenable {
   public:
     /**
      * @brief Standard GroupedTransformation constructor.
      */
     GroupedTransformation();
+
+    virtual ~GroupedTransformation() = default;
 
     /*
      *
@@ -40,7 +37,7 @@ class GroupedTransformation : public ITransformation {
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual glm::mat4 getMatrix() const;
+    virtual const glm::mat4& getMatrix();
 
     /*
      *
@@ -53,33 +50,60 @@ class GroupedTransformation : public ITransformation {
      * @param axisZ Z component of axis unit vector.
      * @return Shared pointer to the new rotation matrix.
      */
-    RotationPtr addNewRotation(float axisX, float axisY, float axisZ);
+    virtual RotationPtr addNewRotation(float axisX, float axisY, float axisZ);
 
     /**
      * @brief Adds new scale matrix to the group.
      * @return Shared pointer to the new scale matrix.
      */
-    ScalePtr addNewScale();
+    virtual ScalePtr addNewScale();
 
     /**
      * @brief Adds new translation matrix to the group.
      * @return Shared pointer to the new translation matrix.
      */
-    TranslationPtr addNewTranslation();
+    virtual TranslationPtr addNewTranslation();
 
     /**
      * @brief Adds new transformations group to the group.
      * @return Shared pointer to the new transformation group.
      */
-    GroupedTransformationPtr addNewGroup();
+    virtual GroupedTransformationPtr addNewGroup();
 
     /**
      * @brief Adds reference to another transformation matrix to this group.
      * @param transformation Reference to shared pointer of transformation to
      * add.
      */
-    void addReferenceToAnother(const TransformationPtr& transformation);
+    virtual void addReferenceToAnother(const TransformationPtr& transformation);
+
+    /**
+     * @brief Registers listener for transformation change event.
+     * @param listener Listener to register.
+     */
+    virtual void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener);
 
   private:
+    bool m_isDirty;
     std::vector<TransformationPtr> m_transformations;
+    glm::mat4 m_cachedMatrix;
+    TransformationChangePublisher m_publisher;
+
+    /**
+     * @brief Calculates and stores new transformation matrix based on current
+     * children configuration.
+     */
+    void calculateTransformationMatrix();
+
+    /**
+     * @brief Notifies all listeners that the rotation matrix changed.
+     */
+    void notifyListeners();
+
+    /**
+     * @brief Handles the signal that atleast one underlying transformation
+     * matrix has changed.
+     */
+    virtual void handleTransformationChange();
 };

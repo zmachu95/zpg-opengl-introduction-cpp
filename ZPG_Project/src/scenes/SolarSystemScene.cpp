@@ -12,10 +12,10 @@
 #include <resources/models/sun.h>
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
-#include <transformations/GroupedTransformation.h>
-#include <transformations/Rotation.h>
-#include <transformations/Scale.h>
-#include <transformations/Translation.h>
+#include <transformations/IGroupedTransformation.h>
+#include <transformations/IRotation.h>
+#include <transformations/IScale.h>
+#include <transformations/ITranslation.h>
 
 // planets sizing
 const float sunScale = 0.25f;
@@ -38,40 +38,40 @@ const float earthOwnAxisOmega = 25.0f;
 const float moonOwnAxisOmega = moonAroundEarthOmega;
 
 void SolarSystemScene::createSunTransformations(
-        GroupedTransformation& sunModelRootTransformation) {
+        GroupedTransformationPtr sunModelRootTransformation) {
     this->m_sunOwnAxisRotation =
-            sunModelRootTransformation.addNewRotation(0.0f, 1.0f, 0.0f);
-    ScalePtr scale = sunModelRootTransformation.addNewScale();
+            sunModelRootTransformation->addNewRotation(0.0f, 1.0f, 0.0f);
+    ScalePtr scale = sunModelRootTransformation->addNewScale();
     scale->setScaleTo(sunScale, sunScale, sunScale);
 }
 
 void SolarSystemScene::createEarthTransformations(
-        GroupedTransformation& earthModelRootTransformation) {
+        GroupedTransformationPtr earthModelRootTransformation) {
     this->m_earthOrbitTransformation =
-            earthModelRootTransformation.addNewGroup();
+            earthModelRootTransformation->addNewGroup();
     this->m_earthAroundSunRotation =
             this->m_earthOrbitTransformation->addNewRotation(0.0f, 0.0f, 1.0f);
     TranslationPtr earthFromSunTranslation =
             this->m_earthOrbitTransformation->addNewTranslation();
     earthFromSunTranslation->translateTo(earthToSunOffset, 0.0f, 0.0f);
     this->m_earthOwnAxisRotation =
-            earthModelRootTransformation.addNewRotation(0.0f, 1.0f, 0.0f);
-    ScalePtr scale = earthModelRootTransformation.addNewScale();
+            earthModelRootTransformation->addNewRotation(0.0f, 1.0f, 0.0f);
+    ScalePtr scale = earthModelRootTransformation->addNewScale();
     scale->setScaleTo(earthScale, earthScale, earthScale);
 }
 
 void SolarSystemScene::createMoonTransformations(
-        GroupedTransformation& moonModelRootTransformation) {
-    moonModelRootTransformation.addReferenceToAnother(
+        GroupedTransformationPtr moonModelRootTransformation) {
+    moonModelRootTransformation->addReferenceToAnother(
             this->m_earthOrbitTransformation);
     this->m_moonAroundEarthRotation =
-            moonModelRootTransformation.addNewRotation(0.0f, 0.0f, 1.0f);
+            moonModelRootTransformation->addNewRotation(0.0f, 0.0f, 1.0f);
     TranslationPtr moonFromEarthTranslation =
-            moonModelRootTransformation.addNewTranslation();
+            moonModelRootTransformation->addNewTranslation();
     moonFromEarthTranslation->translateTo(moonToEarthOffset, 0.0f, 0.0f);
     this->m_moonOwnAxisRotation =
-            moonModelRootTransformation.addNewRotation(0.0f, 1.0f, 0.0f);
-    ScalePtr scale = moonModelRootTransformation.addNewScale();
+            moonModelRootTransformation->addNewRotation(0.0f, 1.0f, 0.0f);
+    ScalePtr scale = moonModelRootTransformation->addNewScale();
     scale->setScaleTo(moonScale, moonScale, moonScale);
 }
 

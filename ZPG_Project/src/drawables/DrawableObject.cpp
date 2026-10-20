@@ -2,10 +2,6 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#ifndef GLAD_GL_H_
-#include <glad/gl.h>
-#endif
-
 #include <drawables/DrawableObject.h>
 #include <drawables/Model.h>
 #include <memory>
@@ -14,13 +10,14 @@
 
 void DrawableObject::draw(
         ShaderProgram& shaderProgram) {
-    this->m_model->draw(shaderProgram, this->m_transformation.getMatrix());
+    this->m_model->draw(shaderProgram, this->m_transformation->getMatrix());
 }
 
-GroupedTransformation& DrawableObject::getTransformation() {
+GroupedTransformationPtr DrawableObject::getTransformation() {
     return this->m_transformation;
 }
 
 DrawableObject::DrawableObject(
         const ModelPtr& model)
-    : m_transformation{}, m_model{model} {}
+    : m_transformation{std::make_shared<GroupedTransformation>()},
+      m_model{model} {}

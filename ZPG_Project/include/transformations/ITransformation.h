@@ -11,15 +11,11 @@
  */
 class ITransformation {
   public:
-    virtual ~ITransformation() {};
-
-    /*
-     *
-     */
+    virtual ~ITransformation() = default;
 
     /**
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual glm::mat4 getMatrix() const = 0;
+    virtual const glm::mat4& getMatrix() = 0;
 };

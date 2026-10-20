@@ -13,6 +13,7 @@
 #include <scenes/LoginScene.h>
 #include <scenes/SolarSystemScene.h>
 #include <scenes/TriangleScene.h>
+#include <scenes/WallclockScene.h>
 
 #ifndef GLAD_GL_H_
 #include <glad/gl.h>
@@ -107,6 +108,7 @@ void Application::initialize() {
     this->m_scenes.push_back(std::make_unique<LoginScene>());
     this->m_scenes.push_back(std::make_unique<ForestScene>());
     this->m_scenes.push_back(std::make_unique<SolarSystemScene>());
+    this->m_scenes.push_back(std::make_unique<WallclockScene>());
     this->m_activeScene = this->m_scenes.front().get();
 
     glfwSetInputMode(this->m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -175,6 +177,9 @@ void Application::handleKeyPresses(
                 return;
             case KeyCodes::KEY_KP_4:
                 this->m_activeScene = this->m_scenes[3].get();
+                return;
+            case KeyCodes::KEY_KP_5:
+                this->m_activeScene = this->m_scenes[4].get();
                 return;
             case KeyCodes::KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GL_TRUE);

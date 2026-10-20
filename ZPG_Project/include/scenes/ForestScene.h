@@ -8,8 +8,14 @@
 #include <scenes/IScene.h>
 #include <vector>
 
+#include <cameras/CameraUserInputController.h>
+#include <glm/ext/matrix_float4x4.hpp>
+#include <string>
+#include <unordered_map>
+
 class DrawableObject;
 class ShaderProgram;
+class PerspectiveCamera;
 enum class KeyCodes;
 enum class KeyActions;
 enum class KeyModifierFlags;
@@ -26,6 +32,8 @@ class ForestScene : public IScene {
      * @brief ForestScene standard constructor.
      */
     ForestScene();
+
+    virtual ~ForestScene() = default;
 
     /**
      * @brief Draws the scene contents.
@@ -57,6 +65,35 @@ class ForestScene : public IScene {
     virtual void handleWindowResize(int width, int height);
 
   private:
-    std::vector<DrawableObjectPtr> m_treesAndBushes;
-    ShaderProgramPtr m_shaderProgram;
+    std::vector<DrawableObjectPtr> m_trees;
+    std::vector<DrawableObjectPtr> m_bushes;
+    DrawableObjectPtr m_plain;
+    DrawableObjectPtr m_clock;
+
+    ShaderProgramPtr m_plainShaderProgram;
+    ShaderProgramPtr m_treesShaderProgram;
+    ShaderProgramPtr m_bushesShaderProgram;
+    ShaderProgramPtr m_clockShaderProgram;
+
+    CameraUserInputController m_cameraController;
+    std::unique_ptr<PerspectiveCamera> m_camera;
+    std::unordered_map<std::string, glm::mat4> m_pinsRotations;
+
+    /**
+     * @brief Creates random trees.
+     * @param treesCount Number of trees to create.
+     */
+    void createRandomTrees(const int treesCount);
+
+    /**
+     * @brief Creates random bushes.
+     * @param treesCount Number of bushes to create.
+     */
+    void createRandomBushes(const int bushesCount);
+
+    /**
+     * @brief Draws clock with current system time.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    void drawClock(float deltaT);
 };

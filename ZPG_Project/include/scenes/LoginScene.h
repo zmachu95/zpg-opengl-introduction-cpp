@@ -27,6 +27,8 @@ class LoginScene : public IScene {
      */
     LoginScene();
 
+    virtual ~LoginScene() = default;
+
     /**
      * @brief Draws the scene contents.
      * @param deltaT Time elapsed since the last drawn frame.

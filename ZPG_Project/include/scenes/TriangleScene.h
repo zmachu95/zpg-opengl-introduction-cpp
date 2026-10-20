@@ -30,6 +30,8 @@ class TriangleScene : public IScene {
      */
     TriangleScene();
 
+    virtual ~TriangleScene() = default;
+
     /**
      * @brief Draws the scene contents.
      * @param deltaT Time elapsed since the last drawn frame.

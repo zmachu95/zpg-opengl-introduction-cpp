@@ -8,6 +8,7 @@
 #include <shaders/UniformVariableManager.h>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 class VertexShader;
 class FragmentShader;
@@ -119,11 +120,24 @@ class ShaderProgram {
      */
     void use(const glm::mat4& transformationMatrix);
 
+    /**
+     * @brief Stores supplied supplemental matrices for application during next
+     * draw call.
+     * @param supplementalMatricesMap Map of shader matrix variables and their
+     * values.
+     * @throw UniformVariableNotFoundException - Thrown if the variable could
+     * not be found.
+     */
+    void setSupplementalUniformMatrices(
+            const std::unordered_map<std::string, glm::mat4>&
+                    supplementalMatricesMap);
+
   private:
     GLuint m_id;
     UniformVariableManagerPtr m_uniformVarManager;
     VertexShaderPtr m_vertexShader;
     FragmentShaderPtr m_fragmentShader;
+    std::unordered_map<std::string, glm::mat4> m_supplementalUniformMatrices;
 
     /**
      * @brief ShaderProgram default constructor.
@@ -161,4 +175,9 @@ class ShaderProgram {
      * @brief Deletes the shader program from OpenGL.
      */
     void deleteProgram();
+
+    /**
+     * @brief Applies supplied supplementary matrices in the shader.
+     */
+    void applySupplementalMatrices();
 };

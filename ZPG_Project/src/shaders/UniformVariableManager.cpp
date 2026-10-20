@@ -100,3 +100,11 @@ void UniformVariableManager::applyCameraMatrices() {
             PROJECTION_MATRIX_UNIFORM_VAR, this->m_projectionMatrix);
     this->setMat4UniformVar(VIEW_MATRIX_UNIFORM_VAR, this->m_viewMatrix);
 }
+
+void UniformVariableManager::applySupplementalMatrices(
+        const std::unordered_map<std::string, glm::mat4>&
+                supplementalMatricesMap) {
+    for (const auto& kvPair : supplementalMatricesMap) {
+        this->setMat4UniformVar(kvPair.first, kvPair.second);
+    }
+}

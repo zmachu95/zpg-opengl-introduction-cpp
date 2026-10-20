@@ -154,10 +154,12 @@
     <ClCompile Include="src\cameras\CameraUserInputController.cpp" />
     <ClCompile Include="src\cameras\CameraUpdatePublisher.cpp" />
     <ClCompile Include="src\drawables\DrawableObjectFactory.cpp" />
+    <ClCompile Include="src\others\WallclockUtils.cpp" />
     <ClCompile Include="src\scenes\ForestScene.cpp" />
     <ClCompile Include="src\scenes\LoginScene.cpp" />
     <ClCompile Include="src\scenes\SolarSystemScene.cpp" />
     <ClCompile Include="src\scenes\TriangleScene.cpp" />
+    <ClCompile Include="src\scenes\WallclockScene.cpp" />
     <ClCompile Include="src\shaders\ShaderCore.cpp" />
     <ClCompile Include="src\shaders\ShaderFactory.cpp" />
     <ClCompile Include="src\shaders\UniformVariableManager.cpp" />
@@ -184,11 +186,13 @@
     <ClInclude Include="include\listeners\ICameraUpdateListener.h" />
     <ClInclude Include="include\cameras\CameraUserInputController.h" />
     <ClInclude Include="include\listeners\ITransformationChangedListener.h" />
+    <ClInclude Include="include\others\WallclockUtils.h" />
     <ClInclude Include="include\scenes\ForestScene.h" />
     <ClInclude Include="include\scenes\IScene.h" />
     <ClInclude Include="include\scenes\LoginScene.h" />
     <ClInclude Include="include\scenes\SolarSystemScene.h" />
     <ClInclude Include="include\scenes\TriangleScene.h" />
+    <ClInclude Include="include\scenes\WallclockScene.h" />
     <ClInclude Include="include\shaders\ShaderCore.h" />
     <ClInclude Include="include\shaders\ShaderFactory.h" />
     <ClInclude Include="include\shaders\UniformVariableManager.h" />

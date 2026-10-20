@@ -24,7 +24,8 @@ ShaderProgram::ShaderProgram(
         const VertexShaderPtr& vertexShader,
         const FragmentShaderPtr& fragmentShader)
     : m_id{id}, m_uniformVarManager{uniformVariableManager},
-      m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader} {
+      m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader},
+      m_supplementalUniformMatrices{} {
     std::cout << "Created shader program with ID " << id << ".\n";
 }
 
@@ -33,7 +34,9 @@ ShaderProgram::ShaderProgram(
     : m_id{std::exchange(other.m_id, 0)},
       m_uniformVarManager{std::move(other.m_uniformVarManager)},
       m_fragmentShader{std::move(other.m_fragmentShader)},
-      m_vertexShader{std::move(other.m_vertexShader)} {}
+      m_vertexShader{std::move(other.m_vertexShader)},
+      m_supplementalUniformMatrices{
+              std::move(other.m_supplementalUniformMatrices)} {}
 
 ShaderProgram::~ShaderProgram() { this->deleteProgram(); }
 
@@ -46,6 +49,8 @@ ShaderProgram& ShaderProgram::operator=(
         this->m_uniformVarManager = std::move(other.m_uniformVarManager);
         this->m_vertexShader = std::move(other.m_vertexShader);
         this->m_fragmentShader = std::move(other.m_fragmentShader);
+        this->m_supplementalUniformMatrices =
+                std::move(other.m_supplementalUniformMatrices);
     }
 
     return *this;
@@ -115,5 +120,20 @@ void ShaderProgram::use(
     this->m_uniformVarManager->applyTransformation(transformationMatrix);
     if (this->m_uniformVarManager->isCameraUpdated()) {
         this->m_uniformVarManager->applyCameraMatrices();
+    }
+    this->applySupplementalMatrices();
+}
+
+void ShaderProgram::setSupplementalUniformMatrices(
+        const std::unordered_map<std::string, glm::mat4>&
+                supplementalMatricesMap) {
+    this->m_supplementalUniformMatrices = supplementalMatricesMap;
+}
+
+void ShaderProgram::applySupplementalMatrices() {
+    if (!this->m_supplementalUniformMatrices.empty()) {
+        this->m_uniformVarManager->applySupplementalMatrices(
+                this->m_supplementalUniformMatrices);
+        this->m_supplementalUniformMatrices.clear();
     }
 }

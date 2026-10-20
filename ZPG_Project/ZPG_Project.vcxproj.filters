@@ -233,5 +233,8 @@
     <ClInclude Include="include\cameras\CameraUpdatePublisher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\scenes\WallclockScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

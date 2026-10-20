@@ -9,6 +9,7 @@
 #include <listeners/ICameraUpdateListener.h>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 /**
  * @brief Indicates that uniform variable could not be found in the shader
@@ -61,6 +62,21 @@ class UniformVariableManager : public ICameraUpdateListener {
      *
      */
     void applyCameraMatrices();
+
+    /*
+     *
+     */
+
+    /**
+     * @brief Applies supplied supplementary matrices in the shader.
+     * @param supplementalMatricesMap Map of shader matrix variables and their
+     * values.
+     * @throw UniformVariableNotFoundException - Thrown if the variable could
+     * not be found.
+     */
+    void applySupplementalMatrices(
+            const std::unordered_map<std::string, glm::mat4>&
+                    supplementalMatricesMap);
 
   private:
     GLuint m_parentShaderProgramId;

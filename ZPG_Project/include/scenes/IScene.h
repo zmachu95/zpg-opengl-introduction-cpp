@@ -13,7 +13,7 @@ enum class KeyModifierFlags;
  */
 class IScene {
   public:
-    virtual ~IScene() {}
+    virtual ~IScene() = default;
 
     /**
      * @brief Draws the scene contents.

@@ -56,14 +56,14 @@ ForestScene::ForestScene()
     this->createRandomBushes(50);
 
     // create shader programs
-    this->m_plainShaderProgram =
-            ShaderProgram::createFromShaderFiles("plain.vert", "basic.frag");
-    this->m_treesShaderProgram =
-            ShaderProgram::createFromShaderFiles("tree.vert", "basic.frag");
-    this->m_bushesShaderProgram =
-            ShaderProgram::createFromShaderFiles("bush.vert", "basic.frag");
-    this->m_clockShaderProgram =
-            ShaderProgram::createFromShaderFiles("clock.vert", "basic.frag");
+    this->m_plainShaderProgram = ShaderProgram::createFromShaderFiles(
+            "tree_scene\\plain.vert", "_templates\\basic.frag");
+    this->m_treesShaderProgram = ShaderProgram::createFromShaderFiles(
+            "tree_scene\\tree.vert", "_templates\\basic.frag");
+    this->m_bushesShaderProgram = ShaderProgram::createFromShaderFiles(
+            "tree_scene\\bush.vert", "_templates\\basic.frag");
+    this->m_clockShaderProgram = ShaderProgram::createFromShaderFiles(
+            "wallclock_scene\\clock.vert", "_templates\\basic.frag");
 
     // add camera
     std::shared_ptr<CameraCommonSettings> commonSettings =

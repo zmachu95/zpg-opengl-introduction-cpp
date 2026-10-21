@@ -158,7 +158,8 @@ int PerspectiveCamera::registerCameraUpdateListener(
         const CameraUpdateListenerPtr& listener) {
     return this->m_publisher.registerCameraUpdateListener(listener,
             this->calculateProjectionMatrix(),
-            this->m_cameraGeometry.calculateViewMatrix());
+            this->m_cameraGeometry.calculateViewMatrix(),
+            this->m_cameraGeometry.getCameraPosition());
 }
 
 bool PerspectiveCamera::unregisterCameraUpdateListener(
@@ -179,7 +180,8 @@ void PerspectiveCamera::update(
 
 void PerspectiveCamera::notifyCameraUpdateListeners() {
     this->m_publisher.notifyListeners(this->calculateProjectionMatrix(),
-            this->m_cameraGeometry.calculateViewMatrix());
+            this->m_cameraGeometry.calculateViewMatrix(),
+            this->m_cameraGeometry.getCameraPosition());
 }
 
 glm::mat4 PerspectiveCamera::calculateProjectionMatrix() const {

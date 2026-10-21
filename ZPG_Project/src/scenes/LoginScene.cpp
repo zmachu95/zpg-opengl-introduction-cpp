@@ -20,8 +20,8 @@ LoginScene::LoginScene()
     : IScene{}, m_login{}, m_shaderProgram{}, m_rotation{} {
     this->m_login = DrawableObjectFactory::createDrawableObjectFromVerticesData(
             mac0690, sizeof(mac0690) / sizeof(mac0690[0]), 2);
-    this->m_shaderProgram =
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
+    this->m_shaderProgram = ShaderProgram::createFromShaderFiles(
+            "_templates\\basic.vert", "_templates\\basic.frag");
     this->m_rotation = this->m_login->getTransformation()->addNewRotation(
             0.0f, 1.0f, 0.0f);
     ScalePtr scale = this->m_login->getTransformation()->addNewScale();

@@ -15,7 +15,8 @@ CameraUpdatePublisher::CameraUpdatePublisher()
 
 int CameraUpdatePublisher::registerCameraUpdateListener(
         const CameraUpdateListenerPtr& listener,
-        const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix) {
+        const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix,
+        const glm::vec3& cameraPosition) {
     this->m_lastListenerId += 1;
 
     this->m_listeners.push_back(std::pair<int, CameraUpdateListenerPtr>(
@@ -23,7 +24,8 @@ int CameraUpdatePublisher::registerCameraUpdateListener(
 
     /* make sure that the just registered listener uses the current camera
      * matrices */
-    listener.lock()->handleCameraUpdate(projectionMatrix, viewMatrix);
+    listener.lock()->handleCameraUpdate(
+            projectionMatrix, viewMatrix, cameraPosition);
     return this->m_lastListenerId;
 }
 
@@ -41,11 +43,13 @@ bool CameraUpdatePublisher::unregisterCameraUpdateListener(
 }
 
 void CameraUpdatePublisher::notifyListeners(
-        const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix) {
+        const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix,
+        const glm::vec3& cameraPosition) {
     auto listenerIt = this->m_listeners.begin();
     while (listenerIt != this->m_listeners.end()) {
         if (auto listener = listenerIt->second.lock()) {
-            listener->handleCameraUpdate(projectionMatrix, viewMatrix);
+            listener->handleCameraUpdate(
+                    projectionMatrix, viewMatrix, cameraPosition);
             listenerIt++;
         } else {
             listenerIt = this->m_listeners.erase(listenerIt);

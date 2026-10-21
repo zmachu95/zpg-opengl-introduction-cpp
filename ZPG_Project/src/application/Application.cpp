@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <scenes/ForestScene.h>
+#include <scenes/LightingTestScene.h>
 #include <scenes/LoginScene.h>
 #include <scenes/SolarSystemScene.h>
 #include <scenes/TriangleScene.h>
@@ -109,6 +110,7 @@ void Application::initialize() {
     this->m_scenes.push_back(std::make_unique<ForestScene>());
     this->m_scenes.push_back(std::make_unique<SolarSystemScene>());
     this->m_scenes.push_back(std::make_unique<WallclockScene>());
+    this->m_scenes.push_back(std::make_unique<LightingTestScene>());
     this->m_activeScene = this->m_scenes.front().get();
 
     glfwSetInputMode(this->m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -164,22 +166,26 @@ void Application::subscribeListeners() {
 
 void Application::handleKeyPresses(
         GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if ((KeyActions)action == KeyActions::PRESSED) {
+    if ((KeyActions)action == KeyActions::PRESSED
+            && (KeyModifierFlags)mods == KeyModifierFlags::NONE) {
         switch ((KeyCodes)key) {
             case KeyCodes::KEY_KP_1:
-                this->m_activeScene = this->m_scenes[0].get();
+                this->activateScene(this->m_scenes[0]);
                 return;
             case KeyCodes::KEY_KP_2:
-                this->m_activeScene = this->m_scenes[1].get();
+                this->activateScene(this->m_scenes[1]);
                 return;
             case KeyCodes::KEY_KP_3:
-                this->m_activeScene = this->m_scenes[2].get();
+                this->activateScene(this->m_scenes[2]);
                 return;
             case KeyCodes::KEY_KP_4:
-                this->m_activeScene = this->m_scenes[3].get();
+                this->activateScene(this->m_scenes[3]);
                 return;
             case KeyCodes::KEY_KP_5:
-                this->m_activeScene = this->m_scenes[4].get();
+                this->activateScene(this->m_scenes[4]);
+                return;
+            case KeyCodes::KEY_KP_6:
+                this->activateScene(this->m_scenes[5]);
                 return;
             case KeyCodes::KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GL_TRUE);
@@ -221,4 +227,11 @@ void Application::handleWindowResizeCallback(
     if (this->m_activeScene && width > 0 && height > 0) {
         this->m_activeScene->handleWindowResize(width, height);
     }
+}
+
+void Application::activateScene(
+        const ScenePtr& scene) {
+    this->m_activeScene = scene.get();
+    this->m_activeScene->handleWindowResize(
+            this->m_halfWindowWidth, this->m_halfWindowHeight);
 }

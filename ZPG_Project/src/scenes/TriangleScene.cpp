@@ -21,8 +21,8 @@
 TriangleScene::TriangleScene()
     : IScene{}, m_program{}, m_rotation{}, m_translation{}, m_triangle{},
       m_cameraController{}, m_camera{} {
-    this->m_program =
-            ShaderProgram::createFromShaderFiles("basic.vert", "basic.frag");
+    this->m_program = ShaderProgram::createFromShaderFiles(
+            "_templates\\basic.vert", "_templates\\basic.frag");
     this->m_triangle =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
                     triangle, sizeof(triangle) / sizeof(triangle[0]), 2);

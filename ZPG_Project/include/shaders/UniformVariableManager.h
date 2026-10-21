@@ -7,19 +7,8 @@
 
 #include <glm/ext/matrix_float4x4.hpp>
 #include <listeners/ICameraUpdateListener.h>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
-
-/**
- * @brief Indicates that uniform variable could not be found in the shader
- * program.
- */
-class UniformVariableNotFoundException : public std::runtime_error {
-  public:
-    UniformVariableNotFoundException(const std::string& message)
-        : std::runtime_error(message) {};
-};
 
 using GLuint = unsigned int;
 using GLint = int;
@@ -71,8 +60,6 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @brief Applies supplied supplementary matrices in the shader.
      * @param supplementalMatricesMap Map of shader matrix variables and their
      * values.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
     void applySupplementalMatrices(
             const std::unordered_map<std::string, glm::mat4>&
@@ -83,65 +70,68 @@ class UniformVariableManager : public ICameraUpdateListener {
     bool m_cameraUpdated;
     glm::mat4 m_projectionMatrix;
     glm::mat4 m_viewMatrix;
+    glm::vec3 m_cameraPosition;
+    std::unordered_map<std::string, GLint> m_uniformVariableLocations;
 
     /**
      * @brief Gets the location of uniform shader variable.
      * @param variableName The variable name.
      * @return GLint with the variable name.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
-    GLint getUniformVariableLocation(const std::string& variableName) const;
+    GLint getUniformVariableLocation(const std::string& variableName);
 
     /**
      * @brief Sets new bool value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
-    void setBoolUniformVar(
-            const std::string& variableName, const bool value) const;
+    void setBoolUniformVar(const std::string& variableName, const bool value);
 
     /**
      * @brief Sets new int value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
-    void setIntUniformVar(
-            const std::string& variableName, const int value) const;
+    void setIntUniformVar(const std::string& variableName, const int value);
 
     /**
      * @brief Sets new float value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
-    void setFloatUniformVar(
-            const std::string& variableName, const float value) const;
+    void setFloatUniformVar(const std::string& variableName, const float value);
+
+    /**
+     * @brief Sets new glm::vec3 value to given uniform variable.
+     * @param variableName The name of uniform variable to set.
+     * @param value The new value.
+     */
+    void setVec3UniformVar(
+            const std::string& variableName, const glm::vec3& value);
 
     /**
      * @brief Sets new glm::vec4 value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
     void setVec4UniformVar(
-            const std::string& variableName, const glm::vec4& value) const;
+            const std::string& variableName, const glm::vec4& value);
+
+    /**
+     * @brief Sets new glm::mat3 value to given uniform variable.
+     * @param variableName The name of uniform variable to set.
+     * @param value The new value.
+     */
+    void setMat3UniformVar(
+            const std::string& variableName, const glm::mat3& value);
 
     /**
      * @brief Sets new glm::mat4 value to given uniform variable.
      * @param variableName The name of uniform variable to set.
      * @param value The new value.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
     void setMat4UniformVar(
-            const std::string& variableName, const glm::mat4& value) const;
+            const std::string& variableName, const glm::mat4& value);
 
     /*
      *
@@ -151,7 +141,8 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @brief Handles the camera update.
      * @param projectionMatrix The new camera projection matrix.
      * @param viewMatrix The new camera view matrix.
+     * @param cameraPosition The new camera position.
      */
-    void handleCameraUpdate(
-            const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix);
+    virtual void handleCameraUpdate(const glm::mat4& projectionMatrix,
+            const glm::mat4& viewMatrix, const glm::vec3& cameraPosition);
 };

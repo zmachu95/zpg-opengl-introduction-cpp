@@ -8,6 +8,9 @@
 #include <scenes/IScene.h>
 #include <transformations/GroupedTransformation.h>
 
+#include <cameras/CameraUserInputController.h>
+#include <cameras/PerspectiveCamera.h>
+
 class DrawableObject;
 class ShaderProgram;
 enum class KeyCodes;
@@ -62,7 +65,11 @@ class SolarSystemScene : public IScene {
     DrawableObjectPtr m_sunModel;
     DrawableObjectPtr m_earthModel;
     DrawableObjectPtr m_moonModel;
-    ShaderProgramPtr m_shaderProgram;
+    DrawableObjectPtr m_satelliteModel;
+
+    ShaderProgramPtr m_sunShaderProgram;
+    ShaderProgramPtr m_planetsShaderProgram;
+    ShaderProgramPtr m_satelliteShaderProgram;
 
     RotationPtr m_sunOwnAxisRotation;
     RotationPtr m_earthAroundSunRotation;
@@ -70,6 +77,10 @@ class SolarSystemScene : public IScene {
     RotationPtr m_earthOwnAxisRotation;
     RotationPtr m_moonAroundEarthRotation;
     RotationPtr m_moonOwnAxisRotation;
+    RotationPtr m_satelliteAroundEarthRotation;
+
+    CameraUserInputController m_cameraController;
+    std::unique_ptr<PerspectiveCamera> m_camera;
 
     /**
      * @brief Creates transformations for Sun.
@@ -91,4 +102,11 @@ class SolarSystemScene : public IScene {
      */
     void createMoonTransformations(
             GroupedTransformationPtr moonModelRootTransformation);
+
+    /**
+     * @brief Creates transformations for satellite.
+     * @param satelliteModelRootTransformation
+     */
+    void createSatelliteTransformations(
+            GroupedTransformationPtr satelliteModelRootTransformation);
 };

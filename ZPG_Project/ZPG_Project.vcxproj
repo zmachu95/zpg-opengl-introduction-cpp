@@ -156,6 +156,7 @@
     <ClCompile Include="src\drawables\DrawableObjectFactory.cpp" />
     <ClCompile Include="src\others\WallclockUtils.cpp" />
     <ClCompile Include="src\scenes\ForestScene.cpp" />
+    <ClCompile Include="src\scenes\LightingTestScene.cpp" />
     <ClCompile Include="src\scenes\LoginScene.cpp" />
     <ClCompile Include="src\scenes\SolarSystemScene.cpp" />
     <ClCompile Include="src\scenes\TriangleScene.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="src\shaders\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="C:\tmp\satellite_1_.h" />
     <ClInclude Include="include\application\Application.h" />
     <ClInclude Include="include\cameras\CameraCommonSettings.h" />
     <ClInclude Include="include\cameras\MovementDirectionEnum.h" />
@@ -189,6 +191,7 @@
     <ClInclude Include="include\others\WallclockUtils.h" />
     <ClInclude Include="include\scenes\ForestScene.h" />
     <ClInclude Include="include\scenes\IScene.h" />
+    <ClInclude Include="include\scenes\LightingTestScene.h" />
     <ClInclude Include="include\scenes\LoginScene.h" />
     <ClInclude Include="include\scenes\SolarSystemScene.h" />
     <ClInclude Include="include\scenes\TriangleScene.h" />

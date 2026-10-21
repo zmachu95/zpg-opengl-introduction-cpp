@@ -37,10 +37,12 @@ class CameraUpdatePublisher {
      * @param listener Listener to register.
      * @param projectionMatrix Projection matrix to send.
      * @param viewMatrix View matrix to send.
+     * @param cameraPosition Camera position to send.
      * @return ID number which can be used to unregister the listener.
      */
     int registerCameraUpdateListener(const CameraUpdateListenerPtr& listener,
-            const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix);
+            const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix,
+            const glm::vec3& cameraPosition);
 
     /**
      * @brief Unregisters listener with supplied ID.
@@ -54,9 +56,10 @@ class CameraUpdatePublisher {
      * @brief Notifies all camera update listeners with new camera matrices.
      * @param projectionMatrix Projection matrix to send.
      * @param viewMatrix View matrix to send.
+     * @param cameraPosition Camera position to send.
      */
-    void notifyListeners(
-            const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix);
+    void notifyListeners(const glm::mat4& projectionMatrix,
+            const glm::mat4& viewMatrix, const glm::vec3& cameraPosition);
 
   private:
     int m_lastListenerId;

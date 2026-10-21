@@ -21,8 +21,8 @@
 #include <resources/models/clock.h>
 
 WallclockScene::WallclockScene() : m_program{}, m_clock{}, m_pinsRotations{} {
-    this->m_program =
-            ShaderProgram::createFromShaderFiles("clock.vert", "basic.frag");
+    this->m_program = ShaderProgram::createFromShaderFiles(
+            "wallclock_scene\\clock.vert", "_templates\\basic.frag");
     this->m_clock = DrawableObjectFactory::createDrawableObjectFromVerticesData(
             clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3);
 }

@@ -90,6 +90,8 @@ ShaderProgram ShaderProgram::link(
 void ShaderProgram::deleteProgram() {
     if (this->m_id != 0) {
         std::cout << "Deleting shader program ID " << this->m_id << ".\n";
+        glDetachShader(this->m_id, this->m_fragmentShader->getId());
+        glDetachShader(this->m_id, this->m_vertexShader->getId());
         glDeleteProgram(this->m_id);
         this->m_id = 0;
     }

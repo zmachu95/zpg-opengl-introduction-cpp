@@ -120,4 +120,10 @@ class Application {
      * @brief Subscribes all OpenGL application listeners.
      */
     void subscribeListeners();
+
+    /**
+     * @brief Makes the supplied scene active.
+     * @param scene Scene to activate.
+     */
+    void activateScene(const ScenePtr& scene);
 };

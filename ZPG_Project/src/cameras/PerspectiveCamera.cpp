@@ -2,8 +2,10 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "CameraGeometry.h"
+#include "CameraUpdatePublisher.h"
+#include "MovementDirectionEnum.h"
 #include <cameras/CameraCommonSettings.h>
-#include <cameras/MovementDirectionEnum.h>
 #include <cameras/PerspectiveCamera.h>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -41,8 +43,9 @@ PerspectiveCamera::PerspectiveCamera(
         float aspectRatio, const glm::vec3& cameraPosition,
         const glm::vec3& viewDirection, float fov_deg,
         float nearClippingPlaneDistance, float farClippingPlaneDistance)
-    : m_publisher{},
-      m_cameraGeometry{commonSettings, cameraPosition, viewDirection},
+    : m_publisher{std::make_unique<CameraUpdatePublisher>()},
+      m_cameraGeometry{std::make_unique<CameraGeometry>(
+              commonSettings, cameraPosition, viewDirection)},
       m_fov_deg{fov_deg}, m_aspectRatio{aspectRatio},
       m_nearClippingPlaneDistance{nearClippingPlaneDistance},
       m_farClippingPlaneDistance{farClippingPlaneDistance} {
@@ -83,8 +86,10 @@ PerspectiveCamera::PerspectiveCamera(
         float aspectRatio)
     : PerspectiveCamera(commonSettings, aspectRatio, glm::vec3{0.0f}) {}
 
+PerspectiveCamera::~PerspectiveCamera() = default;
+
 const glm::vec3& PerspectiveCamera::getCameraPosition() const {
-    return this->m_cameraGeometry.getCameraPosition();
+    return this->m_cameraGeometry->getCameraPosition();
 }
 
 float PerspectiveCamera::getAspectRatio() const { return this->m_aspectRatio; }
@@ -156,21 +161,21 @@ void PerspectiveCamera::setFarClippingPlaneDistance(
 
 int PerspectiveCamera::registerCameraUpdateListener(
         const CameraUpdateListenerPtr& listener) {
-    return this->m_publisher.registerCameraUpdateListener(listener,
+    return this->m_publisher->registerCameraUpdateListener(listener,
             this->calculateProjectionMatrix(),
-            this->m_cameraGeometry.calculateViewMatrix(),
-            this->m_cameraGeometry.getCameraPosition());
+            this->m_cameraGeometry->calculateViewMatrix(),
+            this->m_cameraGeometry->getCameraPosition());
 }
 
 bool PerspectiveCamera::unregisterCameraUpdateListener(
         int listenerId) {
-    return this->m_publisher.unregisterCameraUpdateListener(listenerId);
+    return this->m_publisher->unregisterCameraUpdateListener(listenerId);
 }
 
 void PerspectiveCamera::update(
         MovementDirection movementDirection, int horizontalRotationIncrement,
         int verticalRotationIncrement, float deltaT) {
-    bool cameraChanged = this->m_cameraGeometry.update(movementDirection,
+    bool cameraChanged = this->m_cameraGeometry->update(movementDirection,
             horizontalRotationIncrement, verticalRotationIncrement, deltaT);
 
     if (cameraChanged) {
@@ -179,9 +184,9 @@ void PerspectiveCamera::update(
 }
 
 void PerspectiveCamera::notifyCameraUpdateListeners() {
-    this->m_publisher.notifyListeners(this->calculateProjectionMatrix(),
-            this->m_cameraGeometry.calculateViewMatrix(),
-            this->m_cameraGeometry.getCameraPosition());
+    this->m_publisher->notifyListeners(this->calculateProjectionMatrix(),
+            this->m_cameraGeometry->calculateViewMatrix(),
+            this->m_cameraGeometry->getCameraPosition());
 }
 
 glm::mat4 PerspectiveCamera::calculateProjectionMatrix() const {

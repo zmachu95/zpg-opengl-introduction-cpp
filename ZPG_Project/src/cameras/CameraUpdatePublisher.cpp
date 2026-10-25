@@ -3,10 +3,10 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <cameras/CameraUpdatePublisher.h>
+#include "CameraUpdatePublisher.h"
+#include <cameras/ICameraUpdateListener.h>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <list>
-#include <listeners/ICameraUpdateListener.h>
 #include <memory>
 #include <utility>
 

@@ -3,16 +3,16 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "GroupedTransformation.h"
+#include "ITransformationChangeListenable.h"
+#include "Rotation.h"
+#include "Scale.h"
+#include "TransformationChangePublisher.h"
+#include "Translation.h"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <memory>
-#include <transformations/GroupedTransformation.h>
 #include <transformations/IGroupedTransformation.h>
 #include <transformations/ITransformation.h>
-#include <transformations/ITransformationChangeListenable.h>
-#include <transformations/Rotation.h>
-#include <transformations/Scale.h>
-#include <transformations/TransformationChangePublisher.h>
-#include <transformations/Translation.h>
 #include <utility>
 
 GroupedTransformation::GroupedTransformation()

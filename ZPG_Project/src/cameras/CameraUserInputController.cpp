@@ -3,8 +3,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "MovementDirectionEnum.h"
 #include <cameras/CameraUserInputController.h>
-#include <cameras/MovementDirectionEnum.h>
 #include <constants/KeyActions.h>
 #include <constants/KeyCodes.h>
 #include <constants/KeyModifiers.h>

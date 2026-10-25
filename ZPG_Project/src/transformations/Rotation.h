@@ -4,11 +4,11 @@
 
 #pragma once
 
+#include "TransformationChangePublisher.h"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <transformations/IRotation.h>
-#include <transformations/TransformationChangePublisher.h>
 
-#include <transformations/ITransformationChangeListenable.h>
+#include "ITransformationChangeListenable.h"
 
 /**
  * @brief A rotation transformation matrix.

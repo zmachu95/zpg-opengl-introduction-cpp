@@ -102,15 +102,15 @@
     <ClCompile Include="src\scenes\WallclockScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\transformations\GroupedTransformationFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\application\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\shaders\ShaderProgram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\drawables\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resources\models\sphere.h">
@@ -134,31 +134,10 @@
     <ClInclude Include="resources\models\tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\application\EventManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\shaders\VertexShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\shaders\FragmentShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\drawables\DrawableObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\transformations\ITransformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\transformations\GroupedTransformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\transformations\Translation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\transformations\Rotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\transformations\Scale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resources\models\triangle.h">
@@ -176,19 +155,7 @@
     <ClInclude Include="include\scenes\LoginScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaders\UniformVariableManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\listeners\ICameraUpdateListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\cameras\CameraCommonSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cameras\MovementDirectionEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cameras\CameraGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cameras\CameraUserInputController.h">
@@ -209,16 +176,7 @@
     <ClInclude Include="include\constants\KeyModifiers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\shaders\ShaderCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\shaders\ShaderFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\drawables\DrawableObjectFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\listeners\ITransformationChangedListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\transformations\IScale.h">
@@ -233,15 +191,6 @@
     <ClInclude Include="include\transformations\IGroupedTransformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\transformations\ITransformationChangeListenable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\transformations\TransformationChangePublisher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cameras\CameraUpdatePublisher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\scenes\WallclockScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -251,7 +200,64 @@
     <ClInclude Include="include\scenes\LightingTestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tmp\satellite_1_.h">
+    <ClInclude Include="src\cameras\MovementDirectionEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\CameraGeometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\CameraUpdatePublisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\ICameraUpdateListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\GroupedTransformationBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\ITransformationChangedListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\ShaderCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\ShaderFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\UniformVariableManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\GroupedTransformation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\application\EventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\FragmentShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\ITransformationChangeListenable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\Rotation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\Scale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\TransformationChangePublisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\Translation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drawables\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\VertexShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\transformations\GroupedTransformationFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

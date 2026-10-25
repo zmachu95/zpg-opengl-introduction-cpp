@@ -5,7 +5,6 @@
 #pragma once
 
 #include <memory>
-#include <shaders/UniformVariableManager.h>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -14,6 +13,7 @@ class VertexShader;
 class FragmentShader;
 class ICameraUpdateListener;
 class ShaderProgram;
+class UniformVariableManager;
 
 using GLuint = unsigned int;
 using VertexShaderPtr = std::shared_ptr<VertexShader>;

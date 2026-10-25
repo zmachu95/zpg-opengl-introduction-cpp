@@ -3,9 +3,9 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "Model.h"
 #include <drawables/DrawableObject.h>
 #include <drawables/DrawableObjectFactory.h>
-#include <drawables/Model.h>
 #include <memory>
 
 DrawableObjectFactory DrawableObjectFactory::s_instance{};

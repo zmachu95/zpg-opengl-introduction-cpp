@@ -27,7 +27,7 @@ int convertTimeTtoMinutes(
 
 int convertTimeTtoHours(
         time_t value) {
-    return (value / 3600) % 60 + 2; // +2 due to UTC timezone and summer time
+    return (value / 3600) % 60 + 1; // +1 due to UTC timezone
 }
 
 glm::mat4 getHoursPinRotationMatrix(

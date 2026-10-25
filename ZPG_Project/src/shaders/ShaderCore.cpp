@@ -2,7 +2,7 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <shaders/ShaderCore.h>
+#include "ShaderCore.h"
 
 #include <iostream>
 

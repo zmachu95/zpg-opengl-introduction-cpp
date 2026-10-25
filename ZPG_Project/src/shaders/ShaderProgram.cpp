@@ -6,14 +6,14 @@
 #include <glad/gl.h>
 #endif
 
+#include "FragmentShader.h"
+#include "ShaderFactory.h"
+#include "UniformVariableManager.h"
+#include "VertexShader.h"
+#include <cameras/ICameraUpdateListener.h>
 #include <iostream>
-#include <listeners/ICameraUpdateListener.h>
 #include <memory>
-#include <shaders/FragmentShader.h>
-#include <shaders/ShaderFactory.h>
 #include <shaders/ShaderProgram.h>
-#include <shaders/UniformVariableManager.h>
-#include <shaders/VertexShader.h>
 #include <string>
 #include <utility>
 

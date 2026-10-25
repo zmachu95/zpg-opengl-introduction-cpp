@@ -5,12 +5,12 @@
 
 #pragma once
 
+#include "ITransformationChangeListenable.h"
+#include "ITransformationChangedListener.h"
+#include "TransformationChangePublisher.h"
 #include <glm/ext/matrix_float4x4.hpp>
-#include <listeners/ITransformationChangedListener.h>
 #include <memory>
 #include <transformations/IGroupedTransformation.h>
-#include <transformations/ITransformationChangeListenable.h>
-#include <transformations/TransformationChangePublisher.h>
 #include <vector>
 
 /**

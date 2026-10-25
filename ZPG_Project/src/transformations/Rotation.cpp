@@ -2,12 +2,12 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "Rotation.h"
+#include "TransformationChangePublisher.h"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/trigonometric.hpp>
-#include <transformations/Rotation.h>
-#include <transformations/TransformationChangePublisher.h>
 
 Rotation::Rotation(
         const float axisX, const float axisY, const float axisZ)

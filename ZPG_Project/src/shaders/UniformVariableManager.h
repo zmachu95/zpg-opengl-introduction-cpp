@@ -5,8 +5,8 @@
 
 #pragma once
 
+#include <cameras/ICameraUpdateListener.h>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <listeners/ICameraUpdateListener.h>
 #include <string>
 #include <unordered_map>
 

@@ -4,10 +4,10 @@
 
 #pragma once
 
+#include "ITransformationChangeListenable.h"
+#include "TransformationChangePublisher.h"
 #include <glm/ext/matrix_float4x4.hpp>
-#include <transformations/ITransformationChangeListenable.h>
 #include <transformations/ITranslation.h>
-#include <transformations/TransformationChangePublisher.h>
 
 /**
  * @brief A translation transformation matrix.

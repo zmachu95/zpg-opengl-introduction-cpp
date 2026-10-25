@@ -2,13 +2,13 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "ShaderFactory.h"
+#include "FragmentShader.h"
+#include "ShaderCore.h"
+#include "VertexShader.h"
 #include <fstream>
 #include <iterator>
 #include <memory>
-#include <shaders/FragmentShader.h>
-#include <shaders/ShaderCore.h>
-#include <shaders/ShaderFactory.h>
-#include <shaders/VertexShader.h>
 #include <stdexcept>
 #include <string>
 #include <utility>

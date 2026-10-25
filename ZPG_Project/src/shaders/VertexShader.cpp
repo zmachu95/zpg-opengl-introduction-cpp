@@ -2,8 +2,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <shaders/ShaderCore.h>
-#include <shaders/VertexShader.h>
+#include "VertexShader.h"
+#include "ShaderCore.h"
 #include <utility>
 
 VertexShader::VertexShader(

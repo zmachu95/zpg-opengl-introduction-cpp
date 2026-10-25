@@ -1,23 +1,23 @@
-// FragmentShader.h - Contains declaration of FragmentShader class.
+// VertexShader.h - Contains declaration of VertexShader class.
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
 #pragma once
 
-#include <shaders/ShaderCore.h>
+#include "ShaderCore.h"
 
 using GLuint = unsigned int;
 
 /**
  * @brief Represents a vertex shader.
  */
-class FragmentShader {
+class VertexShader {
   public:
     /**
-     * @brief FragmentShader standard constructor.
+     * @brief VertexShader standard constructor.
      * @param shaderCore The raw OpenGL shader.
      */
-    FragmentShader(ShaderCore&& shaderCore);
+    VertexShader(ShaderCore&& shaderCore);
 
     /**
      * @brief Gets the ID of compiled shader.

@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <scenes/IScene.h>
-#include <transformations/GroupedTransformation.h>
+#include <transformations/IGroupedTransformation.h>
 
 #include <cameras/CameraUserInputController.h>
 #include <cameras/PerspectiveCamera.h>

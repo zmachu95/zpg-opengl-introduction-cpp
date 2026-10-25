@@ -2,8 +2,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "EventManager.h"
 #include <application/Application.h>
-#include <application/EventManager.h>
 #include <constants/KeyActions.h>
 #include <constants/KeyCodes.h>
 #include <constants/KeyModifiers.h>

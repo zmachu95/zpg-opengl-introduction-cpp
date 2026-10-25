@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <scenes/IScene.h>
-#include <transformations/GroupedTransformation.h>
+#include <transformations/IGroupedTransformation.h>
 
 class DrawableObject;
 class ShaderProgram;

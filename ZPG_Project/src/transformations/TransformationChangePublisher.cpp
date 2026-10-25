@@ -3,8 +3,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <listeners/ITransformationChangedListener.h>
-#include <transformations/TransformationChangePublisher.h>
+#include "TransformationChangePublisher.h"
+#include "ITransformationChangedListener.h"
 
 #include <list>
 #include <memory>

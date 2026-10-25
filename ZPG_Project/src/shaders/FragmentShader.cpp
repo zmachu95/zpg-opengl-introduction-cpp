@@ -2,8 +2,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <shaders/FragmentShader.h>
-#include <shaders/ShaderCore.h>
+#include "FragmentShader.h"
+#include "ShaderCore.h"
 #include <utility>
 
 FragmentShader::FragmentShader(

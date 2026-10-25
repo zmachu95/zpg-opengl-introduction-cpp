@@ -1,4 +1,3 @@
-#pragma once
 // IGroupedTransformation.h - Contains declaration of IGroupedTransformation
 // interface.
 //

@@ -7,11 +7,11 @@
 #include <glad/gl.h>
 #endif
 
+#include "UniformVariableManager.h"
 #include <cstdio>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <shaders/UniformVariableManager.h>
 #include <string>
 
 /**

@@ -2,8 +2,8 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "EventManager.h"
 #include <GLFW/glfw3.h>
-#include <application/EventManager.h>
 #include <cstdio>
 #include <utility>
 

@@ -9,7 +9,7 @@
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
-#include <transformations/GroupedTransformation.h>
+#include <transformations/IGroupedTransformation.h>
 #include <transformations/IRotation.h>
 #include <transformations/IScale.h>
 #include <transformations/ITranslation.h>

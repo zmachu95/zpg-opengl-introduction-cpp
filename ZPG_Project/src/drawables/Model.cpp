@@ -6,7 +6,7 @@
 #include <glad/gl.h>
 #endif
 
-#include <drawables/Model.h>
+#include "Model.h"
 #include <shaders/ShaderProgram.h>
 
 #include <iostream>

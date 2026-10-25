@@ -2,9 +2,9 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "CameraGeometry.h"
+#include "MovementDirectionEnum.h"
 #include <cameras/CameraCommonSettings.h>
-#include <cameras/CameraGeometry.h>
-#include <cameras/MovementDirectionEnum.h>
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

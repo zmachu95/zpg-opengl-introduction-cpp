@@ -2,11 +2,11 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "Scale.h"
+#include "TransformationChangePublisher.h"
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
-#include <transformations/Scale.h>
-#include <transformations/TransformationChangePublisher.h>
 
 Scale::Scale() : m_x{0}, m_y{0}, m_z{0}, m_matrix{1.0f}, m_publisher{} {}
 

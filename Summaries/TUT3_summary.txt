@@ -1,0 +1,5 @@
+1) Splněno. Složka resources/shaders/_templates obsahuje soubory ambient.frag, lambert.frag, phong.frag a blinn.frag s jednotlivými typy osvětlovacích shaderů.
+
+2) Splněno. Na Slunce je aplikován konstantní shader a na ostatní planety Phongův shader. Do scény byl navíc přidán satelit obíhající Zemi.
+
+3) Splněno. Na 4 koule byly postupně aplikovány jednotlivé shadery a bylo ověřeno, že poměr stran okna nedeformuje tvar koulí.

@@ -106,26 +106,27 @@ SolarSystemScene::SolarSystemScene()
       m_cameraController{} {
     this->m_sunModel =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    sun, sizeof(sun) / sizeof(sun[0]), 3);
+                    sun, sizeof(sun) / sizeof(sun[0]), 3, false);
     this->m_earthModel =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    earth, sizeof(earth) / sizeof(earth[0]), 3);
+                    earth, sizeof(earth) / sizeof(earth[0]), 3, false);
     this->m_moonModel =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    moon, sizeof(moon) / sizeof(moon[0]), 3);
+                    moon, sizeof(moon) / sizeof(moon[0]), 3, false);
     this->m_satelliteModel =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    satellite, sizeof(satellite) / sizeof(satellite[0]), 2);
+                    satellite, sizeof(satellite) / sizeof(satellite[0]), 2,
+                    false);
 
     this->m_sunShaderProgram = ShaderProgram::createFromShaderFiles(
             "solar_system_scene\\planets.vert",
-            "solar_system_scene\\ambient.frag");
+            "solar_system_scene\\ambient.frag", false);
     this->m_planetsShaderProgram = ShaderProgram::createFromShaderFiles(
             "solar_system_scene\\planets.vert",
-            "solar_system_scene\\phong.frag");
+            "solar_system_scene\\phong.frag", false);
     this->m_satelliteShaderProgram = ShaderProgram::createFromShaderFiles(
             "solar_system_scene\\satellite.vert",
-            "solar_system_scene\\phong.frag");
+            "solar_system_scene\\phong.frag", false);
 
     this->createSunTransformations(this->m_sunModel->getTransformation());
     this->createEarthTransformations(this->m_earthModel->getTransformation());
@@ -175,3 +176,6 @@ void SolarSystemScene::handleWindowResize(
         int width, int height) {
     this->m_camera->setAspectRatio(width, height);
 }
+
+void SolarSystemScene::drawSkybox(
+        const float deltaT) {}

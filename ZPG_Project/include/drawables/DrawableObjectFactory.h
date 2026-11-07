@@ -26,13 +26,15 @@ class DrawableObjectFactory {
      * @param arrayElementsCount Total number of elements in the vertices data
      * array.
      * @param attributesCount Number of attributes in supplied vertices data.
+     * @param uses2dTextures Supply true if model uses 2D textures, otherwise
+     * false.
      * @return New drawable object.
      * @throw std::invalid_argument - Thrown if number of arguments does not
      * correspond with total array elements count.
      */
     static DrawableObjectPtr createDrawableObjectFromVerticesData(
             const float* verticesData, size_t arrayElementsCount,
-            int attributesCount);
+            int attributesCount, bool uses2dTextures);
 
   private:
     static DrawableObjectFactory s_instance;

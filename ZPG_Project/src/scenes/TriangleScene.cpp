@@ -22,10 +22,10 @@ TriangleScene::TriangleScene()
     : IScene{}, m_program{}, m_rotation{}, m_translation{}, m_triangle{},
       m_cameraController{}, m_camera{} {
     this->m_program = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "_templates\\basic.frag");
+            "_templates\\basic.vert", "_templates\\basic.frag", false);
     this->m_triangle =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    triangle, sizeof(triangle) / sizeof(triangle[0]), 2);
+                    triangle, sizeof(triangle) / sizeof(triangle[0]), 2, false);
 
     this->m_rotation =
             this->m_triangle->getTransformation()->addNewRotation(0, 0, 1);
@@ -67,3 +67,6 @@ void TriangleScene::handleWindowResize(
         int width, int height) {
     this->m_camera->setAspectRatio(width, height);
 }
+
+void TriangleScene::drawSkybox(
+        const float deltaT) {}

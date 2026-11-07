@@ -8,7 +8,9 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
+class ITexture;
 class VertexShader;
 class FragmentShader;
 class ICameraUpdateListener;
@@ -20,6 +22,7 @@ using VertexShaderPtr = std::shared_ptr<VertexShader>;
 using FragmentShaderPtr = std::shared_ptr<FragmentShader>;
 using UniformVariableManagerPtr = std::shared_ptr<UniformVariableManager>;
 using ShaderProgramPtr = std::unique_ptr<ShaderProgram>;
+using TexturePtr = std::shared_ptr<ITexture>;
 
 /**
  * @brief Indicates that OpenGL could not create the shader program.
@@ -86,6 +89,8 @@ class ShaderProgram {
      * fragment shader.
      * @param vertexShader The vertex shader.
      * @param fragmentShader The fragment shader.
+     * @param rendersSkybox Supply true if shader program is intended to render
+     * skybox, otherwise false.
      * @return Pointer to new shader program.
      * @throw std::invalid_argument - Thrown when the shader types are invalid.
      * @throw ShaderProgramNotCreatedException - Thrown when OpenGL could not
@@ -93,7 +98,7 @@ class ShaderProgram {
      */
     static ShaderProgramPtr createFromShaderFiles(
             const std::string& vertexShaderFile,
-            const std::string& fragmentShaderFile);
+            const std::string& fragmentShaderFile, bool rendersSkybox);
 
     /*
      *
@@ -117,8 +122,11 @@ class ShaderProgram {
 
     /**
      * @brief Uses the shader program in currently active scene.
+     * @param transformationMatrix Transformation matrix to use in shader.
+     * @param textures Vector of textures to use in shader.
      */
-    void use(const glm::mat4& transformationMatrix);
+    void use(const glm::mat4& transformationMatrix,
+            const std::vector<TexturePtr>& textures);
 
     /**
      * @brief Stores supplied supplemental matrices for application during next
@@ -138,6 +146,8 @@ class ShaderProgram {
     VertexShaderPtr m_vertexShader;
     FragmentShaderPtr m_fragmentShader;
     std::unordered_map<std::string, glm::mat4> m_supplementalUniformMatrices;
+    bool m_initializedTextureSamplers;
+    bool m_rendersSkybox;
 
     /**
      * @brief ShaderProgram default constructor.
@@ -145,11 +155,12 @@ class ShaderProgram {
      * @param uniformVariableManager The uniform variable manager.
      * @param vertexShader The vertex shader.
      * @param fragmentShader The fragment shader.
+     * @param rendersSkybox Flag whether the shader program renders skybox.
      */
     ShaderProgram(GLuint id,
             const UniformVariableManagerPtr& uniformVariableManager,
             const VertexShaderPtr& vertexShader,
-            const FragmentShaderPtr& fragmentShader);
+            const FragmentShaderPtr& fragmentShader, bool rendersSkybox);
 
     /**
      * @brief Verifies the shader program linking status.
@@ -162,6 +173,7 @@ class ShaderProgram {
      * @brief Links the new shader program with supplied shaders.
      * @param vertexShader The vertex shader to use.
      * @param fragmentShader The fragment shader to use.
+     * @param rendersSkybox Flag whether the shader program renders skybox.
      * @return New shader program.
      * @throw ShaderProgramLinkErrorException - Thrown if the shader program was
      * not linked successfully.
@@ -169,7 +181,7 @@ class ShaderProgram {
      * create the shader program.
      */
     static ShaderProgram link(const VertexShaderPtr& vertexShader,
-            const FragmentShaderPtr& fragmentShader);
+            const FragmentShaderPtr& fragmentShader, bool rendersSkybox);
 
     /**
      * @brief Deletes the shader program from OpenGL.
@@ -180,4 +192,10 @@ class ShaderProgram {
      * @brief Applies supplied supplementary matrices in the shader.
      */
     void applySupplementalMatrices();
+
+    /**
+     * @brief Initializes texturing unit samplers in the shader.
+     * @param textures Vector of textures.
+     */
+    void initializeTextureSamplers(const std::vector<TexturePtr>& textures);
 };

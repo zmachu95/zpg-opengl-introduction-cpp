@@ -31,7 +31,7 @@ ForestScene::ForestScene()
       m_camera{}, m_clock{}, m_clockShaderProgram{} {
     // create plain
     this->m_plain = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            plain, sizeof(plain) / sizeof(plain[0]), 2);
+            plain, sizeof(plain) / sizeof(plain[0]), 2, false);
 
     TranslationPtr plainTranslation =
             this->m_plain->getTransformation()->addNewTranslation();
@@ -42,7 +42,7 @@ ForestScene::ForestScene()
 
     // create clock
     this->m_clock = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3);
+            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false);
 
     TranslationPtr clockTranslation =
             this->m_clock->getTransformation()->addNewTranslation();
@@ -57,13 +57,13 @@ ForestScene::ForestScene()
 
     // create shader programs
     this->m_plainShaderProgram = ShaderProgram::createFromShaderFiles(
-            "tree_scene\\plain.vert", "_templates\\basic.frag");
+            "tree_scene\\plain.vert", "_templates\\basic.frag", false);
     this->m_treesShaderProgram = ShaderProgram::createFromShaderFiles(
-            "tree_scene\\tree.vert", "_templates\\basic.frag");
+            "tree_scene\\tree.vert", "_templates\\basic.frag", false);
     this->m_bushesShaderProgram = ShaderProgram::createFromShaderFiles(
-            "tree_scene\\bush.vert", "_templates\\basic.frag");
+            "tree_scene\\bush.vert", "_templates\\basic.frag", false);
     this->m_clockShaderProgram = ShaderProgram::createFromShaderFiles(
-            "wallclock_scene\\clock.vert", "_templates\\basic.frag");
+            "wallclock_scene\\clock.vert", "_templates\\basic.frag", false);
 
     // add camera
     std::shared_ptr<CameraCommonSettings> commonSettings =
@@ -123,7 +123,7 @@ void ForestScene::createRandomTrees(
 
         this->m_trees.push_back(
                 DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                        tree, sizeof(tree) / sizeof(tree[0]), 2));
+                        tree, sizeof(tree) / sizeof(tree[0]), 2, false));
         DrawableObject* drawableTree = this->m_trees.back().get();
         TranslationPtr translation =
                 drawableTree->getTransformation()->addNewTranslation();
@@ -146,7 +146,7 @@ void ForestScene::createRandomBushes(
 
         this->m_bushes.push_back(
                 DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                        bushes, sizeof(bushes) / sizeof(bushes[0]), 2));
+                        bushes, sizeof(bushes) / sizeof(bushes[0]), 2, false));
         DrawableObject* drawableBush = this->m_bushes.back().get();
         TranslationPtr translation =
                 drawableBush->getTransformation()->addNewTranslation();
@@ -175,3 +175,6 @@ void ForestScene::drawClock(
             this->m_pinsRotations);
     this->m_clock->draw(*this->m_clockShaderProgram);
 }
+
+void ForestScene::drawSkybox(
+        const float deltaT) {}

@@ -12,13 +12,13 @@ DrawableObjectFactory DrawableObjectFactory::s_instance{};
 
 DrawableObjectPtr DrawableObjectFactory::createDrawableObjectFromVerticesData(
         const float* verticesData, size_t arrayElementsCount,
-        int attributesCount) {
+        int attributesCount, bool uses2dTextures) {
     if (ModelPtr cachedModel = s_instance.m_modelsCache[verticesData].lock()) {
         return std::make_unique<DrawableObject>(cachedModel);
     }
 
     ModelPtr model = std::make_shared<Model>(Model::fromVerticesData(
-            verticesData, arrayElementsCount, attributesCount));
+            verticesData, arrayElementsCount, attributesCount, uses2dTextures));
 
     s_instance.m_modelsCache[verticesData] = model;
     return std::make_unique<DrawableObject>(model);

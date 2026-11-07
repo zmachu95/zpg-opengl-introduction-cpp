@@ -15,17 +15,20 @@
 #include <memory>
 #include <shaders/ShaderProgram.h>
 #include <string>
+#include <textures/ITexture.h>
 #include <utility>
+#include <vector>
 
 using namespace std::string_literals;
 
 ShaderProgram::ShaderProgram(
         GLuint id, const UniformVariableManagerPtr& uniformVariableManager,
         const VertexShaderPtr& vertexShader,
-        const FragmentShaderPtr& fragmentShader)
+        const FragmentShaderPtr& fragmentShader, bool rendersSkybox)
     : m_id{id}, m_uniformVarManager{uniformVariableManager},
       m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader},
-      m_supplementalUniformMatrices{} {
+      m_supplementalUniformMatrices{}, m_initializedTextureSamplers{false},
+      m_rendersSkybox{rendersSkybox} {
     std::cout << "Created shader program with ID " << id << ".\n";
 }
 
@@ -36,7 +39,10 @@ ShaderProgram::ShaderProgram(
       m_fragmentShader{std::move(other.m_fragmentShader)},
       m_vertexShader{std::move(other.m_vertexShader)},
       m_supplementalUniformMatrices{
-              std::move(other.m_supplementalUniformMatrices)} {}
+              std::move(other.m_supplementalUniformMatrices)},
+      m_initializedTextureSamplers{
+              std::exchange(other.m_initializedTextureSamplers, true)},
+      m_rendersSkybox{other.m_rendersSkybox} {}
 
 ShaderProgram::~ShaderProgram() { this->deleteProgram(); }
 
@@ -51,6 +57,9 @@ ShaderProgram& ShaderProgram::operator=(
         this->m_fragmentShader = std::move(other.m_fragmentShader);
         this->m_supplementalUniformMatrices =
                 std::move(other.m_supplementalUniformMatrices);
+        this->m_initializedTextureSamplers =
+                std::exchange(other.m_initializedTextureSamplers, true);
+        this->m_rendersSkybox = other.m_rendersSkybox;
     }
 
     return *this;
@@ -58,19 +67,19 @@ ShaderProgram& ShaderProgram::operator=(
 
 ShaderProgramPtr ShaderProgram::createFromShaderFiles(
         const std::string& vertexShaderFile,
-        const std::string& fragmentShaderFile) {
+        const std::string& fragmentShaderFile, bool rendersSkybox) {
     VertexShaderPtr vertexShader =
             ShaderFactory::createVertexShaderFromFile(vertexShaderFile);
     FragmentShaderPtr fragmentShader =
             ShaderFactory::createFragmentShaderFromFile(fragmentShaderFile);
 
     return std::make_unique<ShaderProgram>(
-            ShaderProgram::link(vertexShader, fragmentShader));
+            ShaderProgram::link(vertexShader, fragmentShader, rendersSkybox));
 }
 
 ShaderProgram ShaderProgram::link(
         const VertexShaderPtr& vertexShader,
-        const FragmentShaderPtr& fragmentShader) {
+        const FragmentShaderPtr& fragmentShader, bool rendersSkybox) {
     GLuint shaderProgramId = glCreateProgram();
     if (shaderProgramId == 0) {
         throw ShaderProgramNotCreatedException{
@@ -84,7 +93,7 @@ ShaderProgram ShaderProgram::link(
 
     return ShaderProgram{shaderProgramId,
             std::make_shared<UniformVariableManager>(shaderProgramId),
-            vertexShader, fragmentShader};
+            vertexShader, fragmentShader, rendersSkybox};
 }
 
 void ShaderProgram::deleteProgram() {
@@ -116,12 +125,28 @@ std::weak_ptr<ICameraUpdateListener> ShaderProgram::asCameraUpdateListener() {
     return std::weak_ptr<UniformVariableManager>(this->m_uniformVarManager);
 }
 
+void ShaderProgram::initializeTextureSamplers(
+        const std::vector<TexturePtr>& textures) {
+    if (this->m_initializedTextureSamplers || textures.empty()) {
+        return;
+    }
+
+    for (const TexturePtr& texture : textures) {
+        this->m_uniformVarManager->initializeTextureSampler(
+                texture->getTexturingUnitId());
+    }
+
+    this->m_initializedTextureSamplers = true;
+}
+
 void ShaderProgram::use(
-        const glm::mat4& transformationMatrix) {
+        const glm::mat4& transformationMatrix,
+        const std::vector<TexturePtr>& textures) {
     glUseProgram(this->m_id);
+    this->initializeTextureSamplers(textures);
     this->m_uniformVarManager->applyTransformation(transformationMatrix);
     if (this->m_uniformVarManager->isCameraUpdated()) {
-        this->m_uniformVarManager->applyCameraMatrices();
+        this->m_uniformVarManager->applyCameraMatrices(this->m_rendersSkybox);
     }
     this->applySupplementalMatrices();
 }

@@ -12,7 +12,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <textures/ITexture.h>
 #include <utility>
+#include <vector>
 
 using namespace std::string_literals;
 
@@ -20,6 +22,11 @@ using namespace std::string_literals;
  * @brief Number of dimensions in 3D.
  */
 constexpr int DIMENSIONS_COUNT = 3;
+
+/**
+ * @brief Number of values needed for textures.
+ */
+constexpr int TEXTURE_DIMS_COUNT = 2;
 
 Model::Model(
         GLuint vao, GLuint vbo, GLsizei verticeCount)
@@ -55,12 +62,15 @@ Model& Model::operator=(
 
 Model Model::fromVerticesData(
         const float* verticesData, size_t arrayElementsCount,
-        int attributesCount) {
-    size_t floatsPerVertex = (size_t)DIMENSIONS_COUNT * attributesCount;
+        int attributesCount, bool uses2dTextures) {
+    size_t floatsPerVertex = (size_t)DIMENSIONS_COUNT * attributesCount
+                             + uses2dTextures * TEXTURE_DIMS_COUNT;
     if (arrayElementsCount % floatsPerVertex != 0) {
         throw std::invalid_argument(
                 "Supplied array is not divisible by "
-                + std::to_string(DIMENSIONS_COUNT * attributesCount) + "!");
+                + std::to_string(DIMENSIONS_COUNT * attributesCount
+                                 + uses2dTextures * TEXTURE_DIMS_COUNT)
+                + "!");
     }
 
     size_t verticesCount = arrayElementsCount / floatsPerVertex;
@@ -75,19 +85,32 @@ Model Model::fromVerticesData(
             (GLsizeiptr)arrayElementsCount * sizeof(float),
             (const void*)verticesData, GL_STATIC_DRAW);
 
-    addVertexAttributes(attributesCount);
+    addVertexAttributes(attributesCount, uses2dTextures);
     glBindVertexArray(0);
 
     return Model(vao, vbo, (GLsizei)verticesCount);
 }
 
 void Model::addVertexAttributes(
-        GLuint attributesCount) {
+        GLuint attributesCount, bool uses2dTextures) {
+    // attributes
+    const GLint attributeSize = DIMENSIONS_COUNT;
+    const GLsizei stride = (GLsizei)(attributesCount * DIMENSIONS_COUNT
+                                     + uses2dTextures * TEXTURE_DIMS_COUNT)
+                           * sizeof(float);
+    const int offsetStep = (DIMENSIONS_COUNT * sizeof(float));
     for (GLuint i = 0; i < attributesCount; i++) {
         glEnableVertexAttribArray(i);
-        glVertexAttribPointer(i, DIMENSIONS_COUNT, GL_FLOAT, GL_FALSE,
-                (GLsizei)attributesCount * DIMENSIONS_COUNT * sizeof(float),
-                (GLvoid*)((size_t)DIMENSIONS_COUNT * i * sizeof(float)));
+        glVertexAttribPointer(i, attributeSize, GL_FLOAT, GL_FALSE, stride,
+                (GLvoid*)((size_t)offsetStep * i));
+    }
+
+    // texture mapping
+    if (uses2dTextures) {
+        glEnableVertexAttribArray(attributesCount);
+        glVertexAttribPointer(attributesCount, TEXTURE_DIMS_COUNT, GL_FLOAT,
+                GL_FALSE, stride,
+                (GLvoid*)((size_t)offsetStep * attributesCount));
     }
 }
 
@@ -114,14 +137,29 @@ const GLuint Model::getVbo() const { return this->m_vbo; }
 const GLsizei Model::getVerticesCount() const { return this->m_verticesCount; }
 
 void Model::draw(
-        ShaderProgram& shaderProgram, const glm::mat4& transformation) const {
+        ShaderProgram& shaderProgram, const glm::mat4& transformation,
+        const std::vector<TexturePtr>& textures) const {
     if (this->m_vao != 0 && this->m_vbo != 0) {
-        shaderProgram.use(transformation);
+        shaderProgram.use(transformation, textures);
+
+        // apply textures to their texturing units
+        for (const TexturePtr& texture : textures) {
+            glActiveTexture(texture->getTexturingUnit());
+            glBindTexture(texture->getTextureTarget(), texture->getId());
+        }
+
+        // make draw call
         glBindVertexArray(this->m_vao);
         glDrawArrays(GL_TRIANGLES, 0,
                 this->m_verticesCount); // mode,first,count
 
+        // unbind VAO and textures from texturing units
         glBindVertexArray(0);
+        for (auto it = textures.crbegin(); it != textures.crend(); it++) {
+            glActiveTexture((*it)->getTexturingUnit());
+            glBindTexture((*it)->getTextureTarget(), 0);
+        }
+
         glUseProgram(0);
     }
 }

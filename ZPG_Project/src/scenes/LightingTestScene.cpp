@@ -24,14 +24,16 @@ LightingTestScene::LightingTestScene()
     : m_activeShaderProgram{}, m_ambientShaderProgram{},
       m_lambertShaderProgram{}, m_phongShaderProgram{}, m_blinnShaderProgram{},
       m_spheres{}, m_cameraController{}, m_camera{} {
-    this->m_ambientShaderProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "lighting_test_scene\\ambient.frag");
-    this->m_lambertShaderProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "lighting_test_scene\\lambert.frag");
+    this->m_ambientShaderProgram =
+            ShaderProgram::createFromShaderFiles("_templates\\basic.vert",
+                    "lighting_test_scene\\ambient.frag", false);
+    this->m_lambertShaderProgram =
+            ShaderProgram::createFromShaderFiles("_templates\\basic.vert",
+                    "lighting_test_scene\\lambert.frag", false);
     this->m_phongShaderProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "lighting_test_scene\\phong.frag");
+            "_templates\\basic.vert", "lighting_test_scene\\phong.frag", false);
     this->m_blinnShaderProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "lighting_test_scene\\blinn.frag");
+            "_templates\\basic.vert", "lighting_test_scene\\blinn.frag", false);
 
     this->m_activeShaderProgram = this->m_ambientShaderProgram;
 
@@ -39,7 +41,7 @@ LightingTestScene::LightingTestScene()
     for (int i = 0; i < this->m_spheres.size(); i++) {
         this->m_spheres[i] =
                 DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                        sphere, sizeof(sphere) / sizeof(sphere[0]), 2);
+                        sphere, sizeof(sphere) / sizeof(sphere[0]), 2, false);
         ScalePtr sphereScale =
                 this->m_spheres[i]->getTransformation()->addNewScale();
         sphereScale->setScaleTo(0.1f, 0.1f, 0.1f);
@@ -121,3 +123,6 @@ void LightingTestScene::handleWindowResize(
         int width, int height) {
     this->m_camera->setAspectRatio(width, height);
 }
+
+void LightingTestScene::drawSkybox(
+        const float deltaT) {}

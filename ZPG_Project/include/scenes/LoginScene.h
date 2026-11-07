@@ -36,6 +36,12 @@ class LoginScene : public IScene {
     virtual void draw(const float deltaT);
 
     /**
+     * @brief Draws the scene's skybox.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    virtual void drawSkybox(const float deltaT);
+
+    /**
      * @brief Handles the mouse cursor position change.
      * @param cursorDeltaX X component of cursor position change.
      * @param cursorDeltaY Y component of cursor position change.

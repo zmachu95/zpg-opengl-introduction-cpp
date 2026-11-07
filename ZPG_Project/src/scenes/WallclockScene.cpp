@@ -22,9 +22,9 @@
 
 WallclockScene::WallclockScene() : m_program{}, m_clock{}, m_pinsRotations{} {
     this->m_program = ShaderProgram::createFromShaderFiles(
-            "wallclock_scene\\clock.vert", "_templates\\basic.frag");
+            "wallclock_scene\\clock.vert", "_templates\\basic.frag", false);
     this->m_clock = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3);
+            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false);
 }
 
 void WallclockScene::draw(
@@ -53,3 +53,6 @@ void WallclockScene::handleKeyPresses(
 
 void WallclockScene::handleWindowResize(
         int width, int height) {}
+
+void WallclockScene::drawSkybox(
+        const float deltaT) {}

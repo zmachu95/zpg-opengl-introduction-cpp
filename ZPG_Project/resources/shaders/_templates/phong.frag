@@ -7,6 +7,11 @@
 in vec3 vertexNormal;
 in vec3 vertexPosition;
 in vec3 vertexColor;
+in vec2 texCoords;
+
+// add more samplers if needed with names textureX, where X is [0, 15]
+uniform bool usesTextures = false;
+uniform sampler2D texture0;
 
 uniform vec3 cameraPosition = vec3(0.0f);
 uniform vec3 lightPosition = vec3(0.0f);
@@ -41,8 +46,13 @@ void main()
 
     float ambientFactor = 0.1f;
     float diffFactor = calculateDiffusionIntensity(normalizedToLightVector, normalizedVertexNormal);
-    float specFactor = calculateSpecularIntensity(normalizedToLightVector, normalizedVertexNormal);
+    float specFactor = dot(normalizedToLightVector, normalizedVertexNormal) > 0 ? calculateSpecularIntensity(normalizedToLightVector, normalizedVertexNormal) : 0;
     float attenuation = calculateAttenuation();
+    vec4 baseColor = usesTextures ? texture(texture0, texCoords) : vec4(vertexColor, 1.0f);
 
-    FragColor = vec4((ambientFactor + attenuation * diffFactor) * vertexColor + attenuation * specFactor * vec3(1.0f), 1.0f);
+    vec3 ambient = ambientFactor * baseColor.xyz;
+    vec3 diffuse = attenuation * diffFactor * baseColor.xyz;
+    vec3 specular = attenuation * specFactor * vec3(1.0f);
+
+    FragColor = vec4(ambient + diffuse + specular, baseColor.w);
 }

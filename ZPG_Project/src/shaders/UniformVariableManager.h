@@ -48,9 +48,16 @@ class UniformVariableManager : public ICameraUpdateListener {
 
     /**
      * @brief Applies cached camera matrices in shader program.
-     *
+     * @param rendersSkybox Flag whether the parent shader program is rendering
+     * a skybox.
      */
-    void applyCameraMatrices();
+    void applyCameraMatrices(bool rendersSkybox);
+
+    /**
+     * @brief Initializes texture sampler with given index.
+     * @param index Texture sampler index.
+     */
+    void initializeTextureSampler(int index);
 
     /*
      *

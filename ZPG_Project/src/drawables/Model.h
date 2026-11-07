@@ -5,11 +5,15 @@
 #pragma once
 
 #include <glm/fwd.hpp>
+#include <memory>
+#include <vector>
 
 class ShaderProgram;
+class ITexture;
 
 using GLuint = unsigned int;
 using GLsizei = int;
+using TexturePtr = std::shared_ptr<ITexture>;
 
 /**
  * @brief Represents single OpenGL with its VBO and VAO objects.
@@ -57,12 +61,16 @@ class Model {
      * @param verticesPositionsAndColors Array containing vertice positions and
      * colors.
      * @param elementsCount The total number of floats in the array.
+     * @param uses2dTextures Supply true if model uses 2D textures, otherwise
+     * false.
      * @return New Model object.
      * @throw std::invalid_argument Thrown when the supplied array is not
-     * divisible by 6 (3 position floats + 3 color floats).
+     * divisible by 6 or 8 (3 position floats + 3 color floats + 2 uv floats)
+     * respectively.
      */
     static Model fromVerticesData(const float* verticesData,
-            size_t arrayElementsCount, int attributesCount);
+            size_t arrayElementsCount, int attributesCount,
+            bool uses2dTextures);
 
     /*
      *
@@ -94,9 +102,10 @@ class Model {
      * @brief Draws the model in the currently active scene.
      * @param shaderProgram Shader program to be used for drawing the model.
      * @param transformation Transformation applied to the model.
+     * @param textures Reference to vector with textures.
      */
-    void draw(ShaderProgram& shaderProgram,
-            const glm::mat4& transformation) const;
+    void draw(ShaderProgram& shaderProgram, const glm::mat4& transformation,
+            const std::vector<TexturePtr>& textures) const;
 
   private:
     GLuint m_vao;
@@ -114,8 +123,10 @@ class Model {
     /**
      * @brief Adds given number of attributes to currently active VAO object.
      * @param attributesCount Number of attributes to add.
+     * @param uses2dTextures Flag whether model uses 2D textures.
      */
-    static void addVertexAttributes(GLuint attributesCount);
+    static void addVertexAttributes(
+            GLuint attributesCount, bool uses2dTextures);
 
     /**
      * @brief Deletes the encapsulated VAO object from OpenGL.

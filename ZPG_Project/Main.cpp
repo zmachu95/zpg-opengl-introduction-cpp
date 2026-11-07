@@ -2,6 +2,9 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define GLAD_GL_IMPLEMENTATION
 
 #ifndef GLAD_GL_H_

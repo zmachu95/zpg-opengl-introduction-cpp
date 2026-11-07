@@ -14,6 +14,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
+using namespace std::string_literals;
+
 /**
  * @brief Name of transformation matrix shader uniform variable.
  */
@@ -39,6 +41,16 @@ static constexpr const char* CAMERA_POSITION_UNIFORM_VAR = "cameraPosition";
  * @brief Name of normal matrix shader uniform variable.
  */
 static constexpr const char* NORMAL_MATRIX_UNIFORM_VAR = "normalMatrix";
+
+/**
+ * @brief Name of texturing unit sampler uniform variable.
+ */
+static const std::string SAMPLER_UNIFORM_VAR = "texture";
+
+/**
+ * @brief Name of `uses textures` flag uniform variable.
+ */
+static constexpr const char* USES_TEXTURES_FLAG_VAR = "usesTextures";
 
 using namespace std::string_literals;
 
@@ -144,11 +156,18 @@ void UniformVariableManager::applyTransformation(
             glm::transpose(glm::inverse(glm::mat3(transformationMatrix))));
 }
 
-void UniformVariableManager::applyCameraMatrices() {
+void UniformVariableManager::applyCameraMatrices(
+        bool rendersSkybox) {
     this->m_cameraUpdated = false;
     this->setMat4UniformVar(
             PROJECTION_MATRIX_UNIFORM_VAR, this->m_projectionMatrix);
-    this->setMat4UniformVar(VIEW_MATRIX_UNIFORM_VAR, this->m_viewMatrix);
+
+    /* in case of skybox rendering, remove the translation part from view matrix
+     * to make skybox move with the camera
+     */
+    this->setMat4UniformVar(VIEW_MATRIX_UNIFORM_VAR,
+            rendersSkybox ? glm::mat4{glm::mat3{this->m_viewMatrix}}
+                          : this->m_viewMatrix);
     this->setVec3UniformVar(
             CAMERA_POSITION_UNIFORM_VAR, this->m_cameraPosition);
 }
@@ -159,4 +178,10 @@ void UniformVariableManager::applySupplementalMatrices(
     for (const auto& kvPair : supplementalMatricesMap) {
         this->setMat4UniformVar(kvPair.first, kvPair.second);
     }
+}
+
+void UniformVariableManager::initializeTextureSampler(
+        int index) {
+    this->setIntUniformVar(SAMPLER_UNIFORM_VAR + std::to_string(index), index);
+    this->setBoolUniformVar(USES_TEXTURES_FLAG_VAR, true);
 }

@@ -6,7 +6,9 @@
 
 #include <memory>
 #include <transformations/IGroupedTransformation.h>
+#include <vector>
 
+class ITexture;
 class Model;
 class ShaderProgram;
 
@@ -16,7 +18,13 @@ class ShaderProgram;
 using ModelPtr = std::shared_ptr<Model>;
 
 /**
- * @brief Represents a drawable object with its spatial transformation.
+ * @brief Pointer to ITexture object.
+ */
+using TexturePtr = std::shared_ptr<ITexture>;
+
+/**
+ * @brief Represents a drawable object with its spatial transformation and
+ * potentially textures.
  */
 class DrawableObject {
   public:
@@ -46,7 +54,19 @@ class DrawableObject {
      */
     void draw(ShaderProgram& shaderProgram);
 
+    /*
+     *
+     */
+
+    /**
+     * @brief Adds texture to the object.
+     * @param texture Texture to be added.
+     * @return Reference to self.
+     */
+    DrawableObject& addTexture(const TexturePtr& texture);
+
   private:
     ModelPtr m_model;
     GroupedTransformationPtr m_transformation;
+    std::vector<TexturePtr> m_textures;
 };

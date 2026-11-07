@@ -12,6 +12,7 @@
 #include <scenes/ForestScene.h>
 #include <scenes/LightingTestScene.h>
 #include <scenes/LoginScene.h>
+#include <scenes/ShrekFionaScene.h>
 #include <scenes/SolarSystemScene.h>
 #include <scenes/TriangleScene.h>
 #include <scenes/WallclockScene.h>
@@ -105,6 +106,7 @@ void Application::initialize() {
     this->subscribeListeners();
 
     srand(time(nullptr));
+    this->m_scenes.push_back(std::make_unique<ShrekFionaScene>());
     this->m_scenes.push_back(std::make_unique<TriangleScene>());
     this->m_scenes.push_back(std::make_unique<LoginScene>());
     this->m_scenes.push_back(std::make_unique<ForestScene>());
@@ -133,6 +135,8 @@ void Application::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (this->m_activeScene) {
+            this->m_activeScene->drawSkybox(!this->m_pause * deltaT);
+            glClear(GL_DEPTH_BUFFER_BIT);
             this->m_activeScene->draw(!this->m_pause * deltaT);
         }
 
@@ -186,6 +190,9 @@ void Application::handleKeyPresses(
                 return;
             case KeyCodes::KEY_KP_6:
                 this->activateScene(this->m_scenes[5]);
+                return;
+            case KeyCodes::KEY_KP_7:
+                this->activateScene(this->m_scenes[6]);
                 return;
             case KeyCodes::KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GL_TRUE);

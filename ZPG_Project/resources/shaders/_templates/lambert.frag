@@ -7,10 +7,15 @@
 in vec3 vertexNormal;
 in vec3 vertexPosition;
 in vec3 vertexColor;
+in vec2 texCoords;
 
-out vec4 FragColor;
+// add more samplers if needed with names textureX, where X is [0, 15]
+uniform bool usesTextures = false;
+uniform sampler2D texture0;
 
 uniform vec3 lightPosition = vec3(0.0f);
+
+out vec4 FragColor;
 
 float calculateAttenuation() {
     const float k_c = 1.0;
@@ -31,5 +36,10 @@ void main()
     float ambientFactor = 0.1f;
     float diffFactor = calculateDiffusionIntensity();
     float attenuation = calculateAttenuation();
-    FragColor = vec4((ambientFactor + attenuation * diffFactor) * vertexColor, 1.0f);
+    vec4 baseColor = usesTextures ? texture(texture0, texCoords) : vec4(vertexColor, 1.0f);
+
+    vec3 ambient = ambientFactor * baseColor.xyz;
+    vec3 diffuse = attenuation * diffFactor * baseColor.xyz;
+
+    FragColor = vec4(ambient + diffuse, baseColor.w);
 }

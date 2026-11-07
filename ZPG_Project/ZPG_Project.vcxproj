@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir);$(SolutionDir)Libraries\glfw-3.5.1.bin.WIN64\include;$(SolutionDir)Libraries\glm;$(SolutionDir)Libraries\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir);$(SolutionDir)Libraries\glfw-3.5.1.bin.WIN64\include;$(SolutionDir)Libraries\glm;$(SolutionDir)Libraries\glad\include;$(SolutionDir)Libraries\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/w44365 %(AdditionalOptions)</AdditionalOptions>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -147,6 +147,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\textures\SkyboxTexture.cpp" />
+    <ClCompile Include="src\scenes\ShrekFionaScene.cpp" />
+    <ClCompile Include="src\textures\ImageData.cpp" />
     <ClCompile Include="src\application\Application.cpp" />
     <ClCompile Include="src\cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="src\cameras\CameraCommonSettings.cpp" />
@@ -177,8 +180,16 @@
     <ClCompile Include="src\transformations\TransformationChangePublisher.cpp" />
     <ClCompile Include="src\transformations\Translation.cpp" />
     <ClCompile Include="src\shaders\VertexShader.cpp" />
+    <ClCompile Include="src\textures\Texture2dCore.cpp" />
+    <ClCompile Include="src\textures\TextureOptionsTranslator.cpp" />
+    <ClCompile Include="src\textures\TextureFactory.cpp" />
+    <ClCompile Include="src\textures\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\scenes\ShrekFionaScene.h" />
+    <ClInclude Include="include\textures\ITexture.h" />
+    <ClInclude Include="src\textures\SkyboxTexture.h" />
+    <ClInclude Include="src\textures\ImageData.h" />
     <ClInclude Include="include\application\Application.h" />
     <ClInclude Include="include\cameras\CameraCommonSettings.h" />
     <ClInclude Include="include\transformations\GroupedTransformationFactory.h" />
@@ -230,6 +241,10 @@
     <ClInclude Include="resources\models\sphere.h" />
     <ClInclude Include="src\shaders\VertexShader.h" />
     <ClInclude Include="resources\models\triangle.h" />
+    <ClInclude Include="src\textures\Texture2dCore.h" />
+    <ClInclude Include="src\textures\TextureOptionsTranslator.h" />
+    <ClInclude Include="include\textures\TextureFactory.h" />
+    <ClInclude Include="src\textures\Texture2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

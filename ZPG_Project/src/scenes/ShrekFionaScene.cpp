@@ -16,8 +16,6 @@
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObjectFactory.h>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <iostream>
-#include <others/WallclockUtils.h>
 #include <resources/models/fiona.h>
 #include <resources/models/shrek.h>
 #include <resources/models/skybox.h>
@@ -32,24 +30,32 @@ ShrekFionaScene::ShrekFionaScene()
     this->m_objectsProgram = ShaderProgram::createFromShaderFiles(
             "_templates\\basic.vert", "_templates\\ambient.frag", false);
     this->m_shrek = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            shrekVertices, sizeof(shrekVertices) / sizeof(shrekVertices[0]), 2,
-            true);
+            shrek, sizeof(shrek) / sizeof(shrek[0]), 2, true);
     this->m_shrek->addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\shrek.png", TexturingUnit::UNIT0));
+    RotationPtr shrekRotation =
+            this->m_shrek->getTransformation()->addNewRotation(
+                    1.0f, 0.0f, 0.0f);
+    shrekRotation->setAngle(-90.0f);
 
     this->m_fiona = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            fionaVertices, sizeof(fionaVertices) / sizeof(fionaVertices[0]), 2,
-            true);
+            fiona, sizeof(fiona) / sizeof(fiona[0]), 2, true);
     this->m_fiona->addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\fiona.png", TexturingUnit::UNIT0));
+    RotationPtr fionaRotation =
+            this->m_fiona->getTransformation()->addNewRotation(
+                    1.0f, 0.0f, 0.0f);
+    fionaRotation->setAngle(-90.0f);
 
     this->m_toilet =
             DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    toiletVertices,
-                    sizeof(toiletVertices) / sizeof(toiletVertices[0]), 2,
-                    true);
+                    toilet, sizeof(toilet) / sizeof(toilet[0]), 2, true);
     this->m_toilet->addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\toilet.jpg", TexturingUnit::UNIT0));
+    RotationPtr toiletRotation =
+            this->m_toilet->getTransformation()->addNewRotation(
+                    1.0f, 0.0f, 0.0f);
+    toiletRotation->setAngle(-90.0f);
 
     this->m_skyboxProgram = ShaderProgram::createFromShaderFiles(
             "_templates\\skybox.vert", "_templates\\skybox.frag", true);

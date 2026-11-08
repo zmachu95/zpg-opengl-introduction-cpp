@@ -46,7 +46,7 @@ constexpr float DEFAULT_MOUSE_SENSITIVITY = 3.0f;
 /**
  * @brief The default value of camera movement speed factor.
  */
-constexpr float DEFAULT_CAMERA_SPEED = 1.0f;
+constexpr float DEFAULT_CAMERA_SPEED = 3.0f;
 
 CameraCommonSettings::CameraCommonSettings(
         bool invertVerticalAxis, float mouseLookSensitivity,

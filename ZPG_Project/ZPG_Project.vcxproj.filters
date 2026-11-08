@@ -126,6 +126,9 @@
     <ClCompile Include="src\textures\SkyboxTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\scenes\ClassroomScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\application\Application.h">
@@ -303,6 +306,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\textures\SkyboxTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\ClassroomScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

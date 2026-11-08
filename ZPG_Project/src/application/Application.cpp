@@ -9,6 +9,7 @@
 #include <constants/KeyModifiers.h>
 #include <cstdlib>
 #include <ctime>
+#include <scenes/ClassroomScene.h>
 #include <scenes/ForestScene.h>
 #include <scenes/LightingTestScene.h>
 #include <scenes/LoginScene.h>
@@ -106,6 +107,7 @@ void Application::initialize() {
     this->subscribeListeners();
 
     srand(time(nullptr));
+    this->m_scenes.push_back(std::make_unique<ClassroomScene>());
     this->m_scenes.push_back(std::make_unique<ShrekFionaScene>());
     this->m_scenes.push_back(std::make_unique<TriangleScene>());
     this->m_scenes.push_back(std::make_unique<LoginScene>());
@@ -193,6 +195,9 @@ void Application::handleKeyPresses(
                 return;
             case KeyCodes::KEY_KP_7:
                 this->activateScene(this->m_scenes[6]);
+                return;
+            case KeyCodes::KEY_KP_8:
+                this->activateScene(this->m_scenes[7]);
                 return;
             case KeyCodes::KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GL_TRUE);

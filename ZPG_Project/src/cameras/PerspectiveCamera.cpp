@@ -84,7 +84,8 @@ PerspectiveCamera::PerspectiveCamera(
 PerspectiveCamera::PerspectiveCamera(
         const std::shared_ptr<CameraCommonSettings>& commonSettings,
         float aspectRatio)
-    : PerspectiveCamera(commonSettings, aspectRatio, glm::vec3{0.0f}) {}
+    : PerspectiveCamera(
+              commonSettings, aspectRatio, glm::vec3{0.0f, 1.7f, 0.0f}) {}
 
 PerspectiveCamera::~PerspectiveCamera() = default;
 

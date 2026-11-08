@@ -7,16 +7,21 @@
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 color;
+layout (location = 3) in vec2 inTexCoords;
 
 uniform mat4 transformation = mat4(1.0f);
 uniform mat4 projectionMatrix = mat4(1.0f);
 uniform mat4 viewMatrix = mat4(1.0f) ;
+uniform mat3 normalMatrix = mat3(1.0f);
 
 uniform mat4 secondsPinTransformation = mat4(1.0f);
 uniform mat4 minutesPinTransformation = mat4(1.0f);
 uniform mat4 hoursPinTransformation = mat4(1.0f);
 
 out vec3 vertexColor;
+out vec3 vertexNormal;
+out vec3 vertexPosition;
+out vec2 texCoords;
 
 // changes input color to something more fancy
 vec3 apply_color(vec3 input_color) {
@@ -57,5 +62,8 @@ vec4 apply_transformations(vec3 input_color) {
 void main()
 {
     vertexColor = apply_color(color);
+    vertexNormal = normalMatrix * normal;
+    vertexPosition = vec3(transformation * vec4(position, 1.0));
+    texCoords = inTexCoords;
     gl_Position = apply_transformations(color);
 }

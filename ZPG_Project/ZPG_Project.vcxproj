@@ -147,6 +147,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scenes\ClassroomScene.cpp" />
     <ClCompile Include="src\textures\SkyboxTexture.cpp" />
     <ClCompile Include="src\scenes\ShrekFionaScene.cpp" />
     <ClCompile Include="src\textures\ImageData.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="src\textures\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\scenes\ClassroomScene.h" />
     <ClInclude Include="include\scenes\ShrekFionaScene.h" />
     <ClInclude Include="include\textures\ITexture.h" />
     <ClInclude Include="src\textures\SkyboxTexture.h" />

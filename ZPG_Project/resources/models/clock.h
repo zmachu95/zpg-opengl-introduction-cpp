@@ -12,9 +12,9 @@
 *
 **/
 
-static const size_t vertexCount = 44826;
+const size_t vertexCount = 44826;
 
-static const float clockModel[] =
+const float clockModel[] =
 {
     0.01172830f, 0.80797142f, -0.03423869f, -0.00000004f, -0.00000006f, -1.00000000f, 0.00000000f, 1.00000000f, 0.00000000f, 
     0.01213454f, -0.13853841f, -0.03423864f, -0.00000006f, -0.00000006f, -1.00000000f, 0.00000000f, 1.00000000f, 0.00000000f, 

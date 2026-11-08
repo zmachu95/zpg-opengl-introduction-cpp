@@ -1,0 +1,10 @@
+1) Splněno. 
+   a) Třída ImageData se stará o životní cyklus pixelových dat obrázků načtených do paměti s využitím knihovny stb_image.
+   b) Objekty typu DrawableObject nyní umožňují načíst objekty typu ITexture a ty posléze poslat ShaderProgramu k vykreslení v shaderu.
+      Jeden DrawableObject může použít až 16 různých textur.
+   c) Do projektu byl přidán skybox model jako krychle a speciální shader programy, které umí namapovat pozici vrcholu z této krychle na cube mapu.
+      Cube mapa je reprezentována třídou SkyboxTexture.
+2) Splněno částečně.
+   a) Model učebny byl seskládán nejprve v Blenderu, pak z něj byly odečteny transformace jednotlivých objektů.
+   b) V scéně jsou navíc monitory, počítače, hodiny, Shrek a miniatura jeho záchodu.
+   c) Na tabuli byla doplněna tématika násobení matic, Phongova osvětlovacího modelu a skalárního součinu vektorů.

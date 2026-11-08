@@ -133,12 +133,20 @@ class ShaderProgram {
      * draw call.
      * @param supplementalMatricesMap Map of shader matrix variables and their
      * values.
-     * @throw UniformVariableNotFoundException - Thrown if the variable could
-     * not be found.
      */
     void setSupplementalUniformMatrices(
             const std::unordered_map<std::string, glm::mat4>&
                     supplementalMatricesMap);
+
+    /**
+     * @brief Stores supplied supplemental 3D vectors for application during
+     * next draw call.
+     * @param supplementalVectorsMap Map of shader matrix variables and their
+     * values.
+     */
+    void setSupplementalUniformVectors(
+            const std::unordered_map<std::string, glm::vec3>&
+                    supplementalVectorsMap);
 
   private:
     GLuint m_id;
@@ -146,6 +154,7 @@ class ShaderProgram {
     VertexShaderPtr m_vertexShader;
     FragmentShaderPtr m_fragmentShader;
     std::unordered_map<std::string, glm::mat4> m_supplementalUniformMatrices;
+    std::unordered_map<std::string, glm::vec3> m_supplementalUniformVectors;
     bool m_initializedTextureSamplers;
     bool m_rendersSkybox;
 
@@ -189,9 +198,9 @@ class ShaderProgram {
     void deleteProgram();
 
     /**
-     * @brief Applies supplied supplementary matrices in the shader.
+     * @brief Applies supplied supplementary matrices and vectors in the shader.
      */
-    void applySupplementalMatrices();
+    void applySupplementalMatricesAndVectors();
 
     /**
      * @brief Initializes texturing unit samplers in the shader.

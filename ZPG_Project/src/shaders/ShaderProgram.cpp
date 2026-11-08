@@ -28,7 +28,7 @@ ShaderProgram::ShaderProgram(
     : m_id{id}, m_uniformVarManager{uniformVariableManager},
       m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader},
       m_supplementalUniformMatrices{}, m_initializedTextureSamplers{false},
-      m_rendersSkybox{rendersSkybox} {
+      m_rendersSkybox{rendersSkybox}, m_supplementalUniformVectors{} {
     std::cout << "Created shader program with ID " << id << ".\n";
 }
 
@@ -42,7 +42,9 @@ ShaderProgram::ShaderProgram(
               std::move(other.m_supplementalUniformMatrices)},
       m_initializedTextureSamplers{
               std::exchange(other.m_initializedTextureSamplers, true)},
-      m_rendersSkybox{other.m_rendersSkybox} {}
+      m_rendersSkybox{other.m_rendersSkybox},
+      m_supplementalUniformVectors{
+              std::move(other.m_supplementalUniformVectors)} {}
 
 ShaderProgram::~ShaderProgram() { this->deleteProgram(); }
 
@@ -60,6 +62,8 @@ ShaderProgram& ShaderProgram::operator=(
         this->m_initializedTextureSamplers =
                 std::exchange(other.m_initializedTextureSamplers, true);
         this->m_rendersSkybox = other.m_rendersSkybox;
+        this->m_supplementalUniformVectors =
+                std::move(other.m_supplementalUniformVectors);
     }
 
     return *this;
@@ -148,7 +152,7 @@ void ShaderProgram::use(
     if (this->m_uniformVarManager->isCameraUpdated()) {
         this->m_uniformVarManager->applyCameraMatrices(this->m_rendersSkybox);
     }
-    this->applySupplementalMatrices();
+    this->applySupplementalMatricesAndVectors();
 }
 
 void ShaderProgram::setSupplementalUniformMatrices(
@@ -157,10 +161,21 @@ void ShaderProgram::setSupplementalUniformMatrices(
     this->m_supplementalUniformMatrices = supplementalMatricesMap;
 }
 
-void ShaderProgram::applySupplementalMatrices() {
+void ShaderProgram::setSupplementalUniformVectors(
+        const std::unordered_map<std::string, glm::vec3>&
+                supplementalVectorsMap) {
+    this->m_supplementalUniformVectors = supplementalVectorsMap;
+}
+
+void ShaderProgram::applySupplementalMatricesAndVectors() {
     if (!this->m_supplementalUniformMatrices.empty()) {
         this->m_uniformVarManager->applySupplementalMatrices(
                 this->m_supplementalUniformMatrices);
         this->m_supplementalUniformMatrices.clear();
+    }
+    if (!this->m_supplementalUniformVectors.empty()) {
+        this->m_uniformVarManager->applySupplementalVectors(
+                this->m_supplementalUniformVectors);
+        this->m_supplementalUniformVectors.clear();
     }
 }

@@ -72,6 +72,15 @@ class UniformVariableManager : public ICameraUpdateListener {
             const std::unordered_map<std::string, glm::mat4>&
                     supplementalMatricesMap);
 
+    /**
+     * @brief Applies supplied supplementary 3D vectors in the shader.
+     * @param supplementalVectorsMap Map of shader matrix variables and their
+     * values.
+     */
+    void applySupplementalVectors(
+            const std::unordered_map<std::string, glm::vec3>&
+                    supplementalVectorsMap);
+
   private:
     GLuint m_parentShaderProgramId;
     bool m_cameraUpdated;

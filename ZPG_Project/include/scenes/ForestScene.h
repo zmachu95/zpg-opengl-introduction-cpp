@@ -16,13 +16,14 @@
 class DrawableObject;
 class ShaderProgram;
 class PerspectiveCamera;
+class ITranslation;
 enum class KeyCodes;
 enum class KeyActions;
 enum class KeyModifierFlags;
 
 using DrawableObjectPtr = std::unique_ptr<DrawableObject>;
 using ShaderProgramPtr = std::unique_ptr<ShaderProgram>;
-
+using TranslationPtr = std::shared_ptr<ITranslation>;
 /**
  * @brief Scene with random trees and bushes.
  */
@@ -75,15 +76,23 @@ class ForestScene : public IScene {
     std::vector<DrawableObjectPtr> m_bushes;
     DrawableObjectPtr m_plain;
     DrawableObjectPtr m_clock;
+    std::vector<DrawableObjectPtr> m_torchbugs;
+
+    DrawableObjectPtr m_skybox;
 
     ShaderProgramPtr m_plainShaderProgram;
     ShaderProgramPtr m_treesShaderProgram;
     ShaderProgramPtr m_bushesShaderProgram;
     ShaderProgramPtr m_clockShaderProgram;
+    ShaderProgramPtr m_torchbugsShaderProgram;
+    ShaderProgramPtr m_skyboxProgram;
 
     CameraUserInputController m_cameraController;
     std::unique_ptr<PerspectiveCamera> m_camera;
     std::unordered_map<std::string, glm::mat4> m_pinsRotations;
+    std::unordered_map<std::string, glm::vec3> m_torchbugLocations;
+    std::vector<float> m_torchbugPhaseAngles;
+    std::vector<TranslationPtr> m_torchbugLocalTranslations;
 
     /**
      * @brief Creates random trees.
@@ -102,4 +111,16 @@ class ForestScene : public IScene {
      * @param deltaT Time elapsed since the last drawn frame.
      */
     void drawClock(float deltaT);
+
+    /**
+     * @brief Provides logic for drawing torchbugs in the scene.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    void drawTorchbugs(float deltaT);
+
+    /**
+     * @brief Creates specified number of torchbugs with random locations.
+     * @param count Number of torchbugs to create.
+     */
+    void createRandomTorchbugs(int count);
 };

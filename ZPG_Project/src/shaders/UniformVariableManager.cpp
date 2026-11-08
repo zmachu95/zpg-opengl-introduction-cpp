@@ -38,6 +38,12 @@ static constexpr const char* VIEW_MATRIX_UNIFORM_VAR = "viewMatrix";
 static constexpr const char* CAMERA_POSITION_UNIFORM_VAR = "cameraPosition";
 
 /**
+ * @brief Name of camera viewing direction shader uniform variable.
+ */
+static constexpr const char* CAMERA_VIEW_DIRECTION_UNIFORM_VAR =
+        "cameraViewDirection";
+
+/**
  * @brief Name of normal matrix shader uniform variable.
  */
 static constexpr const char* NORMAL_MATRIX_UNIFORM_VAR = "normalMatrix";
@@ -170,6 +176,11 @@ void UniformVariableManager::applyCameraMatrices(
                           : this->m_viewMatrix);
     this->setVec3UniformVar(
             CAMERA_POSITION_UNIFORM_VAR, this->m_cameraPosition);
+
+    glm::vec3 cameraViewDirection = glm::vec3{-this->m_viewMatrix[0][2],
+            -this->m_viewMatrix[1][2], -this->m_viewMatrix[2][2]};
+    this->setVec3UniformVar(CAMERA_VIEW_DIRECTION_UNIFORM_VAR,
+            glm::normalize(cameraViewDirection));
 }
 
 void UniformVariableManager::applySupplementalMatrices(
@@ -177,6 +188,14 @@ void UniformVariableManager::applySupplementalMatrices(
                 supplementalMatricesMap) {
     for (const auto& kvPair : supplementalMatricesMap) {
         this->setMat4UniformVar(kvPair.first, kvPair.second);
+    }
+}
+
+void UniformVariableManager::applySupplementalVectors(
+        const std::unordered_map<std::string, glm::vec3>&
+                supplementalVectorsMap) {
+    for (const auto& kvPair : supplementalVectorsMap) {
+        this->setVec3UniformVar(kvPair.first, kvPair.second);
     }
 }
 

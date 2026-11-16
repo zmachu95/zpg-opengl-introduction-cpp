@@ -37,7 +37,7 @@ class Application : public IApplicationMediator, public IApplication {
      */
     Application(Application&&) noexcept = delete;
 
-    virtual ~Application();
+    ~Application() override;
 
     /*
      *

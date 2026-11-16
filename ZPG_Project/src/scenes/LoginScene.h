@@ -32,7 +32,7 @@ class LoginScene : public AbstractSceneTemplate {
      */
     LoginScene(int windowWidth, int windowHeight);
 
-    virtual ~LoginScene() = default;
+    ~LoginScene() override = default;
 
   protected:
     /**

@@ -80,7 +80,7 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
     AbstractSceneTemplate(
             int windowWidth, int windowHeight, DrawableObjectPtr&& skybox);
 
-    virtual ~AbstractSceneTemplate() = default;
+    ~AbstractSceneTemplate() override = default;
 
     /*
      *

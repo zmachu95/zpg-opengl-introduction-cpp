@@ -26,7 +26,7 @@ class LightingTestScene : public AbstractSceneTemplate {
      */
     LightingTestScene(int windowWidth, int windowHeight);
 
-    virtual ~LightingTestScene() = default;
+    ~LightingTestScene() override = default;
 
     /**
      * @brief Handles keyboard presses.

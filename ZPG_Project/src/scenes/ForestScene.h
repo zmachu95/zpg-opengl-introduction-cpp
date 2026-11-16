@@ -39,7 +39,7 @@ class ForestScene : public AbstractSceneTemplate {
      */
     ForestScene(int windowWidth, int windowHeight);
 
-    virtual ~ForestScene() = default;
+    ~ForestScene() override = default;
 
   protected:
     /**

@@ -21,7 +21,7 @@ class ShrekFionaScene : public AbstractSceneTemplate {
      */
     ShrekFionaScene(int windowWidth, int windowHeight);
 
-    virtual ~ShrekFionaScene() = default;
+    ~ShrekFionaScene() override = default;
 
   protected:
     /**

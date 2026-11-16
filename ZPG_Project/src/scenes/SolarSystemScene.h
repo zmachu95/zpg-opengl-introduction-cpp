@@ -41,7 +41,7 @@ class SolarSystemScene : public AbstractSceneTemplate {
      */
     SolarSystemScene(int windowWidth, int windowHeight);
 
-    virtual ~SolarSystemScene() = default;
+    ~SolarSystemScene() override = default;
 
   protected:
     /**

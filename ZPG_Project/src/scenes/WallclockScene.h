@@ -20,7 +20,7 @@ class WallclockScene : public AbstractSceneTemplate {
      */
     WallclockScene(int windowWidth, int windowHeight);
 
-    virtual ~WallclockScene() = default;
+    ~WallclockScene() override = default;
 
   protected:
     /**

@@ -32,7 +32,7 @@ class TriangleScene : public AbstractSceneTemplate {
      */
     TriangleScene(int windowWidth, int windowHeight);
 
-    virtual ~TriangleScene() = default;
+    ~TriangleScene() override = default;
 
   protected:
     /**

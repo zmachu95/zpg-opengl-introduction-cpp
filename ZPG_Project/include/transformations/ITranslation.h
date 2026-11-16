@@ -11,7 +11,7 @@
  */
 class ITranslation : public ITransformation {
   public:
-    virtual ~ITranslation() = default;
+    ~ITranslation() override = default;
 
     /**
      * @brief Moves relative to current position.

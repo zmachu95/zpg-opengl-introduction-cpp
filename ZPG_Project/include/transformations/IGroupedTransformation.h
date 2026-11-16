@@ -44,7 +44,7 @@ using TransformationPtr = std::shared_ptr<ITransformation>;
  */
 class IGroupedTransformation : public ITransformation {
   public:
-    virtual ~IGroupedTransformation() = default;
+    ~IGroupedTransformation() override = default;
 
     /**
      * @brief Adds constant transformation matrix to the group.

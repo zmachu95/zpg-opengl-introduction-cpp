@@ -23,7 +23,7 @@ class Rotation : public IRotation, public ITransformationChangeListenable {
      */
     Rotation(const float axisX, const float axisY, const float axisZ);
 
-    virtual ~Rotation() = default;
+    ~Rotation() override = default;
 
     /*
      *
@@ -33,7 +33,7 @@ class Rotation : public IRotation, public ITransformationChangeListenable {
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual const glm::mat4& getMatrix();
+    const glm::mat4& getMatrix() override;
 
     /*
      *
@@ -43,20 +43,20 @@ class Rotation : public IRotation, public ITransformationChangeListenable {
      * @brief Registers listener for transformation change event.
      * @param listener Listener to register.
      */
-    virtual void registerTransformationChangeListener(
-            const TransformationChangeListenerPtr& listener);
+    void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener) override;
 
     /**
      * @brief Increments the rotation by specified angle increment in [deg].
      * @param angle_increment_deg Rotation angle increment in [deg].
      */
-    virtual void incrementAngle(const float angle_increment_deg);
+    void incrementAngle(const float angle_increment_deg) override;
 
     /**
      * @brief Sets the rotation to specified angle in [deg].
      * @param angle_deg Rotation angle in [deg].
      */
-    virtual void setAngle(const float angle_deg);
+    void setAngle(const float angle_deg) override;
 
   private:
     float m_angle_deg;

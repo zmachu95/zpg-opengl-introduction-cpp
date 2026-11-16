@@ -11,7 +11,7 @@
  */
 class IScale : public ITransformation {
   public:
-    virtual ~IScale() = default;
+    ~IScale() override = default;
 
     /**
      * @brief Increments the current scale factors by supplied values.

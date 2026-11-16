@@ -19,7 +19,7 @@ class Scale : public IScale, public ITransformationChangeListenable {
      */
     Scale();
 
-    virtual ~Scale() = default;
+    ~Scale() override = default;
 
     /*
      *
@@ -29,7 +29,7 @@ class Scale : public IScale, public ITransformationChangeListenable {
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual const glm::mat4& getMatrix();
+    const glm::mat4& getMatrix() override;
 
     /*
      *
@@ -39,8 +39,8 @@ class Scale : public IScale, public ITransformationChangeListenable {
      * @brief Registers listener for transformation change event.
      * @param listener Listener to register.
      */
-    virtual void registerTransformationChangeListener(
-            const TransformationChangeListenerPtr& listener);
+    void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener) override;
 
     /**
      * @brief Increments the current scale factors by supplied values.
@@ -48,7 +48,7 @@ class Scale : public IScale, public ITransformationChangeListenable {
      * @param dy Y component of scale increment.
      * @param dz Z component of scale increment.
      */
-    virtual void increment(const float dx, const float dy, const float dz);
+    void increment(const float dx, const float dy, const float dz) override;
 
     /**
      * @brief Sets scale to supplied factors.
@@ -56,7 +56,7 @@ class Scale : public IScale, public ITransformationChangeListenable {
      * @param y Scale factor in y direction.
      * @param z Scale factor in z direction.
      */
-    virtual void setScaleTo(const float x, const float y, const float z);
+    void setScaleTo(const float x, const float y, const float z) override;
 
   private:
     float m_x;

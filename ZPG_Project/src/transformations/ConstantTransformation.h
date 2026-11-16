@@ -18,7 +18,7 @@ class ConstantTransformation : public ITransformation {
      */
     ConstantTransformation(const glm::mat4& matrix);
 
-    virtual ~ConstantTransformation() = default;
+    ~ConstantTransformation() override = default;
 
     /**
      * @brief Gets the transformation matrix.

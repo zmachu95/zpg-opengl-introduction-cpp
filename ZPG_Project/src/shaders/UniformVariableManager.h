@@ -24,7 +24,7 @@ class UniformVariableManager : public ICameraUpdateListener {
      */
     UniformVariableManager(GLuint parentShaderProgramId);
 
-    virtual ~UniformVariableManager() = default;
+    ~UniformVariableManager() override = default;
 
     /*
      *
@@ -159,6 +159,7 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @param viewMatrix The new camera view matrix.
      * @param cameraPosition The new camera position.
      */
-    virtual void handleCameraUpdate(const glm::mat4& projectionMatrix,
-            const glm::mat4& viewMatrix, const glm::vec3& cameraPosition);
+    void handleCameraUpdate(const glm::mat4& projectionMatrix,
+            const glm::mat4& viewMatrix,
+            const glm::vec3& cameraPosition) override;
 };

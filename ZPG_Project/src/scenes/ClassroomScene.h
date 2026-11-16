@@ -21,7 +21,7 @@ class ClassroomScene : public AbstractSceneTemplate {
      */
     ClassroomScene(int windowWidth, int windowHeight);
 
-    virtual ~ClassroomScene() = default;
+    ~ClassroomScene() override = default;
 
   protected:
     /**

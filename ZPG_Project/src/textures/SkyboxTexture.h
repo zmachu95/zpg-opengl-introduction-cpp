@@ -35,7 +35,7 @@ class SkyboxTexture : public ITexture {
      */
     SkyboxTexture(SkyboxTexture&& other) noexcept;
 
-    virtual ~SkyboxTexture();
+    ~SkyboxTexture() override;
 
     /*
      *
@@ -78,26 +78,26 @@ class SkyboxTexture : public ITexture {
      * @brief Gets the texture's ID.
      * @return Texture's ID.
      */
-    virtual GLuint getId() const;
+    GLuint getId() const override;
 
     /**
      * @brief Gets OpenGL constant representing the bound texturing unit.
      * @return GLenum OpenGL constant representing the texturing unit.
      */
-    virtual GLenum getTexturingUnit() const;
+    GLenum getTexturingUnit() const override;
 
     /**
      * @brief Gets the index of bound texturing unit.
      * @return Non-negative index of the bound texturing unit.
      */
-    virtual GLuint getTexturingUnitId() const;
+    GLuint getTexturingUnitId() const override;
 
     /**
      * @brief Gets OpenGL constant representing texture target used in
      * glBindTexture call.
      * @return OpenGL GLenum constant with texture target.
      */
-    virtual GLenum getTextureTarget() const;
+    GLenum getTextureTarget() const override;
 
   private:
     GLuint m_textureId;

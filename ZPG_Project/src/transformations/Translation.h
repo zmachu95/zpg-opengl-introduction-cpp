@@ -20,7 +20,7 @@ class Translation : public ITranslation,
      */
     Translation();
 
-    virtual ~Translation() = default;
+    ~Translation() override = default;
 
     /*
      *
@@ -30,7 +30,7 @@ class Translation : public ITranslation,
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual const glm::mat4& getMatrix();
+    const glm::mat4& getMatrix() override;
 
     /*
      *
@@ -40,8 +40,8 @@ class Translation : public ITranslation,
      * @brief Registers listener for transformation change event.
      * @param listener Listener to register.
      */
-    virtual void registerTransformationChangeListener(
-            const TransformationChangeListenerPtr& listener);
+    void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener) override;
 
     /**
      * @brief Moves relative to current position.
@@ -49,7 +49,7 @@ class Translation : public ITranslation,
      * @param dy Y component of relative movement.
      * @param dz Z component of relative movement.
      */
-    virtual void move(const float dx, const float dy, const float dz);
+    void move(const float dx, const float dy, const float dz) override;
 
     /**
      * @brief Performs translation to supplied coordinates.
@@ -57,7 +57,7 @@ class Translation : public ITranslation,
      * @param y Target y coordinate.
      * @param z Target z coordinate.
      */
-    virtual void translateTo(const float x, const float y, const float z);
+    void translateTo(const float x, const float y, const float z) override;
 
   private:
     float m_x;

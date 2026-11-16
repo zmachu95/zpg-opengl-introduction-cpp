@@ -32,7 +32,7 @@ class Model {
      */
     Model(const Model&) = delete;
 
-    virtual ~Model();
+    ~Model();
 
     /*
      *

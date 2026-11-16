@@ -11,7 +11,7 @@
  */
 class IRotation : public ITransformation {
   public:
-    virtual ~IRotation() = default;
+    ~IRotation() override = default;
 
     /**
      * @brief Increments the rotation by specified angle increment in [deg].

@@ -27,7 +27,7 @@ class GroupedTransformation
      */
     GroupedTransformation();
 
-    virtual ~GroupedTransformation() = default;
+    ~GroupedTransformation() override = default;
 
     /*
      *
@@ -37,7 +37,7 @@ class GroupedTransformation
      * @brief Gets the transformation matrix.
      * @return The transformation matrix.
      */
-    virtual const glm::mat4& getMatrix();
+    const glm::mat4& getMatrix() override;
 
     /*
      *
@@ -56,39 +56,40 @@ class GroupedTransformation
      * @param axisZ Z component of axis unit vector.
      * @return Shared pointer to the new rotation matrix.
      */
-    virtual RotationPtr addNewRotation(float axisX, float axisY, float axisZ);
+    RotationPtr addNewRotation(float axisX, float axisY, float axisZ) override;
 
     /**
      * @brief Adds new scale matrix to the group.
      * @return Shared pointer to the new scale matrix.
      */
-    virtual ScalePtr addNewScale();
+    ScalePtr addNewScale() override;
 
     /**
      * @brief Adds new translation matrix to the group.
      * @return Shared pointer to the new translation matrix.
      */
-    virtual TranslationPtr addNewTranslation();
+    TranslationPtr addNewTranslation() override;
 
     /**
      * @brief Adds new transformations group to the group.
      * @return Shared pointer to the new transformation group.
      */
-    virtual GroupedTransformationPtr addNewGroup();
+    GroupedTransformationPtr addNewGroup() override;
 
     /**
      * @brief Adds reference to another transformation matrix to this group.
      * @param transformation Reference to shared pointer of transformation to
      * add.
      */
-    virtual void addReferenceToAnother(const TransformationPtr& transformation);
+    void addReferenceToAnother(
+            const TransformationPtr& transformation) override;
 
     /**
      * @brief Registers listener for transformation change event.
      * @param listener Listener to register.
      */
-    virtual void registerTransformationChangeListener(
-            const TransformationChangeListenerPtr& listener);
+    void registerTransformationChangeListener(
+            const TransformationChangeListenerPtr& listener) override;
 
   private:
     bool m_isDirty;
@@ -111,5 +112,5 @@ class GroupedTransformation
      * @brief Handles the signal that atleast one underlying transformation
      * matrix has changed.
      */
-    virtual void handleTransformationChange();
+    void handleTransformationChange() override;
 };

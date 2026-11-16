@@ -12,16 +12,20 @@
 #endif
 #include <GLFW/glfw3.h>
 
-#include <application/Application.h>
+#include <application/ApplicationFactory.h>
+#include <application/IApplication.h>
 #include <exception>
 #include <iostream>
 
-int main(
-        void) {
+int main() {
+    int windowWidth = 800;  // window width in [px]
+    int windowHeight = 600; // window height in [px]
+
     try {
-        Application app{};
-        app.initialize();
-        app.run();
+        ApplicationPtr app = ApplicationFactory::createApplication(
+                windowWidth, windowHeight);
+        app->initialize();
+        app->run();
     } catch (const std::exception& ex) {
         std::cout << ex.what();
     }

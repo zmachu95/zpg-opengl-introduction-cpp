@@ -2,19 +2,17 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <scenes/SolarSystemScene.h>
+#include "SolarSystemScene.h"
+#include "AbstractSceneTemplate.h"
 
 #include <cameras/CameraCommonSettings.h>
-#include <cameras/CameraUserInputController.h>
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
-#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <resources/models/earth.h>
 #include <resources/models/moon.h>
 #include <resources/models/satellite.h>
 #include <resources/models/sun.h>
-#include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
 #include <transformations/IRotation.h>
@@ -96,60 +94,49 @@ void SolarSystemScene::createSatelliteTransformations(
     scale->setScaleTo(satelliteScale, satelliteScale, satelliteScale);
 }
 
-SolarSystemScene::SolarSystemScene()
-    : IScene{}, m_sunModel{}, m_earthModel{}, m_moonModel{}, m_satelliteModel{},
-      m_sunShaderProgram{}, m_planetsShaderProgram{},
-      m_satelliteShaderProgram{}, m_sunOwnAxisRotation{},
-      m_earthAroundSunRotation{}, m_earthOrbitTransformation{},
-      m_earthOwnAxisRotation{}, m_moonAroundEarthRotation{},
-      m_moonOwnAxisRotation{}, m_satelliteAroundEarthRotation{}, m_camera{},
-      m_cameraController{} {
-    this->m_sunModel =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    sun, sizeof(sun) / sizeof(sun[0]), 3, false);
-    this->m_earthModel =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    earth, sizeof(earth) / sizeof(earth[0]), 3, false);
-    this->m_moonModel =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    moon, sizeof(moon) / sizeof(moon[0]), 3, false);
-    this->m_satelliteModel =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    satellite, sizeof(satellite) / sizeof(satellite[0]), 2,
-                    false);
-
-    this->m_sunShaderProgram = ShaderProgram::createFromShaderFiles(
+SolarSystemScene::SolarSystemScene(
+        int windowWidth, int windowHeight)
+    : AbstractSceneTemplate{
+              SolarSystemScene::createCamera(windowWidth, windowHeight),
+              std::unique_ptr<DrawableObject>()},
+      m_sunOwnAxisRotation{}, m_earthAroundSunRotation{},
+      m_earthOrbitTransformation{}, m_earthOwnAxisRotation{},
+      m_moonAroundEarthRotation{}, m_moonOwnAxisRotation{},
+      m_satelliteAroundEarthRotation{} {
+    // shader programs
+    ShaderProgram& sunShaderProgram = this->addShaderProgramFromShaderFiles(
             "solar_system_scene\\planets.vert",
             "solar_system_scene\\ambient.frag", false);
-    this->m_planetsShaderProgram = ShaderProgram::createFromShaderFiles(
-            "solar_system_scene\\planets.vert",
-            "solar_system_scene\\phong.frag", false);
-    this->m_satelliteShaderProgram = ShaderProgram::createFromShaderFiles(
-            "solar_system_scene\\satellite.vert",
-            "solar_system_scene\\phong.frag", false);
+    ShaderProgram& planetsShaderProgram =
+            this->addShaderProgramFromShaderFiles(
+                    "solar_system_scene\\planets.vert",
+                    "solar_system_scene\\phong.frag", false);
+    ShaderProgram& satelliteShaderProgram =
+            this->addShaderProgramFromShaderFiles(
+                    "solar_system_scene\\satellite.vert",
+                    "solar_system_scene\\phong.frag", false);
 
-    this->createSunTransformations(this->m_sunModel->getTransformation());
-    this->createEarthTransformations(this->m_earthModel->getTransformation());
-    this->createMoonTransformations(this->m_moonModel->getTransformation());
-    this->createSatelliteTransformations(
-            this->m_satelliteModel->getTransformation());
+    // models
+    DrawableObject& sunModel = this->addDrawableObjectFromVerticesData(false,
+            sun, sizeof(sun) / sizeof(sun[0]), 3, false, sunShaderProgram);
+    DrawableObject& earthModel = this->addDrawableObjectFromVerticesData(
+            false, earth, sizeof(earth) / sizeof(earth[0]), 3, false,
+            planetsShaderProgram);
+    DrawableObject& moonModel = this->addDrawableObjectFromVerticesData(
+            false, moon, sizeof(moon) / sizeof(moon[0]), 3, false,
+            planetsShaderProgram);
+    DrawableObject& satelliteModel = this->addDrawableObjectFromVerticesData(
+            false, satellite, sizeof(satellite) / sizeof(satellite[0]), 2,
+            false, satelliteShaderProgram);
 
-    std::shared_ptr<CameraCommonSettings> commonSettings =
-            std::make_shared<CameraCommonSettings>();
-
-    this->m_camera = std::make_unique<PerspectiveCamera>(
-            commonSettings, 1.0f, glm::vec3{0.0f, 0.0f, 2.0f});
-
-    this->m_camera->registerCameraUpdateListener(
-            this->m_sunShaderProgram->asCameraUpdateListener());
-    this->m_camera->registerCameraUpdateListener(
-            this->m_planetsShaderProgram->asCameraUpdateListener());
-    this->m_camera->registerCameraUpdateListener(
-            this->m_satelliteShaderProgram->asCameraUpdateListener());
+    this->createSunTransformations(sunModel.getTransformation());
+    this->createEarthTransformations(earthModel.getTransformation());
+    this->createMoonTransformations(moonModel.getTransformation());
+    this->createSatelliteTransformations(satelliteModel.getTransformation());
 }
 
-void SolarSystemScene::draw(
-        const float deltaT) {
+void SolarSystemScene::updateSceneContents(
+        float deltaT) {
     this->m_sunOwnAxisRotation->incrementAngle(sunOwnAxisOmega * deltaT);
     this->m_earthAroundSunRotation->incrementAngle(
             earthAroundSunOmega * deltaT);
@@ -159,23 +146,11 @@ void SolarSystemScene::draw(
     this->m_moonOwnAxisRotation->incrementAngle(moonOwnAxisOmega * deltaT);
     this->m_satelliteAroundEarthRotation->incrementAngle(
             -satelliteAroundEarthOmega * deltaT);
-
-    this->m_sunModel->draw(*this->m_sunShaderProgram);
-    this->m_earthModel->draw(*this->m_planetsShaderProgram);
-    this->m_moonModel->draw(*this->m_planetsShaderProgram);
-    this->m_satelliteModel->draw(*this->m_satelliteShaderProgram);
 }
 
-void SolarSystemScene::handleMouseMovement(
-        int cursorDeltaX, int cursorDeltaY) {}
-
-void SolarSystemScene::handleKeyPresses(
-        KeyCodes button, KeyActions action, KeyModifierFlags mode) {}
-
-void SolarSystemScene::handleWindowResize(
-        int width, int height) {
-    this->m_camera->setAspectRatio(width, height);
+CameraPtr SolarSystemScene::createCamera(
+        int windowWidth, int windowHeight) {
+    return std::make_unique<PerspectiveCamera>(
+            std::make_shared<CameraCommonSettings>(),
+            (float)windowWidth / windowHeight, glm::vec3{0.0f, 0.0f, 2.0f});
 }
-
-void SolarSystemScene::drawSkybox(
-        const float deltaT) {}

@@ -1,4 +1,4 @@
-// KeyCodes.h - Contains definition of MovementDirection enum.
+// KeyCodes.h - Contains definition of KeyCodes enum.
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 // Copied from https://www.glfw.org/docs/3.3/group__keys.html

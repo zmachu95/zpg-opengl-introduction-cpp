@@ -200,7 +200,8 @@ void UniformVariableManager::applySupplementalVectors(
 }
 
 void UniformVariableManager::initializeTextureSampler(
-        int index) {
-    this->setIntUniformVar(SAMPLER_UNIFORM_VAR + std::to_string(index), index);
+        GLuint index) {
+    this->setIntUniformVar(
+            SAMPLER_UNIFORM_VAR + std::to_string(index), (int)index);
     this->setBoolUniformVar(USES_TEXTURES_FLAG_VAR, true);
 }

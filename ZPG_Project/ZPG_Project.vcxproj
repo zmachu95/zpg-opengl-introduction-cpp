@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -147,7 +147,16 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scenes\SceneRepository.cpp" />
+    <ClCompile Include="src\transformations\ConstantTransformation.cpp" />
+    <ClCompile Include="src\scenes\DrawableObjectInteractionProvider.cpp" />
+    <ClCompile Include="src\application\ApplicationFactory.cpp" />
+    <ClCompile Include="src\application\EventsManager.cpp" />
+    <ClCompile Include="src\scenes\ForestScene.cpp" />
+    <ClCompile Include="src\scenes\SceneFactory.cpp" />
+    <ClCompile Include="src\scenes\AbstractSceneTemplate.cpp" />
     <ClCompile Include="src\scenes\ClassroomScene.cpp" />
+    <ClCompile Include="src\scenes\WallclockScene.cpp" />
     <ClCompile Include="src\textures\SkyboxTexture.cpp" />
     <ClCompile Include="src\scenes\ShrekFionaScene.cpp" />
     <ClCompile Include="src\textures\ImageData.cpp" />
@@ -159,18 +168,15 @@
     <ClCompile Include="src\cameras\CameraUpdatePublisher.cpp" />
     <ClCompile Include="src\drawables\DrawableObjectFactory.cpp" />
     <ClCompile Include="src\others\WallclockUtils.cpp" />
-    <ClCompile Include="src\scenes\ForestScene.cpp" />
     <ClCompile Include="src\scenes\LightingTestScene.cpp" />
     <ClCompile Include="src\scenes\LoginScene.cpp" />
     <ClCompile Include="src\scenes\SolarSystemScene.cpp" />
     <ClCompile Include="src\scenes\TriangleScene.cpp" />
-    <ClCompile Include="src\scenes\WallclockScene.cpp" />
     <ClCompile Include="src\shaders\ShaderCore.cpp" />
     <ClCompile Include="src\shaders\ShaderFactory.cpp" />
     <ClCompile Include="src\shaders\UniformVariableManager.cpp" />
     <ClCompile Include="src\transformations\GroupedTransformation.cpp" />
     <ClCompile Include="src\drawables\DrawableObject.cpp" />
-    <ClCompile Include="src\application\EventManager.cpp" />
     <ClCompile Include="src\shaders\FragmentShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="src\drawables\Model.cpp" />
@@ -187,12 +193,25 @@
     <ClCompile Include="src\textures\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\scenes\ClassroomScene.h" />
-    <ClInclude Include="include\scenes\ShrekFionaScene.h" />
+    <ClInclude Include="src\scenes\SceneRepository.h" />
+    <ClInclude Include="src\transformations\ConstantTransformation.h" />
+    <ClInclude Include="include\application\ApplicationFactory.h" />
+    <ClInclude Include="include\application\IApplication.h" />
+    <ClInclude Include="include\constants\MouseButtonActions.h" />
+    <ClInclude Include="include\constants\MouseButtonCodes.h" />
+    <ClInclude Include="src\scenes\ISceneMediator.h" />
+    <ClInclude Include="src\scenes\DrawableObjectInteractionProvider.h" />
+    <ClInclude Include="src\application\EventsManager.h" />
+    <ClInclude Include="include\scenes\SceneFactory.h" />
+    <ClInclude Include="src\application\IApplicationMediator.h" />
+    <ClInclude Include="src\scenes\AbstractSceneTemplate.h" />
+    <ClInclude Include="src\scenes\ClassroomScene.h" />
+    <ClInclude Include="src\scenes\ForestScene.h" />
+    <ClInclude Include="src\scenes\ShrekFionaScene.h" />
     <ClInclude Include="include\textures\ITexture.h" />
     <ClInclude Include="src\textures\SkyboxTexture.h" />
     <ClInclude Include="src\textures\ImageData.h" />
-    <ClInclude Include="include\application\Application.h" />
+    <ClInclude Include="src\application\Application.h" />
     <ClInclude Include="include\cameras\CameraCommonSettings.h" />
     <ClInclude Include="include\transformations\GroupedTransformationFactory.h" />
     <ClInclude Include="src\cameras\MovementDirectionEnum.h" />
@@ -206,18 +225,17 @@
     <ClInclude Include="include\others\WallclockUtils.h" />
     <ClInclude Include="include\scenes\ForestScene.h" />
     <ClInclude Include="include\scenes\IScene.h" />
-    <ClInclude Include="include\scenes\LightingTestScene.h" />
-    <ClInclude Include="include\scenes\LoginScene.h" />
-    <ClInclude Include="include\scenes\SolarSystemScene.h" />
-    <ClInclude Include="include\scenes\TriangleScene.h" />
-    <ClInclude Include="include\scenes\WallclockScene.h" />
+    <ClInclude Include="src\scenes\LightingTestScene.h" />
+    <ClInclude Include="src\scenes\LoginScene.h" />
+    <ClInclude Include="src\scenes\SolarSystemScene.h" />
+    <ClInclude Include="src\scenes\TriangleScene.h" />
+    <ClInclude Include="src\scenes\WallclockScene.h" />
     <ClInclude Include="src\shaders\ShaderCore.h" />
     <ClInclude Include="src\shaders\ShaderFactory.h" />
     <ClInclude Include="src\shaders\UniformVariableManager.h" />
     <ClInclude Include="include\cameras\PerspectiveCamera.h" />
     <ClInclude Include="src\transformations\GroupedTransformation.h" />
     <ClInclude Include="include\drawables\DrawableObject.h" />
-    <ClInclude Include="src\application\EventManager.h" />
     <ClInclude Include="src\shaders\FragmentShader.h" />
     <ClInclude Include="include\transformations\IGroupedTransformation.h" />
     <ClInclude Include="include\transformations\IRotation.h" />

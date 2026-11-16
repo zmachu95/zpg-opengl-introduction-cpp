@@ -57,7 +57,7 @@ class UniformVariableManager : public ICameraUpdateListener {
      * @brief Initializes texture sampler with given index.
      * @param index Texture sampler index.
      */
-    void initializeTextureSampler(int index);
+    void initializeTextureSampler(GLuint index);
 
     /*
      *

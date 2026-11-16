@@ -59,7 +59,7 @@ class CameraGeometry {
      * returns false.
      */
     bool update(MovementDirection movementDirection,
-            int horizontalRotationIncrement, int verticalRotationIncrement,
+            float horizontalRotationIncrement, float verticalRotationIncrement,
             float deltaT);
 
   private:
@@ -105,7 +105,8 @@ class CameraGeometry {
      * @param rotationIncrement Raw rotation increment.
      * @return Angle increment in [deg].
      */
-    float convertRotationIncrementToAngleIncrement(int rotationIncrement) const;
+    float convertRotationIncrementToAngleIncrement(
+            float rotationIncrement) const;
 
     /**
      * @brief Converts current viewing direction vector to yaw angle.
@@ -142,8 +143,8 @@ class CameraGeometry {
      * @return true if the looking direction changed, otherwise returns
      * false.
      */
-    bool updateLookingDirection(int horizontalRotationIncrement,
-            int verticalRotationIncrement, float deltaT);
+    bool updateLookingDirection(float horizontalRotationIncrement,
+            float verticalRotationIncrement, float deltaT);
 
     /**
      * @brief Updates the camera's position.

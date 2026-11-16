@@ -27,9 +27,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\application\EventManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\shaders\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\transformations\Rotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scenes\ForestScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scenes\SolarSystemScene.cpp">
@@ -99,9 +93,6 @@
     <ClCompile Include="src\scenes\LightingTestScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scenes\WallclockScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\transformations\GroupedTransformationFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,9 +120,33 @@
     <ClCompile Include="src\scenes\ClassroomScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\scenes\AbstractSceneTemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\SceneFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\ForestScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\WallclockScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application\EventsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application\ApplicationFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\DrawableObjectInteractionProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\transformations\ConstantTransformation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\application\Application.h">
+    <ClInclude Include="src\application\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\shaders\ShaderProgram.h">
@@ -173,10 +188,10 @@
     <ClInclude Include="include\scenes\ForestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\SolarSystemScene.h">
+    <ClInclude Include="src\scenes\SolarSystemScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\LoginScene.h">
+    <ClInclude Include="src\scenes\LoginScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cameras\CameraCommonSettings.h">
@@ -185,7 +200,7 @@
     <ClInclude Include="include\cameras\CameraUserInputController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\TriangleScene.h">
+    <ClInclude Include="src\scenes\TriangleScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cameras\PerspectiveCamera.h">
@@ -215,13 +230,13 @@
     <ClInclude Include="include\transformations\IGroupedTransformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\WallclockScene.h">
+    <ClInclude Include="src\scenes\WallclockScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\others\WallclockUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\LightingTestScene.h">
+    <ClInclude Include="src\scenes\LightingTestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cameras\MovementDirectionEnum.h">
@@ -252,9 +267,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\transformations\GroupedTransformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\application\EventManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\shaders\FragmentShader.h">
@@ -302,13 +314,49 @@
     <ClInclude Include="src\textures\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\ShrekFionaScene.h">
+    <ClInclude Include="src\scenes\ShrekFionaScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\textures\SkyboxTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\scenes\ClassroomScene.h">
+    <ClInclude Include="src\scenes\ClassroomScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\AbstractSceneTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scenes\SceneFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\ForestScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\application\EventsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\application\IApplicationMediator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\IApplication.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\ApplicationFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\DrawableObjectInteractionProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\ISceneMediator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants\MouseButtonActions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\constants\MouseButtonCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transformations\ConstantTransformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

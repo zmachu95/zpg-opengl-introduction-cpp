@@ -72,7 +72,8 @@ Texture2dCore Texture2dCore::fromFile(
             GL_UNSIGNED_BYTE, imageData.getData());
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    /* following line is needed to prevent texture leaks into GL_TEXTURE0 */
+    /* following line is needed to prevent texture state leaks into currently
+     * active texturing unit (by default GL_TEXTURE0) */
     glBindTexture(GL_TEXTURE_2D, 0);
     return Texture2dCore{textureId};
 }
@@ -90,7 +91,7 @@ void Texture2dCore::deleteTexture() {
     }
 }
 
-GLint Texture2dCore::translateChannelsCount(
+GLenum Texture2dCore::translateChannelsCount(
         int channelsCount) {
     switch (channelsCount) {
         case 3:

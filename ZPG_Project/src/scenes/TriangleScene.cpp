@@ -2,71 +2,36 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <scenes/TriangleScene.h>
+#include "TriangleScene.h"
+#include "AbstractSceneTemplate.h"
 
-#include <drawables/DrawableObject.h>
 #include <memory>
-#include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IRotation.h>
 #include <transformations/IScale.h>
 #include <transformations/ITranslation.h>
 
-#include <cameras/CameraCommonSettings.h>
-#include <cameras/PerspectiveCamera.h>
-
-#include <drawables/DrawableObjectFactory.h>
+#include <drawables/DrawableObject.h>
 #include <resources/models/triangle.h>
 
-TriangleScene::TriangleScene()
-    : IScene{}, m_program{}, m_rotation{}, m_translation{}, m_triangle{},
-      m_cameraController{}, m_camera{} {
-    this->m_program = ShaderProgram::createFromShaderFiles(
+TriangleScene::TriangleScene(
+        int windowWidth, int windowHeight)
+    : AbstractSceneTemplate{
+              windowWidth, windowHeight, std::unique_ptr<DrawableObject>{}},
+      m_rotation{}, m_translation{} {
+    ShaderProgram& shaderProgram = this->addShaderProgramFromShaderFiles(
             "_templates\\basic.vert", "_templates\\basic.frag", false);
-    this->m_triangle =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    triangle, sizeof(triangle) / sizeof(triangle[0]), 2, false);
+    DrawableObject& triangleObj = this->addDrawableObjectFromVerticesData(
+            false, triangle, sizeof(triangle) / sizeof(triangle[0]), 2, false,
+            shaderProgram);
 
-    this->m_rotation =
-            this->m_triangle->getTransformation()->addNewRotation(0, 0, 1);
-    this->m_translation =
-            this->m_triangle->getTransformation()->addNewTranslation();
-
-    std::shared_ptr<CameraCommonSettings> commonSettings =
-            std::make_shared<CameraCommonSettings>();
-
-    this->m_camera = std::make_unique<PerspectiveCamera>(commonSettings, 1.0f);
-
-    this->m_camera->registerCameraUpdateListener(
-            this->m_program->asCameraUpdateListener());
+    this->m_rotation = triangleObj.getTransformation()->addNewRotation(0, 0, 1);
+    this->m_translation = triangleObj.getTransformation()->addNewTranslation();
 }
 
-void TriangleScene::draw(
-        const float deltaT) {
+void TriangleScene::updateSceneContents(
+        float deltaT) {
     float angle = 90;
     this->m_rotation->setAngle(angle);
     this->m_translation->translateTo(0.5f, 0, 0);
-
-    this->m_camera->update(this->m_cameraController.getMovementDirection(),
-            this->m_cameraController.getHorizontalRotationIncrement(),
-            this->m_cameraController.getVerticalRotationIncrement(), deltaT);
-    this->m_triangle->draw(*this->m_program);
 }
-
-void TriangleScene::handleMouseMovement(
-        int cursorDeltaX, int cursorDeltaY) {
-    this->m_cameraController.handleMouseMove(cursorDeltaX, cursorDeltaY);
-}
-
-void TriangleScene::handleKeyPresses(
-        KeyCodes button, KeyActions action, KeyModifierFlags mode) {
-    this->m_cameraController.handleKeyPresses(button, action, mode);
-}
-
-void TriangleScene::handleWindowResize(
-        int width, int height) {
-    this->m_camera->setAspectRatio(width, height);
-}
-
-void TriangleScene::drawSkybox(
-        const float deltaT) {}

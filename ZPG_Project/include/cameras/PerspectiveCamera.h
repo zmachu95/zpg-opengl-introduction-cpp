@@ -153,6 +153,18 @@ class PerspectiveCamera {
      */
 
     /**
+     * @brief Calculates the camera's projection matrix.
+     * @return The camera's projection matrix.
+     */
+    glm::mat4 calculateProjectionMatrix() const;
+
+    /**
+     * @brief Calculates the camera's view matrix.
+     * @return The camera's view matrix.
+     */
+    glm::mat4 calculateViewMatrix() const;
+
+    /**
      * @brief Registers listener for camera update event.
      * @param listener Listener to register.
      * @return ID number which can be used to unregister the listener.
@@ -177,7 +189,7 @@ class PerspectiveCamera {
      * @param deltaT Time elapsed since the last drawn frame.
      */
     void update(MovementDirection movementDirection,
-            int horizontalRotationIncrement, int verticalRotationIncrement,
+            float horizontalRotationIncrement, float verticalRotationIncrement,
             float deltaT);
 
   private:
@@ -187,16 +199,6 @@ class PerspectiveCamera {
     float m_aspectRatio;
     float m_nearClippingPlaneDistance;
     float m_farClippingPlaneDistance;
-
-    /*
-     *
-     */
-
-    /**
-     * @brief Calculates the camera's projection matrix.
-     * @return The camera's projection matrix.
-     */
-    glm::mat4 calculateProjectionMatrix() const;
 
     /*
      *

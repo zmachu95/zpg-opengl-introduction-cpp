@@ -155,16 +155,14 @@ void ShaderProgram::use(
     this->applySupplementalMatricesAndVectors();
 }
 
-void ShaderProgram::setSupplementalUniformMatrices(
-        const std::unordered_map<std::string, glm::mat4>&
-                supplementalMatricesMap) {
-    this->m_supplementalUniformMatrices = supplementalMatricesMap;
+void ShaderProgram::setSupplementalUniformMatrix(
+        const std::string& name, const glm::mat4& matrix) {
+    this->m_supplementalUniformMatrices[name] = matrix;
 }
 
-void ShaderProgram::setSupplementalUniformVectors(
-        const std::unordered_map<std::string, glm::vec3>&
-                supplementalVectorsMap) {
-    this->m_supplementalUniformVectors = supplementalVectorsMap;
+void ShaderProgram::setSupplementalUniformVector(
+        const std::string& name, const glm::vec3& vector) {
+    this->m_supplementalUniformVectors[name] = vector;
 }
 
 void ShaderProgram::applySupplementalMatricesAndVectors() {

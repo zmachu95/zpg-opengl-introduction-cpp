@@ -35,8 +35,8 @@ glm::mat4 CameraGeometry::calculateViewMatrix() const {
 }
 
 bool CameraGeometry::update(
-        MovementDirection movementDirection, int horizontalRotationIncrement,
-        int verticalRotationIncrement, float deltaT) {
+        MovementDirection movementDirection, float horizontalRotationIncrement,
+        float verticalRotationIncrement, float deltaT) {
     bool cameraChanged = this->updateLookingDirection(
             horizontalRotationIncrement, verticalRotationIncrement, deltaT);
 
@@ -154,7 +154,7 @@ glm::vec3 CameraGeometry::calculateTarget() const {
 }
 
 bool CameraGeometry::updateLookingDirection(
-        int horizontalRotationIncrement, int verticalRotationIncrement,
+        float horizontalRotationIncrement, float verticalRotationIncrement,
         float deltaT) {
     float newYawAngle_deg = this->m_yawAngle_deg
                             + this->convertRotationIncrementToAngleIncrement(
@@ -197,7 +197,7 @@ bool CameraGeometry::updatePosition(
 }
 
 float CameraGeometry::convertRotationIncrementToAngleIncrement(
-        int rotationIncrement) const {
+        float rotationIncrement) const {
     return -this->m_commonSettings->getMouseLookSensitivity()
            * rotationIncrement;
 }

@@ -11,8 +11,24 @@
 class Model;
 class DrawableObject;
 
+/**
+ * @brief Alias for byte.
+ */
+using Byte = unsigned char;
+
+/**
+ * @brief Pointer to Model object.
+ */
 using ModelPtr = std::shared_ptr<Model>;
+
+/**
+ * @brief Weak pointer to Model object.
+ */
 using ModelWeakPtr = std::weak_ptr<Model>;
+
+/**
+ * @brief Pointer to DrawableObject object.
+ */
 using DrawableObjectPtr = std::unique_ptr<DrawableObject>;
 
 /**
@@ -22,6 +38,7 @@ class DrawableObjectFactory {
   public:
     /**
      * @brief Creates drawable object from supplied vertices data.
+     * @param id Assigned object ID.
      * @param verticesData Array of vertices data.
      * @param arrayElementsCount Total number of elements in the vertices data
      * array.
@@ -32,11 +49,12 @@ class DrawableObjectFactory {
      * @throw std::invalid_argument - Thrown if number of arguments does not
      * correspond with total array elements count.
      */
-    static DrawableObjectPtr createDrawableObjectFromVerticesData(
+    static DrawableObjectPtr createDrawableObjectFromVerticesData(Byte id,
             const float* verticesData, size_t arrayElementsCount,
-            int attributesCount, bool uses2dTextures);
+            unsigned int attributesCount, bool uses2dTextures);
 
   private:
     static DrawableObjectFactory s_instance;
+
     std::unordered_map<const float*, ModelWeakPtr> m_modelsCache;
 };

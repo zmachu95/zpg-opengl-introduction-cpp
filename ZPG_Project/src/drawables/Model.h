@@ -69,7 +69,7 @@ class Model {
      * respectively.
      */
     static Model fromVerticesData(const float* verticesData,
-            size_t arrayElementsCount, int attributesCount,
+            size_t arrayElementsCount, GLuint attributesCount,
             bool uses2dTextures);
 
     /*

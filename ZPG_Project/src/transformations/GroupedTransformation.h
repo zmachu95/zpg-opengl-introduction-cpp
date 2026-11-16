@@ -44,6 +44,12 @@ class GroupedTransformation
      */
 
     /**
+     * @brief Adds constant transformation matrix to the group.
+     * @param matrix Matrix representing the constant transformation.
+     */
+    void addConstant(const glm::mat4& matrix) override;
+
+    /**
      * @brief Adds new rotation matrix to the group.
      * @param axisX X component of axis unit vector.
      * @param axisY Y component of axis unit vector.

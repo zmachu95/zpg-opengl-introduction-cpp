@@ -4,6 +4,7 @@
 // Coded by Zdenek Machu (MAC0690), October 2026
 
 #include "GroupedTransformation.h"
+#include "ConstantTransformation.h"
 #include "ITransformationChangeListenable.h"
 #include "Rotation.h"
 #include "Scale.h"
@@ -26,6 +27,13 @@ const glm::mat4& GroupedTransformation::getMatrix() {
     }
 
     return this->m_cachedMatrix;
+}
+
+void GroupedTransformation::addConstant(
+        const glm::mat4& matrix) {
+    std::shared_ptr<ConstantTransformation> constant =
+            std::make_shared<ConstantTransformation>(matrix);
+    this->m_transformations.push_back(constant);
 }
 
 RotationPtr GroupedTransformation::addNewRotation(

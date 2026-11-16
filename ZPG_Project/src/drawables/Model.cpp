@@ -62,7 +62,7 @@ Model& Model::operator=(
 
 Model Model::fromVerticesData(
         const float* verticesData, size_t arrayElementsCount,
-        int attributesCount, bool uses2dTextures) {
+        GLuint attributesCount, bool uses2dTextures) {
     size_t floatsPerVertex = (size_t)DIMENSIONS_COUNT * attributesCount
                              + uses2dTextures * TEXTURE_DIMS_COUNT;
     if (arrayElementsCount % floatsPerVertex != 0) {
@@ -82,7 +82,7 @@ Model Model::fromVerticesData(
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-            (GLsizeiptr)arrayElementsCount * sizeof(float),
+            (GLsizeiptr)(arrayElementsCount * sizeof(float)),
             (const void*)verticesData, GL_STATIC_DRAW);
 
     addVertexAttributes(attributesCount, uses2dTextures);
@@ -95,9 +95,10 @@ void Model::addVertexAttributes(
         GLuint attributesCount, bool uses2dTextures) {
     // attributes
     const GLint attributeSize = DIMENSIONS_COUNT;
-    const GLsizei stride = (GLsizei)(attributesCount * DIMENSIONS_COUNT
-                                     + uses2dTextures * TEXTURE_DIMS_COUNT)
-                           * sizeof(float);
+    const GLsizei stride =
+            (GLsizei)((attributesCount * DIMENSIONS_COUNT
+                              + uses2dTextures * TEXTURE_DIMS_COUNT)
+                      * sizeof(float));
     const int offsetStep = (DIMENSIONS_COUNT * sizeof(float));
     for (GLuint i = 0; i < attributesCount; i++) {
         glEnableVertexAttribArray(i);

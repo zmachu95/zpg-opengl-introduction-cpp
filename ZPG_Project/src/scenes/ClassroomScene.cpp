@@ -2,20 +2,19 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
+#include "ClassroomScene.h"
+#include "AbstractSceneTemplate.h"
+
 #include <cameras/CameraCommonSettings.h>
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
-#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <others/WallclockUtils.h>
-#include <scenes/ClassroomScene.h>
-#include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
 #include <transformations/IRotation.h>
 #include <transformations/IScale.h>
 #include <transformations/ITranslation.h>
-#include <vector>
 
 #include <resources/models/clock.h>
 #include <resources/models/eb408/case.h>
@@ -27,18 +26,24 @@
 #include <resources/models/eb408/table.h>
 #include <resources/models/eb408/whiteboard.h>
 #include <resources/models/shrek.h>
-#include <resources/models/skybox.h>
 #include <resources/models/toilet.h>
 
+#include <glm/ext/vector_float3.hpp>
 #include <textures/ITexture.h>
 #include <textures/TextureFactory.h>
 
-ClassroomScene::ClassroomScene()
-    : m_classroomItems{}, m_shrek{}, m_toilet{}, m_classroom{}, m_whiteboard{},
-      m_door{}, m_doorFrame{}, m_teacherTable{}, m_teacherChair{},
-      m_teacherCase{}, m_teacherMonitor{}, m_shaderProgram{},
-      m_cameraController{}, m_camera{}, m_skybox{}, m_skyboxProgram{},
-      m_clock{}, m_pinsRotations{}, m_clockShaderProgram{} {
+ClassroomScene::ClassroomScene(
+        int windowWidth, int windowHeight)
+    : AbstractSceneTemplate{
+              ClassroomScene::createCamera(windowWidth, windowHeight)},
+      m_shrek{}, m_toilet{}, m_classroom{}, m_whiteboard{}, m_door{},
+      m_doorFrame{}, m_teacherTable{}, m_teacherChair{}, m_teacherMonitor{},
+      m_teacherCase{}, m_shaderProgram{}, m_clock{}, m_clockShaderProgram{} {
+    this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
+            "_templates\\basic.vert", "classroom\\lambert.frag", false);
+    this->m_clockShaderProgram = &this->addShaderProgramFromShaderFiles(
+            "wallclock_scene\\clock.vert", "classroom\\lambert.frag", false);
+
     this->initializeClassroom();
 
     this->createTableWithChairsAndPcs(-1.7f, 1.2f);
@@ -52,84 +57,31 @@ ClassroomScene::ClassroomScene()
     this->createTableWithChairsAndPcs(2.0f, 1.2f);
     this->createTableWithChairsAndPcs(2.0f, 3.0f);
     this->createTableWithChairsAndPcs(2.0f, 4.8f);
-
-    this->m_skybox =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    skyboxVertices,
-                    sizeof(skyboxVertices) / sizeof(skyboxVertices[0]), 1,
-                    false);
-    this->m_skybox->addTexture(TextureFactory::createDefaultSkyBoxTexture());
-
-    this->m_shaderProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\basic.vert", "classroom\\lambert.frag", false);
-    this->m_skyboxProgram = ShaderProgram::createFromShaderFiles(
-            "_templates\\skybox.vert", "classroom\\skybox.frag", true);
-    this->m_clockShaderProgram = ShaderProgram::createFromShaderFiles(
-            "wallclock_scene\\clock.vert", "classroom\\lambert.frag", false);
-
-    // add camera
-    std::shared_ptr<CameraCommonSettings> commonSettings =
-            std::make_shared<CameraCommonSettings>();
-    this->m_camera = std::make_unique<PerspectiveCamera>(commonSettings, 1.0f,
-            glm::vec3{1.0f, 1.7f, 2.0f}, glm::vec3{-1.0f, 0.0f, 0.0f});
-
-    this->m_camera->registerCameraUpdateListener(
-            this->m_shaderProgram->asCameraUpdateListener());
-    this->m_camera->registerCameraUpdateListener(
-            this->m_skyboxProgram->asCameraUpdateListener());
-    this->m_camera->registerCameraUpdateListener(
-            this->m_clockShaderProgram->asCameraUpdateListener());
 }
 
-void ClassroomScene::draw(
-        const float deltaT) {
-    for (DrawableObjectPtr& obj : this->m_classroomItems) {
-        obj->draw(*this->m_shaderProgram);
-    }
+void ClassroomScene::updateSceneContents(
+        float deltaT) {
+    time_t currentTime = getCurrentTime();
+    int seconds = convertTimeTtoSeconds(currentTime);
+    int minutes = convertTimeTtoMinutes(currentTime);
+    int hours = convertTimeTtoHours(currentTime);
 
-    this->m_classroom->draw(*this->m_shaderProgram);
-    this->m_door->draw(*this->m_shaderProgram);
-    this->m_doorFrame->draw(*this->m_shaderProgram);
-    this->m_shrek->draw(*this->m_shaderProgram);
-    this->m_toilet->draw(*this->m_shaderProgram);
-    this->m_whiteboard->draw(*this->m_shaderProgram);
-    this->m_teacherChair->draw(*this->m_shaderProgram);
-    this->m_teacherTable->draw(*this->m_shaderProgram);
-    this->m_teacherCase->draw(*this->m_shaderProgram);
-    this->m_teacherMonitor->draw(*this->m_shaderProgram);
-
-    this->drawClock(deltaT);
-
-    this->m_camera->update(this->m_cameraController.getMovementDirection(),
-            this->m_cameraController.getHorizontalRotationIncrement(),
-            this->m_cameraController.getVerticalRotationIncrement(), deltaT);
-}
-
-void ClassroomScene::handleMouseMovement(
-        int cursorDeltaX, int cursorDeltaY) {
-    this->m_cameraController.handleMouseMove(cursorDeltaX, cursorDeltaY);
-}
-
-void ClassroomScene::handleKeyPresses(
-        KeyCodes button, KeyActions action, KeyModifierFlags mode) {
-    this->m_cameraController.handleKeyPresses(button, action, mode);
-}
-
-void ClassroomScene::handleWindowResize(
-        int width, int height) {
-    this->m_camera->setAspectRatio(width, height);
-}
-
-void ClassroomScene::drawSkybox(
-        const float deltaT) {
-    this->m_skybox->draw(*this->m_skyboxProgram);
+    this->m_clockShaderProgram->setSupplementalUniformMatrix(
+            SECONDS_PIN_SHADER_MATRIX_NAME,
+            getSecondsPinRotationMatrix(seconds));
+    this->m_clockShaderProgram->setSupplementalUniformMatrix(
+            MINUTES_PIN_SHADER_MATRIX_NAME,
+            getMinutesPinRotationMatrix(minutes, seconds));
+    this->m_clockShaderProgram->setSupplementalUniformMatrix(
+            HOURS_PIN_SHADER_MATRIX_NAME,
+            getHoursPinRotationMatrix(hours, minutes, seconds));
 }
 
 void ClassroomScene::createTableWithChairsAndPcs(
         float x, float z) {
-    DrawableObjectPtr newTable =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    table, sizeof(table) / sizeof(table[0]), 2, true);
+    DrawableObject* newTable = &this->addDrawableObjectFromVerticesData(true,
+            table, sizeof(table) / sizeof(table[0]), 2, true,
+            *this->m_shaderProgram);
     newTable->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\table.png", TexturingUnit::UNIT0));
     TranslationPtr tableTranslation =
@@ -142,9 +94,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     tableRotationX->setAngle(-90.0f);
     tableRotationZ->setAngle(90.0f);
 
-    DrawableObjectPtr firstChair =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    chair, sizeof(chair) / sizeof(chair[0]), 2, true);
+    DrawableObject* firstChair = &this->addDrawableObjectFromVerticesData(true,
+            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
+            *this->m_shaderProgram);
     firstChair->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr firstChairTranslation =
@@ -157,9 +109,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstChairRotationX->setAngle(-90.0f);
     firstChairRotationZ->setAngle(-90.0f);
 
-    DrawableObjectPtr secondChair =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    chair, sizeof(chair) / sizeof(chair[0]), 2, true);
+    DrawableObject* secondChair = &this->addDrawableObjectFromVerticesData(true,
+            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
+            *this->m_shaderProgram);
     secondChair->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr secondChairTranslation =
@@ -172,10 +124,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     secondChairRotationX->setAngle(-90.0f);
     secondChairRotationZ->setAngle(-90.0f);
 
-    DrawableObjectPtr firstCase =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    computerCase,
-                    sizeof(computerCase) / sizeof(computerCase[0]), 2, true);
+    DrawableObject* firstCase = &this->addDrawableObjectFromVerticesData(true,
+            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
+            true, *this->m_shaderProgram);
     firstCase->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr firstCaseTranslation =
@@ -190,10 +141,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstCaseRotationZ->setAngle(90.0f);
     firstCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    DrawableObjectPtr secondCase =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    computerCase,
-                    sizeof(computerCase) / sizeof(computerCase[0]), 2, true);
+    DrawableObject* secondCase = &this->addDrawableObjectFromVerticesData(true,
+            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
+            true, *this->m_shaderProgram);
     secondCase->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr secondCaseTranslation =
@@ -208,9 +158,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     secondCaseRotationZ->setAngle(90.0f);
     secondCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    DrawableObjectPtr firstMonitor =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true);
+    DrawableObject* firstMonitor = &this->addDrawableObjectFromVerticesData(
+            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
+            *this->m_shaderProgram);
     firstMonitor->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr firstMonitorTranslation =
@@ -226,9 +176,9 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstMonitorRotationZ->setAngle(180.0f);
     firstMonitorScale->setScaleTo(0.01f, 0.01f, 0.01f);
 
-    DrawableObjectPtr secondMonitor =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true);
+    DrawableObject* secondMonitor = &this->addDrawableObjectFromVerticesData(
+            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
+            *this->m_shaderProgram);
     secondMonitor->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr secondMonitorTranslation =
@@ -245,20 +195,11 @@ void ClassroomScene::createTableWithChairsAndPcs(
     secondMonitorRotationX->setAngle(-90.0f);
     secondMonitorRotationZ->setAngle(180.0f);
     secondMonitorScale->setScaleTo(0.01f, 0.01f, 0.01f);
-
-    this->m_classroomItems.push_back(std::move(newTable));
-    this->m_classroomItems.push_back(std::move(firstChair));
-    this->m_classroomItems.push_back(std::move(secondChair));
-    this->m_classroomItems.push_back(std::move(firstCase));
-    this->m_classroomItems.push_back(std::move(secondCase));
-    this->m_classroomItems.push_back(std::move(firstMonitor));
-    this->m_classroomItems.push_back(std::move(secondMonitor));
 }
 
 void ClassroomScene::initializeClassroom() {
-    this->m_classroom =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    eb408, sizeof(eb408) / sizeof(eb408[0]), 2, true);
+    this->m_classroom = &this->addDrawableObjectFromVerticesData(true, eb408,
+            sizeof(eb408) / sizeof(eb408[0]), 2, true, *this->m_shaderProgram);
     this->m_classroom->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\eb408.png", TexturingUnit::UNIT0));
     RotationPtr classroomRotationX =
@@ -266,8 +207,9 @@ void ClassroomScene::initializeClassroom() {
                     1.0f, 0.0f, 0.0f);
     classroomRotationX->setAngle(-90.0f);
 
-    this->m_clock = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false);
+    this->m_clock = &this->addDrawableObjectFromVerticesData(true, clockModel,
+            sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
+            *this->m_clockShaderProgram);
     TranslationPtr clockTranslation =
             this->m_clock->getTransformation()->addNewTranslation();
     RotationPtr clockRotation =
@@ -278,8 +220,8 @@ void ClassroomScene::initializeClassroom() {
     clockRotation->setAngle(-90.0f);
     clockScale->setScaleTo(-0.3f, 0.3f, 0.3f);
 
-    this->m_door = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            door, sizeof(door) / sizeof(door[0]), 2, true);
+    this->m_door = &this->addDrawableObjectFromVerticesData(true, door,
+            sizeof(door) / sizeof(door[0]), 2, true, *this->m_shaderProgram);
     this->m_door->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorTranslation =
@@ -289,10 +231,9 @@ void ClassroomScene::initializeClassroom() {
     doorTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorRotationX->setAngle(-90.0f);
 
-    this->m_doorFrame =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    doorFrame, sizeof(doorFrame) / sizeof(doorFrame[0]), 2,
-                    true);
+    this->m_doorFrame = &this->addDrawableObjectFromVerticesData(true,
+            doorFrame, sizeof(doorFrame) / sizeof(doorFrame[0]), 2, true,
+            *this->m_shaderProgram);
     this->m_doorFrame->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorFrameTranslation =
@@ -303,8 +244,8 @@ void ClassroomScene::initializeClassroom() {
     doorFrameTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorFrameRotationX->setAngle(-90.0f);
 
-    this->m_shrek = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            shrek, sizeof(shrek) / sizeof(shrek[0]), 2, true);
+    this->m_shrek = &this->addDrawableObjectFromVerticesData(true, shrek,
+            sizeof(shrek) / sizeof(shrek[0]), 2, true, *this->m_shaderProgram);
     this->m_shrek->addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\shrek.png", TexturingUnit::UNIT0));
     TranslationPtr shrekTranslation =
@@ -319,9 +260,9 @@ void ClassroomScene::initializeClassroom() {
     shrekRotationX->setAngle(-90.0f);
     shrekRotationZ->setAngle(90.0f);
 
-    this->m_toilet =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    toilet, sizeof(toilet) / sizeof(toilet[0]), 2, true);
+    this->m_toilet = &this->addDrawableObjectFromVerticesData(true, toilet,
+            sizeof(toilet) / sizeof(toilet[0]), 2, true,
+            *this->m_shaderProgram);
     this->m_toilet->addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\toilet.jpg", TexturingUnit::UNIT0));
     TranslationPtr toiletTranslation =
@@ -338,10 +279,9 @@ void ClassroomScene::initializeClassroom() {
     toiletRotationZ->setAngle(30.0f);
     toiletScale->setScaleTo(0.1f, 0.1f, 0.1f);
 
-    this->m_whiteboard =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    whiteboard, sizeof(whiteboard) / sizeof(whiteboard[0]), 2,
-                    true);
+    this->m_whiteboard = &this->addDrawableObjectFromVerticesData(true,
+            whiteboard, sizeof(whiteboard) / sizeof(whiteboard[0]), 2, true,
+            *this->m_shaderProgram);
     this->m_whiteboard->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\whiteboard.png", TexturingUnit::UNIT0));
     TranslationPtr whiteboardTranslation =
@@ -352,9 +292,8 @@ void ClassroomScene::initializeClassroom() {
     whiteboardTranslation->translateTo(-3.8f, 0.0f, 2.5f);
     whiteboardRotation->setAngle(-90.0f);
 
-    this->m_teacherChair =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    chair, sizeof(chair) / sizeof(chair[0]), 2, true);
+    this->m_teacherChair = &this->addDrawableObjectFromVerticesData(true, chair,
+            sizeof(chair) / sizeof(chair[0]), 2, true, *this->m_shaderProgram);
     this->m_teacherChair->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr teacherChairTranslation =
@@ -365,9 +304,8 @@ void ClassroomScene::initializeClassroom() {
     teacherChairTranslation->translateTo(-3.3f, 0.0f, 0.55f);
     teacherChairRotation->setAngle(-90.0f);
 
-    this->m_teacherTable =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    table, sizeof(table) / sizeof(table[0]), 2, true);
+    this->m_teacherTable = &this->addDrawableObjectFromVerticesData(true, table,
+            sizeof(table) / sizeof(table[0]), 2, true, *this->m_shaderProgram);
     this->m_teacherTable->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\table.png", TexturingUnit::UNIT0));
     TranslationPtr teacherTableTranslation =
@@ -382,10 +320,9 @@ void ClassroomScene::initializeClassroom() {
     teacherTableRotationX->setAngle(-90.0f);
     teacherTableRotationZ->setAngle(-90.0f);
 
-    this->m_teacherCase =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    computerCase,
-                    sizeof(computerCase) / sizeof(computerCase[0]), 2, true);
+    this->m_teacherCase = &this->addDrawableObjectFromVerticesData(true,
+            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
+            true, *this->m_shaderProgram);
     this->m_teacherCase->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr teacherCaseTranslation =
@@ -403,9 +340,9 @@ void ClassroomScene::initializeClassroom() {
     teacherCaseRotationZ->setAngle(-90.0f);
     teacherCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    this->m_teacherMonitor =
-            DrawableObjectFactory::createDrawableObjectFromVerticesData(
-                    monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true);
+    this->m_teacherMonitor = &this->addDrawableObjectFromVerticesData(true,
+            monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
+            *this->m_shaderProgram);
     this->m_teacherMonitor->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr teacherMonitorTranslation =
@@ -424,21 +361,10 @@ void ClassroomScene::initializeClassroom() {
     teacherMonitorScale->setScaleTo(0.01f, 0.01f, 0.01f);
 }
 
-void ClassroomScene::drawClock(
-        float deltaT) {
-    time_t currentTime = getCurrentTime();
-    int seconds = convertTimeTtoSeconds(currentTime);
-    int minutes = convertTimeTtoMinutes(currentTime);
-    int hours = convertTimeTtoHours(currentTime);
-
-    m_pinsRotations["secondsPinTransformation"] =
-            getSecondsPinRotationMatrix(seconds);
-    m_pinsRotations["minutesPinTransformation"] =
-            getMinutesPinRotationMatrix(minutes, seconds);
-    m_pinsRotations["hoursPinTransformation"] =
-            getHoursPinRotationMatrix(hours, minutes, seconds);
-
-    this->m_clockShaderProgram->setSupplementalUniformMatrices(
-            this->m_pinsRotations);
-    this->m_clock->draw(*this->m_clockShaderProgram);
+CameraPtr ClassroomScene::createCamera(
+        int windowWidth, int windowHeight) {
+    return std::make_unique<PerspectiveCamera>(
+            std::make_shared<CameraCommonSettings>(),
+            (float)windowWidth / windowHeight, glm::vec3{1.0f, 1.7f, 2.0f},
+            glm::vec3{-1.0f, 0.0f, 0.0f});
 }

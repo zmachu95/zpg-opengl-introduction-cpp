@@ -13,6 +13,11 @@ class Model;
 class ShaderProgram;
 
 /**
+ * @brief Alias for byte.
+ */
+using Byte = unsigned char;
+
+/**
  * @brief Pointer to Model object.
  */
 using ModelPtr = std::shared_ptr<Model>;
@@ -31,12 +36,57 @@ class DrawableObject {
     /**
      * @brief DrawableObject standard constructor.
      * @param model The model to bind.
+     * @param id ID to assign.
      */
-    DrawableObject(const ModelPtr& model);
+    DrawableObject(const ModelPtr& model, Byte id);
+
+    /**
+     * @brief DrawableObject copy constructor. This constructor is deleted to
+     * prevent two objects sharing the same ID and same transformations.
+     */
+    DrawableObject(const DrawableObject&) = delete;
+
+    /**
+     * @brief DrawableObject move constructor.
+     */
+    DrawableObject(DrawableObject&& other) noexcept;
+
+    ~DrawableObject() = default;
 
     /*
      *
      */
+
+    /**
+     * @brief DrawableObject copy operator. This operator is deleted to
+     * prevent two objects sharing the same ID and same transformations.
+     */
+    DrawableObject& operator=(const DrawableObject&) = delete;
+
+    /**
+     * @brief DrawableObject move operator. This operator is deleted to
+     * prevent dangling reference problems.
+     */
+    DrawableObject& operator=(DrawableObject&& other) noexcept = delete;
+
+    /**
+     * @brief Clones this drawable object into a standalone copy with supplied
+     * ID. Only textures are copied to the clone; transformations are completely
+     * ignored.
+     * @param newId The ID assigned to the new copy.
+     * @return Standalone clone with given ID.
+     */
+    DrawableObject cloneWithoutTransformations(Byte newId) const;
+
+    /*
+     *
+     */
+
+    /**
+     * @brief Gets this object's ID.
+     * @return This object's ID.
+     */
+    Byte getId() const;
 
     /**
      * @brief Gets the spatial transformation.
@@ -66,6 +116,7 @@ class DrawableObject {
     DrawableObject& addTexture(const TexturePtr& texture);
 
   private:
+    Byte m_id;
     ModelPtr m_model;
     GroupedTransformationPtr m_transformation;
     std::vector<TexturePtr> m_textures;

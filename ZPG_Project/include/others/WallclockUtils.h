@@ -6,6 +6,25 @@
 #pragma once
 
 #include <glm/ext/matrix_float4x4.hpp>
+#include <string>
+
+/**
+ * @brief Holds the name to shader transformation matrix controlling the seconds
+ * pin.
+ */
+const std::string SECONDS_PIN_SHADER_MATRIX_NAME{"secondsPinTransformation"};
+
+/**
+ * @brief Holds the name to shader transformation matrix controlling the minutes
+ * pin.
+ */
+const std::string MINUTES_PIN_SHADER_MATRIX_NAME{"minutesPinTransformation"};
+
+/**
+ * @brief Holds the name to shader transformation matrix controlling the hours
+ * pin.
+ */
+const std::string HOURS_PIN_SHADER_MATRIX_NAME{"hoursPinTransformation"};
 
 /**
  * @brief Gets the current system time.

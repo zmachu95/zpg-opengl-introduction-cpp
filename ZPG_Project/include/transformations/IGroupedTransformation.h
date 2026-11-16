@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <glm/fwd.hpp>
 #include <memory>
 #include <transformations/ITransformation.h>
 
@@ -44,6 +45,12 @@ using TransformationPtr = std::shared_ptr<ITransformation>;
 class IGroupedTransformation : public ITransformation {
   public:
     virtual ~IGroupedTransformation() = default;
+
+    /**
+     * @brief Adds constant transformation matrix to the group.
+     * @param matrix Matrix representing the constant transformation.
+     */
+    virtual void addConstant(const glm::mat4& matrix) = 0;
 
     /**
      * @brief Adds new rotation matrix to the group.

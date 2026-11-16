@@ -86,9 +86,11 @@ class ShaderProgram {
 
     /**
      * @brief Factory method which creates a shader program from vertex and
-     * fragment shader.
-     * @param vertexShader The vertex shader.
-     * @param fragmentShader The fragment shader.
+     * fragment shader files.
+     * @param vertexShaderFile Path to file with vertex shader relative to
+     * resources/shaders folder.
+     * @param fragmentShaderFile Path to file with fragment shader relative to
+     * resources/shaders folder.
      * @param rendersSkybox Supply true if shader program is intended to render
      * skybox, otherwise false.
      * @return Pointer to new shader program.
@@ -129,24 +131,22 @@ class ShaderProgram {
             const std::vector<TexturePtr>& textures);
 
     /**
-     * @brief Stores supplied supplemental matrices for application during next
+     * @brief Stores supplied supplemental matrix for application during next
      * draw call.
-     * @param supplementalMatricesMap Map of shader matrix variables and their
-     * values.
+     * @param name Name under which the matrix will be stored.
+     * @param matrix The matrix to store.
      */
-    void setSupplementalUniformMatrices(
-            const std::unordered_map<std::string, glm::mat4>&
-                    supplementalMatricesMap);
+    void setSupplementalUniformMatrix(
+            const std::string& name, const glm::mat4& matrix);
 
     /**
-     * @brief Stores supplied supplemental 3D vectors for application during
+     * @brief Stores supplied supplemental 3D vector for application during
      * next draw call.
-     * @param supplementalVectorsMap Map of shader matrix variables and their
-     * values.
+     * @param name Name under which the vector will be stored.
+     * @param vector The vector to store.
      */
-    void setSupplementalUniformVectors(
-            const std::unordered_map<std::string, glm::vec3>&
-                    supplementalVectorsMap);
+    void setSupplementalUniformVector(
+            const std::string& name, const glm::vec3& vector);
 
   private:
     GLuint m_id;

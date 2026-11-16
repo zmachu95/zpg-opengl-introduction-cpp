@@ -174,8 +174,8 @@ bool PerspectiveCamera::unregisterCameraUpdateListener(
 }
 
 void PerspectiveCamera::update(
-        MovementDirection movementDirection, int horizontalRotationIncrement,
-        int verticalRotationIncrement, float deltaT) {
+        MovementDirection movementDirection, float horizontalRotationIncrement,
+        float verticalRotationIncrement, float deltaT) {
     bool cameraChanged = this->m_cameraGeometry->update(movementDirection,
             horizontalRotationIncrement, verticalRotationIncrement, deltaT);
 
@@ -194,6 +194,10 @@ glm::mat4 PerspectiveCamera::calculateProjectionMatrix() const {
     return glm::perspective(glm::radians(this->m_fov_deg), this->m_aspectRatio,
             this->m_nearClippingPlaneDistance,
             this->m_farClippingPlaneDistance);
+}
+
+glm::mat4 PerspectiveCamera::calculateViewMatrix() const {
+    return this->m_cameraGeometry->calculateViewMatrix();
 }
 
 void PerspectiveCamera::notifyOnChange(

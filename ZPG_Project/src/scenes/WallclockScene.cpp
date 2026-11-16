@@ -2,57 +2,41 @@
 //
 // Coded by Zdenek Machu (MAC0690), October 2026
 
-#include <scenes/WallclockScene.h>
+#include "WallclockScene.h"
+#include "AbstractSceneTemplate.h"
 
+#include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
 #include <memory>
-#include <scenes/IScene.h>
-#include <shaders/ShaderProgram.h>
-#include <transformations/IRotation.h>
-#include <transformations/IScale.h>
-#include <transformations/ITranslation.h>
-
-#include <cameras/CameraCommonSettings.h>
-#include <cameras/PerspectiveCamera.h>
-#include <drawables/DrawableObjectFactory.h>
-#include <glm/ext/matrix_float4x4.hpp>
-#include <iostream>
 #include <others/WallclockUtils.h>
 #include <resources/models/clock.h>
+#include <shaders/ShaderProgram.h>
 
-WallclockScene::WallclockScene() : m_program{}, m_clock{}, m_pinsRotations{} {
-    this->m_program = ShaderProgram::createFromShaderFiles(
+WallclockScene::WallclockScene(
+        int windowWidth, int windowHeight)
+    : AbstractSceneTemplate{std::unique_ptr<PerspectiveCamera>{},
+              std::unique_ptr<DrawableObject>{}} {
+    this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
             "wallclock_scene\\clock.vert", "_templates\\basic.frag", false);
-    this->m_clock = DrawableObjectFactory::createDrawableObjectFromVerticesData(
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false);
+    DrawableObject& clock = this->addDrawableObjectFromVerticesData(false,
+            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
+            *this->m_shaderProgram);
 }
 
-void WallclockScene::draw(
-        const float deltaT) {
+void WallclockScene::updateSceneContents(
+        float deltaT) {
     time_t currentTime = getCurrentTime();
     int seconds = convertTimeTtoSeconds(currentTime);
     int minutes = convertTimeTtoMinutes(currentTime);
     int hours = convertTimeTtoHours(currentTime);
 
-    m_pinsRotations["secondsPinTransformation"] =
-            getSecondsPinRotationMatrix(seconds);
-    m_pinsRotations["minutesPinTransformation"] =
-            getMinutesPinRotationMatrix(minutes, seconds);
-    m_pinsRotations["hoursPinTransformation"] =
-            getHoursPinRotationMatrix(hours, minutes, seconds);
-
-    this->m_program->setSupplementalUniformMatrices(this->m_pinsRotations);
-    this->m_clock->draw(*this->m_program);
+    this->m_shaderProgram->setSupplementalUniformMatrix(
+            SECONDS_PIN_SHADER_MATRIX_NAME,
+            getSecondsPinRotationMatrix(seconds));
+    this->m_shaderProgram->setSupplementalUniformMatrix(
+            MINUTES_PIN_SHADER_MATRIX_NAME,
+            getMinutesPinRotationMatrix(minutes, seconds));
+    this->m_shaderProgram->setSupplementalUniformMatrix(
+            HOURS_PIN_SHADER_MATRIX_NAME,
+            getHoursPinRotationMatrix(hours, minutes, seconds));
 }
-
-void WallclockScene::handleMouseMovement(
-        int cursorDeltaX, int cursorDeltaY) {}
-
-void WallclockScene::handleKeyPresses(
-        KeyCodes button, KeyActions action, KeyModifierFlags mode) {}
-
-void WallclockScene::handleWindowResize(
-        int width, int height) {}
-
-void WallclockScene::drawSkybox(
-        const float deltaT) {}

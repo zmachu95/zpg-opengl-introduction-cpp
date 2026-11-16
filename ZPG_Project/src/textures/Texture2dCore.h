@@ -102,11 +102,11 @@ class Texture2dCore {
     /**
      * @brief Translates the number of color channels to OpenGL constant.
      * @param channelsCount Number of color channels present.
-     * @return OpenGL GLint constant.
+     * @return OpenGL GLenum constant.
      * @throw std::invalid_argument - Thrown when insupported option is
      * supplied.
      */
-    static GLint translateChannelsCount(int channelsCount);
+    static GLenum translateChannelsCount(int channelsCount);
 
     /**
      * @brief Deletes the texture from OpenGL.

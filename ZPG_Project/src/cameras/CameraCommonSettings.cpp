@@ -41,7 +41,7 @@ constexpr float ZERO_LENGTH_TRESHOLD = 1e-6f;
 /**
  * @brief The default value of mouse look sensitivity factor.
  */
-constexpr float DEFAULT_MOUSE_SENSITIVITY = 3.0f;
+constexpr float DEFAULT_MOUSE_SENSITIVITY = 4.0f;
 
 /**
  * @brief The default value of camera movement speed factor.

@@ -21,11 +21,14 @@ enum MovementDirectionBitMasks {
     RIGHT = 1 << 3
 };
 
-CameraUserInputController::CameraUserInputController()
-    : m_moveDirection{0}, m_cursorDeltaX{0}, m_cursorDeltaY{0} {}
+CameraUserInputController CameraUserInputController::s_instance{};
 
-MovementDirection CameraUserInputController::getMovementDirection() const {
-    switch (this->m_moveDirection) {
+CameraUserInputController::CameraUserInputController()
+    : m_moveDirection{0}, m_previousCursorX{0}, m_previousCursorY{0},
+      m_currentCursorX{0}, m_currentCursorY{0} {}
+
+MovementDirection CameraUserInputController::getMovementDirection() {
+    switch (s_instance.m_moveDirection) {
         case FORWARD | RIGHT:
             return MovementDirection::FORWARD_AND_RIGHT;
         case FORWARD | LEFT:
@@ -47,22 +50,28 @@ MovementDirection CameraUserInputController::getMovementDirection() const {
     }
 }
 
-int CameraUserInputController::getHorizontalRotationIncrement() {
-    int returnedValue = this->m_cursorDeltaX;
-    this->m_cursorDeltaX = 0;
-    return returnedValue;
+float CameraUserInputController::getHorizontalRotationIncrement() {
+    double returnedValue =
+            s_instance.m_currentCursorX - s_instance.m_previousCursorX;
+    s_instance.m_previousCursorX = s_instance.m_currentCursorX;
+    return (float)returnedValue;
 }
 
-int CameraUserInputController::getVerticalRotationIncrement() {
-    int returnedValue = this->m_cursorDeltaY;
-    this->m_cursorDeltaY = 0;
-    return returnedValue;
+float CameraUserInputController::getVerticalRotationIncrement() {
+    double returnedValue =
+            s_instance.m_currentCursorY - s_instance.m_previousCursorY;
+    s_instance.m_previousCursorY = s_instance.m_currentCursorY;
+    return (float)returnedValue;
 }
 
 void CameraUserInputController::handleMouseMove(
-        int cursorDeltaX, int cursorDeltaY) {
-    this->m_cursorDeltaX += cursorDeltaX;
-    this->m_cursorDeltaY += cursorDeltaY;
+        double cursorX, double cursorY, bool discardUpdates) {
+    s_instance.m_currentCursorX = cursorX;
+    s_instance.m_currentCursorY = cursorY;
+    if (discardUpdates) {
+        s_instance.m_previousCursorX = cursorX;
+        s_instance.m_previousCursorY = cursorY;
+    }
 }
 
 void CameraUserInputController::handleKeyPresses(
@@ -74,11 +83,12 @@ void CameraUserInputController::handleKeyPresses(
     switch (action) {
         case KeyActions::RELEASED:
             /* remove the bit mask */
-            this->m_moveDirection = ~(~this->m_moveDirection | dirFlag);
+            s_instance.m_moveDirection =
+                    ~(~s_instance.m_moveDirection | dirFlag);
             break;
         case KeyActions::PRESSED:
             /* add the bit mask */
-            this->m_moveDirection = this->m_moveDirection | dirFlag;
+            s_instance.m_moveDirection = s_instance.m_moveDirection | dirFlag;
             break;
     }
 }

@@ -22,7 +22,7 @@ ShrekFionaScene::ShrekFionaScene(
         int windowWidth, int windowHeight)
     : AbstractSceneTemplate{windowWidth, windowHeight} {
     ShaderProgram& shaderProgram = this->addShaderProgramFromShaderFiles(
-            "_templates\\basic.vert", "_templates\\ambient.frag", false);
+            "_templates\\basic.vert", "_templates\\lighting.frag", false);
 
     DrawableObject& shrekObj = this->addDrawableObjectFromVerticesData(true,
             shrek, sizeof(shrek) / sizeof(shrek[0]), 2, true, shaderProgram);

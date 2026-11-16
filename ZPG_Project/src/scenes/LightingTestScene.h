@@ -45,11 +45,8 @@ class LightingTestScene : public AbstractSceneTemplate {
     void updateSceneContents(float deltaT) override;
 
   private:
-    std::array<DrawableObject*, 4> m_spheres;
-    ShaderProgram* m_ambientShaderProgram;
-    ShaderProgram* m_lambertShaderProgram;
-    ShaderProgram* m_phongShaderProgram;
-    ShaderProgram* m_blinnShaderProgram;
+    ShaderProgram* m_shaderProgram;
+    bool m_initializedPointLight;
 
     /**
      * @brief Creates camera in the scene.
@@ -58,4 +55,9 @@ class LightingTestScene : public AbstractSceneTemplate {
      * @return Pointer to camera object.
      */
     static CameraPtr createCamera(int windowWidth, int windowHeight);
+
+    /**
+     * @brief Initializes uniform variables inside shader programs.
+     */
+    void initializeShaderPrograms();
 };

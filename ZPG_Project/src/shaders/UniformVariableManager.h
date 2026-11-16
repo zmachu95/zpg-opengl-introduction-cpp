@@ -81,6 +81,30 @@ class UniformVariableManager : public ICameraUpdateListener {
             const std::unordered_map<std::string, glm::vec3>&
                     supplementalVectorsMap);
 
+    /**
+     * @brief Applies supplied supplementary bool values in the shader.
+     * @param supplementalBoolValues Map of shader bool variables and their
+     * values.
+     */
+    void applySupplementalBooleans(const std::unordered_map<std::string, bool>&
+                    supplementalBoolValues);
+
+    /**
+     * @brief Applies supplied supplementary int values in the shader.
+     * @param supplementalIntValues Map of shader int variables and their
+     * values.
+     */
+    void applySupplementalInts(
+            const std::unordered_map<std::string, int>& supplementalIntValues);
+
+    /**
+     * @brief Applies supplied supplementary float values in the shader.
+     * @param supplementalFloatValues Map of shader float variables and their
+     * values.
+     */
+    void applySupplementalFloats(const std::unordered_map<std::string, float>&
+                    supplementalFloatValues);
+
   private:
     GLuint m_parentShaderProgramId;
     bool m_cameraUpdated;

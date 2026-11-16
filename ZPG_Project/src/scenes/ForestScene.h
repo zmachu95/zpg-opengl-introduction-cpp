@@ -12,6 +12,9 @@
 class DrawableObject;
 class ShaderProgram;
 class ITranslation;
+enum class MouseButtonActions;
+enum class MouseButtonCodes;
+enum class KeyModifierFlags;
 
 /**
  * @brief Pointer for ITranslation object.
@@ -41,6 +44,15 @@ class ForestScene : public AbstractSceneTemplate {
 
     ~ForestScene() override = default;
 
+    /**
+     * @brief Handles mouse click event.
+     * @param button Clicked mouse button.
+     * @param action The mouse button action.
+     * @param mode Button modifier mode.
+     */
+    void handleMouseClick(MouseButtonCodes button, MouseButtonActions action,
+            KeyModifierFlags mode) override;
+
   protected:
     /**
      * @brief Updates the scene contents.
@@ -48,10 +60,19 @@ class ForestScene : public AbstractSceneTemplate {
      */
     void updateSceneContents(float deltaT) override;
 
+    /**
+     * @brief Updates the parameters of skybox shader program.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    void updateSkyboxShaderProgram(float deltaT) override;
+
   private:
     ShaderProgram* m_clockShaderProgram;
     std::vector<std::reference_wrapper<ShaderProgram>> m_dynamicShaderPrograms;
     std::vector<TorchbugData> m_torchbugs;
+    bool m_useFlashlight;
+    bool m_updatedSkyboxShader;
+    bool m_initializedShaders;
 
     /**
      * @brief Creates random trees.
@@ -85,4 +106,9 @@ class ForestScene : public AbstractSceneTemplate {
      */
     void createRandomTorchbugs(
             int count, ShaderProgram& torchbugsShaderProgram);
+
+    /**
+     * @brief Initializes uniform variables inside shader programs.
+     */
+    void initializeShaderPrograms();
 };

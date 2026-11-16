@@ -8,6 +8,9 @@
 
 class DrawableObject;
 class ShaderProgram;
+enum class MouseButtonActions;
+enum class MouseButtonCodes;
+enum class KeyModifierFlags;
 
 /**
  * @brief Scene with EB408 room.
@@ -30,23 +33,27 @@ class ClassroomScene : public AbstractSceneTemplate {
      */
     void updateSceneContents(float deltaT) override;
 
+    /**
+     * @brief Handles mouse click event.
+     * @param button Clicked mouse button.
+     * @param action The mouse button action.
+     * @param mode Button modifier mode.
+     */
+    void handleMouseClick(MouseButtonCodes button, MouseButtonActions action,
+            KeyModifierFlags mode) override;
+
+    /**
+     * @brief Updates the parameters of skybox shader program.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    void updateSkyboxShaderProgram(float deltaT) override;
+
   private:
-    DrawableObject* m_shrek;
-    DrawableObject* m_toilet;
-    DrawableObject* m_classroom;
-    DrawableObject* m_whiteboard;
-    DrawableObject* m_door;
-    DrawableObject* m_doorFrame;
-
-    DrawableObject* m_teacherTable;
-    DrawableObject* m_teacherChair;
-    DrawableObject* m_teacherMonitor;
-    DrawableObject* m_teacherCase;
-
-    DrawableObject* m_clock;
-
     ShaderProgram* m_shaderProgram;
     ShaderProgram* m_clockShaderProgram;
+    bool m_useFlashlight;
+    bool m_updatedSkyboxShader;
+    bool m_initializedShaders;
 
     /**
      * @brief Creates camera in the scene.
@@ -68,4 +75,9 @@ class ClassroomScene : public AbstractSceneTemplate {
      * @brief Initializes classroom items.
      */
     void initializeClassroom();
+
+    /**
+     * @brief Initializes uniform variables inside shader programs.
+     */
+    void initializeShaderPrograms();
 };

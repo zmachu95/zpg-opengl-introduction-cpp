@@ -28,7 +28,10 @@
 #include <resources/models/shrek.h>
 #include <resources/models/toilet.h>
 
+#include <constants/MouseButtonActions.h>
+#include <constants/MouseButtonCodes.h>
 #include <glm/ext/vector_float3.hpp>
+#include <glm/trigonometric.hpp>
 #include <textures/ITexture.h>
 #include <textures/TextureFactory.h>
 
@@ -36,13 +39,13 @@ ClassroomScene::ClassroomScene(
         int windowWidth, int windowHeight)
     : AbstractSceneTemplate{
               ClassroomScene::createCamera(windowWidth, windowHeight)},
-      m_shrek{}, m_toilet{}, m_classroom{}, m_whiteboard{}, m_door{},
-      m_doorFrame{}, m_teacherTable{}, m_teacherChair{}, m_teacherMonitor{},
-      m_teacherCase{}, m_shaderProgram{}, m_clock{}, m_clockShaderProgram{} {
+      m_clockShaderProgram{nullptr}, m_shaderProgram{nullptr},
+      m_useFlashlight{false}, m_updatedSkyboxShader{false},
+      m_initializedShaders{false} {
     this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
-            "_templates\\basic.vert", "classroom\\lambert.frag", false);
+            "_templates\\basic.vert", "_templates\\lighting.frag", false);
     this->m_clockShaderProgram = &this->addShaderProgramFromShaderFiles(
-            "wallclock_scene\\clock.vert", "classroom\\lambert.frag", false);
+            "wallclock_scene\\clock.vert", "_templates\\lighting.frag", false);
 
     this->initializeClassroom();
 
@@ -61,6 +64,8 @@ ClassroomScene::ClassroomScene(
 
 void ClassroomScene::updateSceneContents(
         float deltaT) {
+    this->initializeShaderPrograms();
+
     time_t currentTime = getCurrentTime();
     int seconds = convertTimeTtoSeconds(currentTime);
     int minutes = convertTimeTtoMinutes(currentTime);
@@ -198,163 +203,154 @@ void ClassroomScene::createTableWithChairsAndPcs(
 }
 
 void ClassroomScene::initializeClassroom() {
-    this->m_classroom = &this->addDrawableObjectFromVerticesData(true, eb408,
-            sizeof(eb408) / sizeof(eb408[0]), 2, true, *this->m_shaderProgram);
-    this->m_classroom->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& classroom = this->addDrawableObjectFromVerticesData(true,
+            eb408, sizeof(eb408) / sizeof(eb408[0]), 2, true,
+            *this->m_shaderProgram);
+    classroom.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\eb408.png", TexturingUnit::UNIT0));
     RotationPtr classroomRotationX =
-            this->m_classroom->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            classroom.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     classroomRotationX->setAngle(-90.0f);
 
-    this->m_clock = &this->addDrawableObjectFromVerticesData(true, clockModel,
-            sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
+    DrawableObject& clock = this->addDrawableObjectFromVerticesData(true,
+            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
             *this->m_clockShaderProgram);
     TranslationPtr clockTranslation =
-            this->m_clock->getTransformation()->addNewTranslation();
+            clock.getTransformation()->addNewTranslation();
     RotationPtr clockRotation =
-            this->m_clock->getTransformation()->addNewRotation(
-                    0.0f, 1.0f, 0.0f);
-    ScalePtr clockScale = this->m_clock->getTransformation()->addNewScale();
+            clock.getTransformation()->addNewRotation(0.0f, 1.0f, 0.0f);
+    ScalePtr clockScale = clock.getTransformation()->addNewScale();
     clockTranslation->translateTo(-3.8f, 2.0f, 5.5f);
     clockRotation->setAngle(-90.0f);
     clockScale->setScaleTo(-0.3f, 0.3f, 0.3f);
 
-    this->m_door = &this->addDrawableObjectFromVerticesData(true, door,
-            sizeof(door) / sizeof(door[0]), 2, true, *this->m_shaderProgram);
-    this->m_door->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& doorObj = this->addDrawableObjectFromVerticesData(true,
+            door, sizeof(door) / sizeof(door[0]), 2, true,
+            *this->m_shaderProgram);
+    doorObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorTranslation =
-            this->m_door->getTransformation()->addNewTranslation();
+            doorObj.getTransformation()->addNewTranslation();
     RotationPtr doorRotationX =
-            this->m_door->getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
+            doorObj.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     doorTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorRotationX->setAngle(-90.0f);
 
-    this->m_doorFrame = &this->addDrawableObjectFromVerticesData(true,
+    DrawableObject& doorFrameObj = this->addDrawableObjectFromVerticesData(true,
             doorFrame, sizeof(doorFrame) / sizeof(doorFrame[0]), 2, true,
             *this->m_shaderProgram);
-    this->m_doorFrame->addTexture(TextureFactory::create2dTextureFromFile(
+    doorFrameObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorFrameTranslation =
-            this->m_doorFrame->getTransformation()->addNewTranslation();
+            doorFrameObj.getTransformation()->addNewTranslation();
     RotationPtr doorFrameRotationX =
-            this->m_doorFrame->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            doorFrameObj.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     doorFrameTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorFrameRotationX->setAngle(-90.0f);
 
-    this->m_shrek = &this->addDrawableObjectFromVerticesData(true, shrek,
-            sizeof(shrek) / sizeof(shrek[0]), 2, true, *this->m_shaderProgram);
-    this->m_shrek->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& shrekObj = this->addDrawableObjectFromVerticesData(true,
+            shrek, sizeof(shrek) / sizeof(shrek[0]), 2, true,
+            *this->m_shaderProgram);
+    shrekObj.addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\shrek.png", TexturingUnit::UNIT0));
     TranslationPtr shrekTranslation =
-            this->m_shrek->getTransformation()->addNewTranslation();
+            shrekObj.getTransformation()->addNewTranslation();
     RotationPtr shrekRotationX =
-            this->m_shrek->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            shrekObj.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     RotationPtr shrekRotationZ =
-            this->m_shrek->getTransformation()->addNewRotation(
-                    0.0f, 0.0f, 1.0f);
+            shrekObj.getTransformation()->addNewRotation(0.0f, 0.0f, 1.0f);
     shrekTranslation->translateTo(-3.23f, 0.0f, 1.73f);
     shrekRotationX->setAngle(-90.0f);
     shrekRotationZ->setAngle(90.0f);
 
-    this->m_toilet = &this->addDrawableObjectFromVerticesData(true, toilet,
-            sizeof(toilet) / sizeof(toilet[0]), 2, true,
+    DrawableObject& toiletObj = this->addDrawableObjectFromVerticesData(true,
+            toilet, sizeof(toilet) / sizeof(toilet[0]), 2, true,
             *this->m_shaderProgram);
-    this->m_toilet->addTexture(TextureFactory::create2dTextureFromFile(
+    toiletObj.addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\toilet.jpg", TexturingUnit::UNIT0));
     TranslationPtr toiletTranslation =
-            this->m_toilet->getTransformation()->addNewTranslation();
+            toiletObj.getTransformation()->addNewTranslation();
     RotationPtr toiletRotationX =
-            this->m_toilet->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            toiletObj.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     RotationPtr toiletRotationZ =
-            this->m_toilet->getTransformation()->addNewRotation(
-                    0.0f, 0.0f, 1.0f);
-    ScalePtr toiletScale = this->m_toilet->getTransformation()->addNewScale();
+            toiletObj.getTransformation()->addNewRotation(0.0f, 0.0f, 1.0f);
+    ScalePtr toiletScale = toiletObj.getTransformation()->addNewScale();
     toiletTranslation->translateTo(-2.44f, 0.664f, 0.57f);
     toiletRotationX->setAngle(-90.0f);
     toiletRotationZ->setAngle(30.0f);
     toiletScale->setScaleTo(0.1f, 0.1f, 0.1f);
 
-    this->m_whiteboard = &this->addDrawableObjectFromVerticesData(true,
-            whiteboard, sizeof(whiteboard) / sizeof(whiteboard[0]), 2, true,
-            *this->m_shaderProgram);
-    this->m_whiteboard->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& whiteboardObj = this->addDrawableObjectFromVerticesData(
+            true, whiteboard, sizeof(whiteboard) / sizeof(whiteboard[0]), 2,
+            true, *this->m_shaderProgram);
+    whiteboardObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\whiteboard.png", TexturingUnit::UNIT0));
     TranslationPtr whiteboardTranslation =
-            this->m_whiteboard->getTransformation()->addNewTranslation();
+            whiteboardObj.getTransformation()->addNewTranslation();
     RotationPtr whiteboardRotation =
-            this->m_whiteboard->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            whiteboardObj.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     whiteboardTranslation->translateTo(-3.8f, 0.0f, 2.5f);
     whiteboardRotation->setAngle(-90.0f);
 
-    this->m_teacherChair = &this->addDrawableObjectFromVerticesData(true, chair,
-            sizeof(chair) / sizeof(chair[0]), 2, true, *this->m_shaderProgram);
-    this->m_teacherChair->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& teacherChair = this->addDrawableObjectFromVerticesData(true,
+            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
+            *this->m_shaderProgram);
+    teacherChair.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr teacherChairTranslation =
-            this->m_teacherChair->getTransformation()->addNewTranslation();
+            teacherChair.getTransformation()->addNewTranslation();
     RotationPtr teacherChairRotation =
-            this->m_teacherChair->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            teacherChair.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     teacherChairTranslation->translateTo(-3.3f, 0.0f, 0.55f);
     teacherChairRotation->setAngle(-90.0f);
 
-    this->m_teacherTable = &this->addDrawableObjectFromVerticesData(true, table,
-            sizeof(table) / sizeof(table[0]), 2, true, *this->m_shaderProgram);
-    this->m_teacherTable->addTexture(TextureFactory::create2dTextureFromFile(
+    DrawableObject& teacherTable = this->addDrawableObjectFromVerticesData(true,
+            table, sizeof(table) / sizeof(table[0]), 2, true,
+            *this->m_shaderProgram);
+    teacherTable.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\table.png", TexturingUnit::UNIT0));
     TranslationPtr teacherTableTranslation =
-            this->m_teacherTable->getTransformation()->addNewTranslation();
+            teacherTable.getTransformation()->addNewTranslation();
     RotationPtr teacherTableRotationX =
-            this->m_teacherTable->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            teacherTable.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     RotationPtr teacherTableRotationZ =
-            this->m_teacherTable->getTransformation()->addNewRotation(
-                    0.0f, 0.0f, 1.0f);
+            teacherTable.getTransformation()->addNewRotation(0.0f, 0.0f, 1.0f);
     teacherTableTranslation->translateTo(-2.515f, 0.0f, 1.27f);
     teacherTableRotationX->setAngle(-90.0f);
     teacherTableRotationZ->setAngle(-90.0f);
 
-    this->m_teacherCase = &this->addDrawableObjectFromVerticesData(true,
+    DrawableObject& teacherCase = this->addDrawableObjectFromVerticesData(true,
             computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
             true, *this->m_shaderProgram);
-    this->m_teacherCase->addTexture(TextureFactory::create2dTextureFromFile(
+    teacherCase.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr teacherCaseTranslation =
-            this->m_teacherCase->getTransformation()->addNewTranslation();
+            teacherCase.getTransformation()->addNewTranslation();
     RotationPtr teacherCaseRotationX =
-            this->m_teacherCase->getTransformation()->addNewRotation(
-                    1.0f, 0.0f, 0.0f);
+            teacherCase.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     RotationPtr teacherCaseRotationZ =
-            this->m_teacherCase->getTransformation()->addNewRotation(
-                    0.0f, 0.0f, 1.0f);
-    ScalePtr teacherCaseScale =
-            this->m_teacherCase->getTransformation()->addNewScale();
+            teacherCase.getTransformation()->addNewRotation(0.0f, 0.0f, 1.0f);
+    ScalePtr teacherCaseScale = teacherCase.getTransformation()->addNewScale();
     teacherCaseTranslation->translateTo(-2.414f, 0.0f, 2.067f);
     teacherCaseRotationX->setAngle(-90.0f);
     teacherCaseRotationZ->setAngle(-90.0f);
     teacherCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    this->m_teacherMonitor = &this->addDrawableObjectFromVerticesData(true,
-            monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
+    DrawableObject& teacherMonitor = this->addDrawableObjectFromVerticesData(
+            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
             *this->m_shaderProgram);
-    this->m_teacherMonitor->addTexture(TextureFactory::create2dTextureFromFile(
+    teacherMonitor.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr teacherMonitorTranslation =
-            this->m_teacherMonitor->getTransformation()->addNewTranslation();
+            teacherMonitor.getTransformation()->addNewTranslation();
     RotationPtr teacherMonitorRotationX =
-            this->m_teacherMonitor->getTransformation()->addNewRotation(
+            teacherMonitor.getTransformation()->addNewRotation(
                     1.0f, 0.0f, 0.0f);
     RotationPtr teacherMonitorRotationZ =
-            this->m_teacherMonitor->getTransformation()->addNewRotation(
+            teacherMonitor.getTransformation()->addNewRotation(
                     0.0f, 0.0f, 1.0f);
     ScalePtr teacherMonitorScale =
-            this->m_teacherMonitor->getTransformation()->addNewScale();
+            teacherMonitor.getTransformation()->addNewScale();
     teacherMonitorTranslation->translateTo(-2.428f, 0.664f, 1.311f);
     teacherMonitorRotationX->setAngle(-90.0f);
     teacherMonitorRotationZ->setAngle(0.0f);
@@ -367,4 +363,83 @@ CameraPtr ClassroomScene::createCamera(
             std::make_shared<CameraCommonSettings>(),
             (float)windowWidth / windowHeight, glm::vec3{1.0f, 1.7f, 2.0f},
             glm::vec3{-1.0f, 0.0f, 0.0f});
+}
+
+void ClassroomScene::handleMouseClick(
+        MouseButtonCodes button, MouseButtonActions action,
+        KeyModifierFlags mode) {
+    if (action == MouseButtonActions::PRESSED) {
+        switch (button) {
+            case MouseButtonCodes::RIGHT_BUTTON:
+                this->m_useFlashlight = !this->m_useFlashlight;
+                for (ShaderProgram* shaderProgram :
+                        {this->m_clockShaderProgram, this->m_shaderProgram}) {
+                    shaderProgram->setSupplementalUniformIntValue(
+                            "spotLightsCount", (int)this->m_useFlashlight);
+                }
+                break;
+        }
+    }
+
+    AbstractSceneTemplate::handleMouseClick(button, action, mode);
+}
+
+void ClassroomScene::updateSkyboxShaderProgram(
+        float deltaT) {
+    if (!this->m_updatedSkyboxShader) {
+        this->getSkyboxShaderProgram()->setSupplementalUniformVector(
+                "ambientFactors", glm::vec3{0.1f});
+        this->m_updatedSkyboxShader = true;
+    }
+}
+
+void ClassroomScene::initializeShaderPrograms() {
+    if (!this->m_initializedShaders) {
+        for (ShaderProgram* shaderProgram :
+                {this->m_clockShaderProgram, this->m_shaderProgram}) {
+            shaderProgram->setSupplementalUniformIntValue(
+                    "directedLightsCount", 1);
+            shaderProgram->setSupplementalUniformIntValue(
+                    "spotLightsCount", (int)this->m_useFlashlight);
+            shaderProgram->setSupplementalUniformVector(
+                    "ambientFactors", glm::vec3{0.01f});
+
+            // define directed light
+            shaderProgram->setSupplementalUniformVector(
+                    "directedLights[0].direction",
+                    glm::vec3{-0.8f, -0.5f, -0.2f});
+            shaderProgram->setSupplementalUniformVector(
+                    "directedLights[0].color", glm::vec3{0.1f, 0.08f, 0.08f});
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "directedLights[0].shininessExponent", 128.0f);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "directedLights[0].useSpecular", false);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "directedLights[0].useBlinn", false);
+
+            // define spotlight
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].innerCosineCutOff",
+                    glm::cos(glm::radians(5.0f)));
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].outerCosineCutOff",
+                    glm::cos(glm::radians(15.0f)));
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].attConstant", 1.0f);
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].attLinear", 0.3f);
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].attQuadratic", 0.01f);
+            shaderProgram->setSupplementalUniformVector(
+                    "spotLights[0].color", glm::vec3{0.7f, 0.7f, 1.0f});
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "spotLights[0].shininessExponent", 2.0f);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "spotLights[0].useSpecular", true);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "spotLights[0].useBlinn", true);
+        }
+
+        this->m_initializedShaders = true;
+    }
 }

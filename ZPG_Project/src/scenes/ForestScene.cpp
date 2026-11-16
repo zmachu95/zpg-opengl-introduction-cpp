@@ -27,24 +27,30 @@
 #include <resources/models/sun.h>
 #include <string>
 
+#include <constants/MouseButtonActions.h>
+#include <constants/MouseButtonCodes.h>
+
 using namespace std::string_literals;
+
+constexpr int TORCHBUGS_COUNT = 10;
 
 ForestScene::ForestScene(
         int windowWidth, int windowHeight)
     : AbstractSceneTemplate{windowWidth, windowHeight}, m_clockShaderProgram{},
-      m_dynamicShaderPrograms{}, m_torchbugs{} {
+      m_dynamicShaderPrograms{}, m_torchbugs{}, m_useFlashlight{false},
+      m_updatedSkyboxShader{false}, m_initializedShaders{false} {
     // create shader programs
     ShaderProgram& plainShaderProgram = this->addShaderProgramFromShaderFiles(
-            "tree_scene\\plain.vert", "tree_scene\\lambert.frag", false);
+            "tree_scene\\plain.vert", "_templates\\lighting.frag", false);
     ShaderProgram& treeShaderProgram = this->addShaderProgramFromShaderFiles(
-            "tree_scene\\tree.vert", "tree_scene\\lambert.frag", false);
+            "tree_scene\\tree.vert", "_templates\\lighting.frag", false);
     ShaderProgram& bushShaderProgram = this->addShaderProgramFromShaderFiles(
-            "tree_scene\\bush.vert", "tree_scene\\lambert.frag", false);
+            "tree_scene\\bush.vert", "_templates\\lighting.frag", false);
     this->m_clockShaderProgram = &this->addShaderProgramFromShaderFiles(
-            "wallclock_scene\\clock.vert", "tree_scene\\lambert.frag", false);
+            "wallclock_scene\\clock.vert", "_templates\\lighting.frag", false);
     ShaderProgram& torchbugShaderProgram =
             this->addShaderProgramFromShaderFiles("_templates\\basic.vert",
-                    "tree_scene\\ambient.frag", false);
+                    "_templates\\lighting.frag", false);
     this->m_dynamicShaderPrograms = {plainShaderProgram, treeShaderProgram,
             bushShaderProgram, *this->m_clockShaderProgram};
 
@@ -69,11 +75,12 @@ ForestScene::ForestScene(
     // create forest
     this->createRandomTrees(100, treeShaderProgram);
     this->createRandomBushes(50, bushShaderProgram);
-    this->createRandomTorchbugs(10, torchbugShaderProgram);
+    this->createRandomTorchbugs(TORCHBUGS_COUNT, torchbugShaderProgram);
 }
 
 void ForestScene::updateSceneContents(
         float deltaT) {
+    this->initializeShaderPrograms();
     this->drawTorchbugs(deltaT);
     this->drawClock(deltaT);
 }
@@ -154,7 +161,7 @@ void ForestScene::drawTorchbugs(
 
         for (ShaderProgram& shaderProgram : this->m_dynamicShaderPrograms) {
             shaderProgram.setSupplementalUniformVector(
-                    "lightPositions["s + std::to_string(i) + "]",
+                    "pointLights["s + std::to_string(i) + "].position",
                     worldLocation);
         }
         i += 1;
@@ -183,5 +190,96 @@ void ForestScene::createRandomTorchbugs(
 
         this->m_torchbugs.push_back(TorchbugData{
                 &torchbug, (float)(rand() % 360), localTranslation});
+    }
+}
+
+void ForestScene::handleMouseClick(
+        MouseButtonCodes button, MouseButtonActions action,
+        KeyModifierFlags mode) {
+    if (action == MouseButtonActions::PRESSED) {
+        switch (button) {
+            case MouseButtonCodes::RIGHT_BUTTON:
+                this->m_useFlashlight = !this->m_useFlashlight;
+                for (ShaderProgram& shaderProgram :
+                        this->m_dynamicShaderPrograms) {
+                    shaderProgram.setSupplementalUniformIntValue(
+                            "spotLightsCount", (int)this->m_useFlashlight);
+                }
+                break;
+        }
+    }
+
+    AbstractSceneTemplate::handleMouseClick(button, action, mode);
+}
+
+void ForestScene::updateSkyboxShaderProgram(
+        float deltaT) {
+    if (!this->m_updatedSkyboxShader) {
+        this->getSkyboxShaderProgram()->setSupplementalUniformVector(
+                "ambientFactors", glm::vec3{0.1f});
+        this->m_updatedSkyboxShader = true;
+    }
+}
+
+void ForestScene::initializeShaderPrograms() {
+    if (!this->m_initializedShaders) {
+        for (ShaderProgram& shaderProgram : this->m_dynamicShaderPrograms) {
+            shaderProgram.setSupplementalUniformIntValue(
+                    "pointLightsCount", TORCHBUGS_COUNT);
+            shaderProgram.setSupplementalUniformIntValue(
+                    "spotLightsCount", (int)this->m_useFlashlight);
+            shaderProgram.setSupplementalUniformVector(
+                    "ambientFactors", glm::vec3{0.15f});
+
+            // define torchbug lights
+            for (int i = 0; i < TORCHBUGS_COUNT; i++) {
+                shaderProgram.setSupplementalUniformFloatValue(
+                        "pointLights["s + std::to_string(i) + "].attConstant",
+                        1.0f);
+                shaderProgram.setSupplementalUniformFloatValue(
+                        "pointLights["s + std::to_string(i) + "].attLinear",
+                        0.8f);
+                shaderProgram.setSupplementalUniformFloatValue(
+                        "pointLights["s + std::to_string(i) + "].attQuadratic",
+                        0.2f);
+                shaderProgram.setSupplementalUniformVector(
+                        "pointLights["s + std::to_string(i) + "].color",
+                        glm::vec3{0.6f, 0.3f, 0.0f});
+                shaderProgram.setSupplementalUniformFloatValue(
+                        "pointLights["s + std::to_string(i)
+                                + "].shininessExponent",
+                        4.0f);
+                shaderProgram.setSupplementalUniformBoolValue(
+                        "pointLights["s + std::to_string(i) + "].useSpecular",
+                        true);
+                shaderProgram.setSupplementalUniformBoolValue(
+                        "pointLights["s + std::to_string(i) + "].useBlinn",
+                        true);
+            }
+
+            // define spotlight
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].innerCosineCutOff",
+                    glm::cos(glm::radians(5.0f)));
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].outerCosineCutOff",
+                    glm::cos(glm::radians(25.0f)));
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].attConstant", 1.0f);
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].attLinear", 0.05f);
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].attQuadratic", 0.01f);
+            shaderProgram.setSupplementalUniformVector(
+                    "spotLights[0].color", glm::vec3{0.7f, 0.7f, 1.0f});
+            shaderProgram.setSupplementalUniformFloatValue(
+                    "spotLights[0].shininessExponent", 2.0f);
+            shaderProgram.setSupplementalUniformBoolValue(
+                    "spotLights[0].useSpecular", true);
+            shaderProgram.setSupplementalUniformBoolValue(
+                    "spotLights[0].useBlinn", false);
+        }
+
+        this->m_initializedShaders = true;
     }
 }

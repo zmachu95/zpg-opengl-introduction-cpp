@@ -28,7 +28,9 @@ ShaderProgram::ShaderProgram(
     : m_id{id}, m_uniformVarManager{uniformVariableManager},
       m_vertexShader{vertexShader}, m_fragmentShader{fragmentShader},
       m_supplementalUniformMatrices{}, m_initializedTextureSamplers{false},
-      m_rendersSkybox{rendersSkybox}, m_supplementalUniformVectors{} {
+      m_rendersSkybox{rendersSkybox}, m_supplementalUniformVectors{},
+      m_supplementalBoolValues{}, m_supplementalIntValues{},
+      m_supplementalFloatValues{} {
     std::cout << "Created shader program with ID " << id << ".\n";
 }
 
@@ -44,7 +46,10 @@ ShaderProgram::ShaderProgram(
               std::exchange(other.m_initializedTextureSamplers, true)},
       m_rendersSkybox{other.m_rendersSkybox},
       m_supplementalUniformVectors{
-              std::move(other.m_supplementalUniformVectors)} {}
+              std::move(other.m_supplementalUniformVectors)},
+      m_supplementalBoolValues{std::move(other.m_supplementalBoolValues)},
+      m_supplementalIntValues{std::move(other.m_supplementalIntValues)},
+      m_supplementalFloatValues{std::move(other.m_supplementalFloatValues)} {}
 
 ShaderProgram::~ShaderProgram() { this->deleteProgram(); }
 
@@ -64,6 +69,12 @@ ShaderProgram& ShaderProgram::operator=(
         this->m_rendersSkybox = other.m_rendersSkybox;
         this->m_supplementalUniformVectors =
                 std::move(other.m_supplementalUniformVectors);
+        this->m_supplementalBoolValues =
+                std::move(other.m_supplementalBoolValues);
+        this->m_supplementalIntValues =
+                std::move(other.m_supplementalIntValues);
+        this->m_supplementalFloatValues =
+                std::move(other.m_supplementalFloatValues);
     }
 
     return *this;
@@ -165,6 +176,21 @@ void ShaderProgram::setSupplementalUniformVector(
     this->m_supplementalUniformVectors[name] = vector;
 }
 
+void ShaderProgram::setSupplementalUniformBoolValue(
+        const std::string& name, bool value) {
+    this->m_supplementalBoolValues[name] = value;
+}
+
+void ShaderProgram::setSupplementalUniformIntValue(
+        const std::string& name, int value) {
+    this->m_supplementalIntValues[name] = value;
+}
+
+void ShaderProgram::setSupplementalUniformFloatValue(
+        const std::string& name, float value) {
+    this->m_supplementalFloatValues[name] = value;
+}
+
 void ShaderProgram::applySupplementalMatricesAndVectors() {
     if (!this->m_supplementalUniformMatrices.empty()) {
         this->m_uniformVarManager->applySupplementalMatrices(
@@ -175,5 +201,20 @@ void ShaderProgram::applySupplementalMatricesAndVectors() {
         this->m_uniformVarManager->applySupplementalVectors(
                 this->m_supplementalUniformVectors);
         this->m_supplementalUniformVectors.clear();
+    }
+    if (!this->m_supplementalBoolValues.empty()) {
+        this->m_uniformVarManager->applySupplementalBooleans(
+                this->m_supplementalBoolValues);
+        this->m_supplementalBoolValues.clear();
+    }
+    if (!this->m_supplementalIntValues.empty()) {
+        this->m_uniformVarManager->applySupplementalInts(
+                this->m_supplementalIntValues);
+        this->m_supplementalIntValues.clear();
+    }
+    if (!this->m_supplementalFloatValues.empty()) {
+        this->m_uniformVarManager->applySupplementalFloats(
+                this->m_supplementalFloatValues);
+        this->m_supplementalFloatValues.clear();
     }
 }

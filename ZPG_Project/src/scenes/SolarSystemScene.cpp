@@ -102,32 +102,33 @@ SolarSystemScene::SolarSystemScene(
       m_sunOwnAxisRotation{}, m_earthAroundSunRotation{},
       m_earthOrbitTransformation{}, m_earthOwnAxisRotation{},
       m_moonAroundEarthRotation{}, m_moonOwnAxisRotation{},
-      m_satelliteAroundEarthRotation{} {
+      m_satelliteAroundEarthRotation{}, m_sunShaderProgram{nullptr},
+      m_planetsShaderProgram{nullptr}, m_satelliteShaderProgram{nullptr},
+      m_initializedShaders{false} {
     // shader programs
-    ShaderProgram& sunShaderProgram = this->addShaderProgramFromShaderFiles(
-            "solar_system_scene\\planets.vert",
-            "solar_system_scene\\ambient.frag", false);
-    ShaderProgram& planetsShaderProgram =
-            this->addShaderProgramFromShaderFiles(
-                    "solar_system_scene\\planets.vert",
-                    "solar_system_scene\\phong.frag", false);
-    ShaderProgram& satelliteShaderProgram =
-            this->addShaderProgramFromShaderFiles(
-                    "solar_system_scene\\satellite.vert",
-                    "solar_system_scene\\phong.frag", false);
+    this->m_sunShaderProgram = &this->addShaderProgramFromShaderFiles(
+            "solar_system_scene\\planets.vert", "_templates\\lighting.frag",
+            false);
+    this->m_planetsShaderProgram = &this->addShaderProgramFromShaderFiles(
+            "solar_system_scene\\planets.vert", "_templates\\lighting.frag",
+            false);
+    this->m_satelliteShaderProgram = &this->addShaderProgramFromShaderFiles(
+            "solar_system_scene\\satellite.vert", "_templates\\lighting.frag",
+            false);
 
     // models
     DrawableObject& sunModel = this->addDrawableObjectFromVerticesData(false,
-            sun, sizeof(sun) / sizeof(sun[0]), 3, false, sunShaderProgram);
-    DrawableObject& earthModel = this->addDrawableObjectFromVerticesData(
-            false, earth, sizeof(earth) / sizeof(earth[0]), 3, false,
-            planetsShaderProgram);
-    DrawableObject& moonModel = this->addDrawableObjectFromVerticesData(
-            false, moon, sizeof(moon) / sizeof(moon[0]), 3, false,
-            planetsShaderProgram);
+            sun, sizeof(sun) / sizeof(sun[0]), 3, false,
+            *this->m_sunShaderProgram);
+    DrawableObject& earthModel = this->addDrawableObjectFromVerticesData(false,
+            earth, sizeof(earth) / sizeof(earth[0]), 3, false,
+            *this->m_planetsShaderProgram);
+    DrawableObject& moonModel = this->addDrawableObjectFromVerticesData(false,
+            moon, sizeof(moon) / sizeof(moon[0]), 3, false,
+            *this->m_planetsShaderProgram);
     DrawableObject& satelliteModel = this->addDrawableObjectFromVerticesData(
             false, satellite, sizeof(satellite) / sizeof(satellite[0]), 2,
-            false, satelliteShaderProgram);
+            false, *this->m_satelliteShaderProgram);
 
     this->createSunTransformations(sunModel.getTransformation());
     this->createEarthTransformations(earthModel.getTransformation());
@@ -137,6 +138,8 @@ SolarSystemScene::SolarSystemScene(
 
 void SolarSystemScene::updateSceneContents(
         float deltaT) {
+    this->initializeShaderPrograms();
+
     this->m_sunOwnAxisRotation->incrementAngle(sunOwnAxisOmega * deltaT);
     this->m_earthAroundSunRotation->incrementAngle(
             earthAroundSunOmega * deltaT);
@@ -153,4 +156,32 @@ CameraPtr SolarSystemScene::createCamera(
     return std::make_unique<PerspectiveCamera>(
             std::make_shared<CameraCommonSettings>(),
             (float)windowWidth / windowHeight, glm::vec3{0.0f, 0.0f, 2.0f});
+}
+
+void SolarSystemScene::initializeShaderPrograms() {
+    if (!this->m_initializedShaders) {
+        for (ShaderProgram* shaderProgram : {this->m_planetsShaderProgram,
+                     this->m_satelliteShaderProgram}) {
+            shaderProgram->setSupplementalUniformIntValue(
+                    "pointLightsCount", 1);
+            shaderProgram->setSupplementalUniformVector(
+                    "ambientFactors", glm::vec3{0.3f});
+            shaderProgram->setSupplementalUniformVector(
+                    "pointLights[0].color", glm::vec3{1.0f, 0.8f, 0.8f});
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "pointLights[0].shininessExponent", 6.0f);
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "pointLights[0].attConstant", 1.0f);
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "pointLights[0].attLinear", 0.05f);
+            shaderProgram->setSupplementalUniformFloatValue(
+                    "pointLights[0].attQuadratic", 0.001f);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "pointLights[0].useSpecular", true);
+            shaderProgram->setSupplementalUniformBoolValue(
+                    "pointLights[0].useBlinn", true);
+        }
+
+        this->m_initializedShaders = true;
+    }
 }

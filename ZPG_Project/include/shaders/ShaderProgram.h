@@ -148,6 +148,30 @@ class ShaderProgram {
     void setSupplementalUniformVector(
             const std::string& name, const glm::vec3& vector);
 
+    /**
+     * @brief Stores supplied supplemental bool value for application during
+     * next draw call.
+     * @param name Name under which the value will be stored.
+     * @param value The value to store.
+     */
+    void setSupplementalUniformBoolValue(const std::string& name, bool value);
+
+    /**
+     * @brief Stores supplied supplemental int value for application during
+     * next draw call.
+     * @param name Name under which the value will be stored.
+     * @param value The value to store.
+     */
+    void setSupplementalUniformIntValue(const std::string& name, int value);
+
+    /**
+     * @brief Stores supplied supplemental float value for application during
+     * next draw call.
+     * @param name Name under which the value will be stored.
+     * @param value The value to store.
+     */
+    void setSupplementalUniformFloatValue(const std::string& name, float value);
+
   private:
     GLuint m_id;
     UniformVariableManagerPtr m_uniformVarManager;
@@ -155,6 +179,9 @@ class ShaderProgram {
     FragmentShaderPtr m_fragmentShader;
     std::unordered_map<std::string, glm::mat4> m_supplementalUniformMatrices;
     std::unordered_map<std::string, glm::vec3> m_supplementalUniformVectors;
+    std::unordered_map<std::string, bool> m_supplementalBoolValues;
+    std::unordered_map<std::string, int> m_supplementalIntValues;
+    std::unordered_map<std::string, float> m_supplementalFloatValues;
     bool m_initializedTextureSamplers;
     bool m_rendersSkybox;
 

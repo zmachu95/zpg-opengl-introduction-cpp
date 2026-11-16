@@ -199,6 +199,27 @@ void UniformVariableManager::applySupplementalVectors(
     }
 }
 
+void UniformVariableManager::applySupplementalBooleans(
+        const std::unordered_map<std::string, bool>& supplementalBoolValues) {
+    for (const auto& kvPair : supplementalBoolValues) {
+        this->setBoolUniformVar(kvPair.first, kvPair.second);
+    }
+}
+
+void UniformVariableManager::applySupplementalInts(
+        const std::unordered_map<std::string, int>& supplementalIntValues) {
+    for (const auto& kvPair : supplementalIntValues) {
+        this->setIntUniformVar(kvPair.first, kvPair.second);
+    }
+}
+
+void UniformVariableManager::applySupplementalFloats(
+        const std::unordered_map<std::string, float>& supplementalFloatValues) {
+    for (const auto& kvPair : supplementalFloatValues) {
+        this->setFloatUniformVar(kvPair.first, kvPair.second);
+    }
+}
+
 void UniformVariableManager::initializeTextureSampler(
         GLuint index) {
     this->setIntUniformVar(

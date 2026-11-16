@@ -102,6 +102,7 @@ void AbstractSceneTemplate::highlightSelectedObject(
 void AbstractSceneTemplate::drawSkybox(
         const float deltaT) {
     if (this->m_skybox.get()) {
+        this->updateSkyboxShaderProgram(deltaT);
         this->m_skybox->draw(*this->m_skyboxShaderProgram);
     }
 }
@@ -240,4 +241,13 @@ ShaderProgram* AbstractSceneTemplate::getShaderProgram(
     }
 
     return this->m_repository.getShaderProgram(*object);
+}
+
+ShaderProgram* AbstractSceneTemplate::getSkyboxShaderProgram() {
+    return this->m_skyboxShaderProgram;
+}
+
+void AbstractSceneTemplate::updateSkyboxShaderProgram(
+        float deltaT) {
+    /* do nothing */
 }

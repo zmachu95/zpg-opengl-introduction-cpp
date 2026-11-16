@@ -222,6 +222,17 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
 
   protected:
     /**
+     * @brief Gets pointer to skybox shader program.
+     * @return If exists, pointer to skybox shader program. Otherwise returns
+     * nullptr.
+     */
+    ShaderProgram* getSkyboxShaderProgram();
+
+    /*
+     *
+     */
+
+    /**
      * @brief Adds new drawable object into the scene.
      * @param generateId Flag whether the new object should receive unique ID.
      * @param verticesData Array of vertices data.
@@ -257,6 +268,12 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
      * @param deltaT Time elapsed since the last drawn frame.
      */
     virtual void updateSceneContents(float deltaT) = 0;
+
+    /**
+     * @brief Updates the parameters of skybox shader program.
+     * @param deltaT Time elapsed since the last drawn frame.
+     */
+    virtual void updateSkyboxShaderProgram(float deltaT);
 
   private:
     CameraPtr m_camera;

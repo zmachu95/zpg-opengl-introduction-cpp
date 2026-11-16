@@ -58,6 +58,10 @@ class SolarSystemScene : public AbstractSceneTemplate {
     RotationPtr m_moonAroundEarthRotation;
     RotationPtr m_moonOwnAxisRotation;
     RotationPtr m_satelliteAroundEarthRotation;
+    ShaderProgram* m_sunShaderProgram;
+    ShaderProgram* m_planetsShaderProgram;
+    ShaderProgram* m_satelliteShaderProgram;
+    bool m_initializedShaders;
 
     /**
      * @brief Creates camera in the scene.
@@ -94,4 +98,9 @@ class SolarSystemScene : public AbstractSceneTemplate {
      */
     void createSatelliteTransformations(
             GroupedTransformationPtr satelliteModelRootTransformation);
+
+    /**
+     * @brief Initializes uniform variables inside shader programs.
+     */
+    void initializeShaderPrograms();
 };

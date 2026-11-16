@@ -212,6 +212,11 @@ DrawableObject* AbstractSceneTemplate::getSelectedObject() const {
 
 void AbstractSceneTemplate::setSelectedObject(
         DrawableObject* object) {
+    if (object) {
+        printf("Selected model with ID %hhd.\n", object->getId());
+    } else if (this->m_selectedObject && !object) {
+        printf("Selection cleared.\n");
+    }
     this->m_selectedObject = object;
 }
 
@@ -229,6 +234,9 @@ void AbstractSceneTemplate::removeSelectedObjectFromScene() {
     }
 
     if (this->m_repository.removeDrawableObject(*this->m_selectedObject)) {
+        printf("Removed object with ID %hhd.\n",
+                this->m_selectedObject->getId());
+
         this->m_selectedObject = nullptr;
         this->m_selectedObjectClone = std::unique_ptr<DrawableObject>{};
     }

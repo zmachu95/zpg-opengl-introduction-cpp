@@ -126,7 +126,8 @@ void EventsManager::onMouseClick(
     IApplicationMediator* application =
             (IApplicationMediator*)glfwGetWindowUserPointer(window);
 
-    if (application->isMouseCursorActivated()) {
+    if (application->isMouseCursorActivated()
+            && (MouseButtonActions)action == MouseButtonActions::PRESSED) {
         Color color{};
         float depth;
         unsigned int stencilIndex;

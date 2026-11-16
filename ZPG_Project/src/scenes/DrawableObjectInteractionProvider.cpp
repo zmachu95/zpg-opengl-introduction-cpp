@@ -65,9 +65,17 @@ void DrawableObjectInteractionProvider::handleMouseClick(
                     return;
                 case KeyModifierFlags::CTRL:
                     this->m_lineSegmentStart = this->m_clickedWorldCoords;
+                    printf("Set line segment start coordinates [%f, %f, %f].\n",
+                            this->m_clickedWorldCoords.x,
+                            this->m_clickedWorldCoords.y,
+                            this->m_clickedWorldCoords.z);
                     return;
                 case KeyModifierFlags::ALT:
                     this->m_lineSegmentEnd = this->m_clickedWorldCoords;
+                    printf("Set line segment end coordinates [%f, %f, %f].\n",
+                            this->m_clickedWorldCoords.x,
+                            this->m_clickedWorldCoords.y,
+                            this->m_clickedWorldCoords.z);
                     return;
             }
         }
@@ -144,6 +152,11 @@ void DrawableObjectInteractionProvider::insertStaticObject() {
     if (insertedObj && translation) {
         translation->translateTo(this->m_clickedWorldCoords.x,
                 this->m_clickedWorldCoords.y, this->m_clickedWorldCoords.z);
+
+        printf("Inserted static object with ID %hhd at world "
+               "coordinates [%f, %f, %f]\n",
+                insertedObj->getId(), this->m_clickedWorldCoords.x,
+                this->m_clickedWorldCoords.y, this->m_clickedWorldCoords.z);
     }
 }
 
@@ -158,6 +171,11 @@ void DrawableObjectInteractionProvider::insertAnimatedObject() {
                         this->m_lineSegmentEnd, translation, 0.0f, 1};
 
         translation->translateTo(this->m_lineSegmentStart.x,
+                this->m_lineSegmentStart.y, this->m_lineSegmentStart.z);
+
+        printf("Inserted line-segment-animated object with ID %hhd at world "
+               "coordinates [%f, %f, %f]\n",
+                insertedObj->getId(), this->m_lineSegmentStart.x,
                 this->m_lineSegmentStart.y, this->m_lineSegmentStart.z);
     }
 }

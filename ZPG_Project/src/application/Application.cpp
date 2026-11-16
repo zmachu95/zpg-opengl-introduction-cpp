@@ -186,7 +186,7 @@ bool Application::isPaused() const { return this->m_pause; }
 
 void Application::queryClickedPixel(
         Color& color, float& depthComponent, unsigned int& stencilIndex) {
-    // calculate pixel coordinates relative to top left corner
+    // calculate pixel coordinates relative to bottom left corner
     int pixelX = (int)((long long)this->m_mouseX % this->m_windowWidth);
     int pixelY = this->m_windowHeight
                  - (int)((long long)this->m_mouseY % this->m_windowHeight) - 1;

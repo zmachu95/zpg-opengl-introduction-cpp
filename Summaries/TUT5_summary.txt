@@ -1,0 +1,18 @@
+1) Splněno.
+   a) Každému DrawableObjectu lze nyní přiradit ID typu byte (hodnoty 0-255). 
+      Pokud má objekt hodnotu 0, pak jej aplikace chápe jako bez ID a nelze s ním provádět interakce.
+   b) Objekty lze vybírat pomocí hodnot ve stencil bufferu a zvýraznit je speciálním 
+      shader programem vytvořením jejich dočasné kopie s o něco větší velikostí (faktor 1.05).
+
+2) Splněno.
+   a) Převod souřadnic z viewportu souřadného systému je proveden pomocí funkce glm::unproject 
+      a hodnoty odečtené z depth bufferu.
+   b) Vybraný objekt ve scéně lze znovu vložit na vybrané souřadnice pomocí klávesy Insert.
+
+3) Splněno.
+   a) Výběr bodů probíhá pomocí kombinace Ctrl+klik (počáteční bod) a Alt+klik (koncový bod). 
+      Pomocí lineární interpolace pak probíhá výpočet pozice animovaného modelu v nekonečné smyčce.
+      Takto vložený model přebírá měřítko a rotace svého zdrojového modelu.
+   b,c) Shift-klik vybírá objekty a zvýrazní je, stisk klávesy Delete je smaže.
+   d) Současně implementováno vkládání a animování vybraných objektů. V případě potřeby lze 
+      funkcionalitu rozšířit i o další modely pomocí kombinace různých kláves.

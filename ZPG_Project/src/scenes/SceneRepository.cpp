@@ -128,6 +128,20 @@ DrawableObject& SceneRepository::addDrawableObjectFromVerticesData(
     return objRef;
 }
 
+DrawableObject& SceneRepository::addDrawableObjectFromKnownModel(
+        bool generateId, KnownModels modelType, ShaderProgram& shaderProgram) {
+    Byte id = generateId ? this->generateId() : (Byte)0;
+
+    DrawableObjectPtr newObj =
+            DrawableObjectFactory::createKnownModel(id, modelType);
+    DrawableObject& objRef = *newObj.get();
+    this->m_drawableObjectsAndShadersLookup.insert(
+            std::pair<Byte, ObjectAndShader>{objRef.getId(),
+                    ObjectAndShader{std::move(newObj), shaderProgram}});
+
+    return objRef;
+}
+
 ShaderProgram& SceneRepository::addShaderProgramFromShaderFiles(
         const std::string& vertexShaderFile,
         const std::string& fragmentShaderFile, bool rendersSkybox,

@@ -7,9 +7,9 @@
 
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <others/WallclockUtils.h>
-#include <resources/models/clock.h>
 #include <shaders/ShaderProgram.h>
 
 WallclockScene::WallclockScene(
@@ -18,9 +18,8 @@ WallclockScene::WallclockScene(
               std::unique_ptr<DrawableObject>{}} {
     this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
             "wallclock_scene\\clock.vert", "_templates\\basic.frag", false);
-    DrawableObject& clock = this->addDrawableObjectFromVerticesData(false,
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
-            *this->m_shaderProgram);
+    DrawableObject& clock = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::CLOCK, *this->m_shaderProgram);
 }
 
 void WallclockScene::updateSceneContents(

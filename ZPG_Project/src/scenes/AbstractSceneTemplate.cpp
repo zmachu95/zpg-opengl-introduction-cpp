@@ -166,6 +166,12 @@ DrawableObject& AbstractSceneTemplate::addDrawableObjectFromVerticesData(
             shaderProgram);
 }
 
+DrawableObject& AbstractSceneTemplate::addDrawableObjectFromKnownModel(
+        bool generateId, KnownModels modelType, ShaderProgram& shaderProgram) {
+    return this->m_repository.addDrawableObjectFromKnownModel(
+            generateId, modelType, shaderProgram);
+}
+
 CameraPtr AbstractSceneTemplate::createDefaultCamera(
         int windowWidth, int windowHeight) {
     return std::make_unique<PerspectiveCamera>(

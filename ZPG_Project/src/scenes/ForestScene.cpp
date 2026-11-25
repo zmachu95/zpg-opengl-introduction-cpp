@@ -6,6 +6,7 @@
 #include "AbstractSceneTemplate.h"
 #include <cstdlib>
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
@@ -14,18 +15,11 @@
 #include <transformations/ITranslation.h>
 #include <vector>
 
-#include <resources/models/bushes.h>
-#include <resources/models/clock.h>
-#include <resources/models/moon.h>
-#include <resources/models/plain.h>
-#include <resources/models/tree.h>
-
 #include <cmath>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <glm/trigonometric.hpp>
 #include <others/WallclockUtils.h>
-#include <resources/models/sun.h>
 #include <string>
 
 #include <constants/MouseButtonActions.h>
@@ -70,16 +64,14 @@ ForestScene::ForestScene(
             bushShaderProgram, *this->m_clockShaderProgram};
 
     // create plain
-    DrawableObject& plainObj = this->addDrawableObjectFromVerticesData(false,
-            plain, sizeof(plain) / sizeof(plain[0]), 2, false,
-            plainShaderProgram);
+    DrawableObject& plainObj = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::PLAIN, plainShaderProgram);
     ScalePtr plainScale = plainObj.getTransformation()->addNewScale();
     plainScale->setScaleTo(100.f, 100.f, 100.f);
 
     // create clock
-    DrawableObject& clock = this->addDrawableObjectFromVerticesData(true,
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
-            *this->m_clockShaderProgram);
+    DrawableObject& clock = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::CLOCK, *this->m_clockShaderProgram);
     TranslationPtr clockTranslation =
             clock.getTransformation()->addNewTranslation();
     ScalePtr clockScale = clock.getTransformation()->addNewScale();
@@ -93,9 +85,8 @@ ForestScene::ForestScene(
     this->createRandomTorchbugs(TORCHBUGS_COUNT, torchbugAndMoonShaderProgram);
 
     // create moon
-    DrawableObject& moonObj = this->addDrawableObjectFromVerticesData(false,
-            moon, sizeof(moon) / sizeof(moon[0]), 3, false,
-            torchbugAndMoonShaderProgram);
+    DrawableObject& moonObj = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::MOON, torchbugAndMoonShaderProgram);
     this->m_moonTranslation = moonObj.getTransformation()->addNewTranslation();
 }
 
@@ -120,9 +111,8 @@ void ForestScene::createRandomTrees(
         float positionZ = (rand() % 2 == 1 ? 1 : -1) * (float)(rand() % 50)
                           + (rand() % 5);
 
-        DrawableObject& drawableTree = this->addDrawableObjectFromVerticesData(
-                true, tree, sizeof(tree) / sizeof(tree[0]), 2, false,
-                treeShaderProgram);
+        DrawableObject& drawableTree = this->addDrawableObjectFromKnownModel(
+                true, KnownModels::TREE, treeShaderProgram);
         TranslationPtr translation =
                 drawableTree.getTransformation()->addNewTranslation();
         ScalePtr scale = drawableTree.getTransformation()->addNewScale();
@@ -142,9 +132,8 @@ void ForestScene::createRandomBushes(
         float positionZ = (rand() % 2 == 1 ? 1 : -1) * (float)(rand() % 50)
                           + (rand() % 5);
 
-        DrawableObject& drawableBush = this->addDrawableObjectFromVerticesData(
-                true, bushes, sizeof(bushes) / sizeof(bushes[0]), 2, false,
-                bushShaderProgram);
+        DrawableObject& drawableBush = this->addDrawableObjectFromKnownModel(
+                true, KnownModels::BUSH, bushShaderProgram);
         TranslationPtr translation =
                 drawableBush.getTransformation()->addNewTranslation();
         ScalePtr scale = drawableBush.getTransformation()->addNewScale();
@@ -202,9 +191,8 @@ void ForestScene::createRandomTorchbugs(
         float positionZ = (rand() % 2 == 1 ? 1 : -1) * (float)(rand() % 50)
                           + (rand() % 5);
 
-        DrawableObject& torchbug = this->addDrawableObjectFromVerticesData(true,
-                sun, sizeof(sun) / sizeof(sun[0]), 3, false,
-                torchbugsShaderProgram);
+        DrawableObject& torchbug = this->addDrawableObjectFromKnownModel(
+                true, KnownModels::SUN, torchbugsShaderProgram);
         TranslationPtr worldTranslation =
                 torchbug.getTransformation()->addNewTranslation();
         TranslationPtr localTranslation =

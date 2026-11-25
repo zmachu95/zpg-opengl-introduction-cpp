@@ -8,11 +8,8 @@
 #include <cameras/CameraCommonSettings.h>
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
-#include <resources/models/earth.h>
-#include <resources/models/moon.h>
-#include <resources/models/satellite.h>
-#include <resources/models/sun.h>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
 #include <transformations/IRotation.h>
@@ -117,18 +114,14 @@ SolarSystemScene::SolarSystemScene(
             false);
 
     // models
-    DrawableObject& sunModel = this->addDrawableObjectFromVerticesData(false,
-            sun, sizeof(sun) / sizeof(sun[0]), 3, false,
-            *this->m_sunShaderProgram);
-    DrawableObject& earthModel = this->addDrawableObjectFromVerticesData(false,
-            earth, sizeof(earth) / sizeof(earth[0]), 3, false,
-            *this->m_planetsShaderProgram);
-    DrawableObject& moonModel = this->addDrawableObjectFromVerticesData(false,
-            moon, sizeof(moon) / sizeof(moon[0]), 3, false,
-            *this->m_planetsShaderProgram);
-    DrawableObject& satelliteModel = this->addDrawableObjectFromVerticesData(
-            false, satellite, sizeof(satellite) / sizeof(satellite[0]), 2,
-            false, *this->m_satelliteShaderProgram);
+    DrawableObject& sunModel = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::SUN, *this->m_sunShaderProgram);
+    DrawableObject& earthModel = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::EARTH, *this->m_planetsShaderProgram);
+    DrawableObject& moonModel = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::MOON, *this->m_planetsShaderProgram);
+    DrawableObject& satelliteModel = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::SATELLITE, *this->m_satelliteShaderProgram);
 
     this->createSunTransformations(sunModel.getTransformation());
     this->createEarthTransformations(earthModel.getTransformation());

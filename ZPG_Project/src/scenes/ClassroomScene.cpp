@@ -7,33 +7,21 @@
 
 #include <cameras/CameraCommonSettings.h>
 #include <cameras/PerspectiveCamera.h>
+#include <constants/MouseButtonActions.h>
+#include <constants/MouseButtonCodes.h>
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
+#include <glm/ext/vector_float3.hpp>
+#include <glm/trigonometric.hpp>
 #include <memory>
 #include <others/WallclockUtils.h>
 #include <shaders/ShaderProgram.h>
+#include <textures/ITexture.h>
+#include <textures/TextureFactory.h>
 #include <transformations/IGroupedTransformation.h>
 #include <transformations/IRotation.h>
 #include <transformations/IScale.h>
 #include <transformations/ITranslation.h>
-
-#include <resources/models/clock.h>
-#include <resources/models/eb408/case.h>
-#include <resources/models/eb408/chair.h>
-#include <resources/models/eb408/door.h>
-#include <resources/models/eb408/doorFrame.h>
-#include <resources/models/eb408/eb408.h>
-#include <resources/models/eb408/monitor.h>
-#include <resources/models/eb408/table.h>
-#include <resources/models/eb408/whiteboard.h>
-#include <resources/models/shrek.h>
-#include <resources/models/toilet.h>
-
-#include <constants/MouseButtonActions.h>
-#include <constants/MouseButtonCodes.h>
-#include <glm/ext/vector_float3.hpp>
-#include <glm/trigonometric.hpp>
-#include <textures/ITexture.h>
-#include <textures/TextureFactory.h>
 
 ClassroomScene::ClassroomScene(
         int windowWidth, int windowHeight)
@@ -84,9 +72,8 @@ void ClassroomScene::updateSceneContents(
 
 void ClassroomScene::createTableWithChairsAndPcs(
         float x, float z) {
-    DrawableObject* newTable = &this->addDrawableObjectFromVerticesData(true,
-            table, sizeof(table) / sizeof(table[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject* newTable = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_TABLE, *this->m_shaderProgram);
     newTable->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\table.png", TexturingUnit::UNIT0));
     TranslationPtr tableTranslation =
@@ -99,9 +86,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     tableRotationX->setAngle(-90.0f);
     tableRotationZ->setAngle(90.0f);
 
-    DrawableObject* firstChair = &this->addDrawableObjectFromVerticesData(true,
-            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject* firstChair = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CHAIR, *this->m_shaderProgram);
     firstChair->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr firstChairTranslation =
@@ -114,9 +100,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstChairRotationX->setAngle(-90.0f);
     firstChairRotationZ->setAngle(-90.0f);
 
-    DrawableObject* secondChair = &this->addDrawableObjectFromVerticesData(true,
-            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject* secondChair = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CHAIR, *this->m_shaderProgram);
     secondChair->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr secondChairTranslation =
@@ -129,9 +114,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     secondChairRotationX->setAngle(-90.0f);
     secondChairRotationZ->setAngle(-90.0f);
 
-    DrawableObject* firstCase = &this->addDrawableObjectFromVerticesData(true,
-            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
-            true, *this->m_shaderProgram);
+    DrawableObject* firstCase = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CASE, *this->m_shaderProgram);
     firstCase->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr firstCaseTranslation =
@@ -146,9 +130,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstCaseRotationZ->setAngle(90.0f);
     firstCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    DrawableObject* secondCase = &this->addDrawableObjectFromVerticesData(true,
-            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
-            true, *this->m_shaderProgram);
+    DrawableObject* secondCase = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CASE, *this->m_shaderProgram);
     secondCase->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr secondCaseTranslation =
@@ -163,9 +146,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     secondCaseRotationZ->setAngle(90.0f);
     secondCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    DrawableObject* firstMonitor = &this->addDrawableObjectFromVerticesData(
-            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject* firstMonitor = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_MONITOR, *this->m_shaderProgram);
     firstMonitor->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr firstMonitorTranslation =
@@ -181,9 +163,8 @@ void ClassroomScene::createTableWithChairsAndPcs(
     firstMonitorRotationZ->setAngle(180.0f);
     firstMonitorScale->setScaleTo(0.01f, 0.01f, 0.01f);
 
-    DrawableObject* secondMonitor = &this->addDrawableObjectFromVerticesData(
-            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject* secondMonitor = &this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_MONITOR, *this->m_shaderProgram);
     secondMonitor->addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr secondMonitorTranslation =
@@ -203,18 +184,16 @@ void ClassroomScene::createTableWithChairsAndPcs(
 }
 
 void ClassroomScene::initializeClassroom() {
-    DrawableObject& classroom = this->addDrawableObjectFromVerticesData(true,
-            eb408, sizeof(eb408) / sizeof(eb408[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& classroom = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408, *this->m_shaderProgram);
     classroom.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\eb408.png", TexturingUnit::UNIT0));
     RotationPtr classroomRotationX =
             classroom.getTransformation()->addNewRotation(1.0f, 0.0f, 0.0f);
     classroomRotationX->setAngle(-90.0f);
 
-    DrawableObject& clock = this->addDrawableObjectFromVerticesData(true,
-            clockModel, sizeof(clockModel) / sizeof(clockModel[0]), 3, false,
-            *this->m_clockShaderProgram);
+    DrawableObject& clock = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::CLOCK, *this->m_clockShaderProgram);
     TranslationPtr clockTranslation =
             clock.getTransformation()->addNewTranslation();
     RotationPtr clockRotation =
@@ -224,9 +203,8 @@ void ClassroomScene::initializeClassroom() {
     clockRotation->setAngle(-90.0f);
     clockScale->setScaleTo(-0.3f, 0.3f, 0.3f);
 
-    DrawableObject& doorObj = this->addDrawableObjectFromVerticesData(true,
-            door, sizeof(door) / sizeof(door[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& doorObj = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_DOOR, *this->m_shaderProgram);
     doorObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorTranslation =
@@ -236,9 +214,8 @@ void ClassroomScene::initializeClassroom() {
     doorTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorRotationX->setAngle(-90.0f);
 
-    DrawableObject& doorFrameObj = this->addDrawableObjectFromVerticesData(true,
-            doorFrame, sizeof(doorFrame) / sizeof(doorFrame[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& doorFrameObj = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_DOOR_FRAME, *this->m_shaderProgram);
     doorFrameObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\doorAndFrame.png", TexturingUnit::UNIT0));
     TranslationPtr doorFrameTranslation =
@@ -248,9 +225,8 @@ void ClassroomScene::initializeClassroom() {
     doorFrameTranslation->translateTo(-2.45f, 0.0f, 7.8f);
     doorFrameRotationX->setAngle(-90.0f);
 
-    DrawableObject& shrekObj = this->addDrawableObjectFromVerticesData(true,
-            shrek, sizeof(shrek) / sizeof(shrek[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& shrekObj = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::SHREK, *this->m_shaderProgram);
     shrekObj.addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\shrek.png", TexturingUnit::UNIT0));
     TranslationPtr shrekTranslation =
@@ -263,9 +239,8 @@ void ClassroomScene::initializeClassroom() {
     shrekRotationX->setAngle(-90.0f);
     shrekRotationZ->setAngle(90.0f);
 
-    DrawableObject& toiletObj = this->addDrawableObjectFromVerticesData(true,
-            toilet, sizeof(toilet) / sizeof(toilet[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& toiletObj = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::TOILET, *this->m_shaderProgram);
     toiletObj.addTexture(TextureFactory::create2dTextureFromFile(
             "shrek_fiona\\toilet.jpg", TexturingUnit::UNIT0));
     TranslationPtr toiletTranslation =
@@ -280,9 +255,8 @@ void ClassroomScene::initializeClassroom() {
     toiletRotationZ->setAngle(30.0f);
     toiletScale->setScaleTo(0.1f, 0.1f, 0.1f);
 
-    DrawableObject& whiteboardObj = this->addDrawableObjectFromVerticesData(
-            true, whiteboard, sizeof(whiteboard) / sizeof(whiteboard[0]), 2,
-            true, *this->m_shaderProgram);
+    DrawableObject& whiteboardObj = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_WHITEBOARD, *this->m_shaderProgram);
     whiteboardObj.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\whiteboard.png", TexturingUnit::UNIT0));
     TranslationPtr whiteboardTranslation =
@@ -292,9 +266,8 @@ void ClassroomScene::initializeClassroom() {
     whiteboardTranslation->translateTo(-3.8f, 0.0f, 2.5f);
     whiteboardRotation->setAngle(-90.0f);
 
-    DrawableObject& teacherChair = this->addDrawableObjectFromVerticesData(true,
-            chair, sizeof(chair) / sizeof(chair[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& teacherChair = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CHAIR, *this->m_shaderProgram);
     teacherChair.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\chair.png", TexturingUnit::UNIT0));
     TranslationPtr teacherChairTranslation =
@@ -304,9 +277,8 @@ void ClassroomScene::initializeClassroom() {
     teacherChairTranslation->translateTo(-3.3f, 0.0f, 0.55f);
     teacherChairRotation->setAngle(-90.0f);
 
-    DrawableObject& teacherTable = this->addDrawableObjectFromVerticesData(true,
-            table, sizeof(table) / sizeof(table[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& teacherTable = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_TABLE, *this->m_shaderProgram);
     teacherTable.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\table.png", TexturingUnit::UNIT0));
     TranslationPtr teacherTableTranslation =
@@ -319,9 +291,8 @@ void ClassroomScene::initializeClassroom() {
     teacherTableRotationX->setAngle(-90.0f);
     teacherTableRotationZ->setAngle(-90.0f);
 
-    DrawableObject& teacherCase = this->addDrawableObjectFromVerticesData(true,
-            computerCase, sizeof(computerCase) / sizeof(computerCase[0]), 2,
-            true, *this->m_shaderProgram);
+    DrawableObject& teacherCase = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_CASE, *this->m_shaderProgram);
     teacherCase.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\case.png", TexturingUnit::UNIT0));
     TranslationPtr teacherCaseTranslation =
@@ -336,9 +307,8 @@ void ClassroomScene::initializeClassroom() {
     teacherCaseRotationZ->setAngle(-90.0f);
     teacherCaseScale->setScaleTo(1.2f, 1.2f, 1.2f);
 
-    DrawableObject& teacherMonitor = this->addDrawableObjectFromVerticesData(
-            true, monitor, sizeof(monitor) / sizeof(monitor[0]), 2, true,
-            *this->m_shaderProgram);
+    DrawableObject& teacherMonitor = this->addDrawableObjectFromKnownModel(
+            true, KnownModels::EB408_MONITOR, *this->m_shaderProgram);
     teacherMonitor.addTexture(TextureFactory::create2dTextureFromFile(
             "eb408\\monitor.png", TexturingUnit::UNIT0));
     TranslationPtr teacherMonitorTranslation =

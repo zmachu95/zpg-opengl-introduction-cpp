@@ -21,6 +21,7 @@ enum class MouseButtonCodes;
 enum class KeyCodes;
 enum class KeyActions;
 enum class KeyModifierFlags;
+enum class KnownModels;
 
 /**
  * @brief Alias for byte.
@@ -248,6 +249,16 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
             const float* verticesData, size_t arrayElementsCount,
             unsigned int attributesCount, bool uses2dTextures,
             ShaderProgram& shaderProgram);
+
+    /**
+     * @brief Adds new drawable object into the scene from known model.
+     * @param generateId Flag whether the new object should receive unique ID.
+     * @param modelType Type of model to create.
+     * @param shaderProgram Shader program to use with the drawable object.
+     * @return Reference to just created drawable object.
+     */
+    DrawableObject& addDrawableObjectFromKnownModel(bool generateId,
+            KnownModels modelType, ShaderProgram& shaderProgram);
 
     /**
      * @brief Adds new shader program into the scene.

@@ -6,6 +6,7 @@
 #include "AbstractSceneTemplate.h"
 
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
@@ -14,7 +15,6 @@
 #include <transformations/ITranslation.h>
 
 #include <cameras/PerspectiveCamera.h>
-#include <resources/models/mac0690.h>
 
 LoginScene::LoginScene(
         int windowWidth, int windowHeight)
@@ -24,9 +24,8 @@ LoginScene::LoginScene(
     ShaderProgram& shaderProgram = this->addShaderProgramFromShaderFiles(
             "_templates\\basic.vert", "_templates\\basic.frag", false);
 
-    DrawableObject& login = this->addDrawableObjectFromVerticesData(false,
-            mac0690, sizeof(mac0690) / sizeof(mac0690[0]), 2, false,
-            shaderProgram);
+    DrawableObject& login = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::LOGIN, shaderProgram);
 
     this->m_rotation =
             login.getTransformation()->addNewRotation(0.0f, 1.0f, 0.0f);

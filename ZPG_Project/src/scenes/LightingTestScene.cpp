@@ -6,6 +6,7 @@
 #include "AbstractSceneTemplate.h"
 
 #include <drawables/DrawableObject.h>
+#include <drawables/DrawableObjectFactory.h>
 #include <memory>
 #include <scenes/IScene.h>
 #include <shaders/ShaderProgram.h>
@@ -19,7 +20,6 @@
 #include <constants/KeyCodes.h>
 #include <constants/KeyModifiers.h>
 #include <glm/ext/vector_float3.hpp>
-#include <resources/models/sphere.h>
 #include <transformations/IGroupedTransformation.h>
 
 LightingTestScene::LightingTestScene(
@@ -34,9 +34,8 @@ LightingTestScene::LightingTestScene(
 
     const float sphereOffset = 2.0f;
     for (size_t i = 0; i < 4; i++) {
-        DrawableObject& sphereObj = this->addDrawableObjectFromVerticesData(
-                false, sphere, sizeof(sphere) / sizeof(sphere[0]), 2, false,
-                *this->m_shaderProgram);
+        DrawableObject& sphereObj = this->addDrawableObjectFromKnownModel(
+                false, KnownModels::SPHERE, *this->m_shaderProgram);
         ScalePtr sphereScale = sphereObj.getTransformation()->addNewScale();
         sphereScale->setScaleTo(0.1f, 0.1f, 0.1f);
 

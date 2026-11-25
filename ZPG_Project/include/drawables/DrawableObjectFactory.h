@@ -32,6 +32,38 @@ using ModelWeakPtr = std::weak_ptr<Model>;
 using DrawableObjectPtr = std::unique_ptr<DrawableObject>;
 
 /**
+ * @brief Enlists known models for quick creation.
+ */
+enum class KnownModels {
+    BUSH,
+    CLOCK,
+    EARTH,
+    FIONA,
+    GIFT,
+    LOGIN,
+    MOON,
+    PLAIN,
+    SATELLITE,
+    SHREK,
+    SPHERE,
+    SUN,
+    SUZI_FLAT,
+    SUZI_SMOOTH,
+    TOILET,
+    TREE,
+    TRIANGLE,
+
+    EB408,
+    EB408_CASE,
+    EB408_CHAIR,
+    EB408_DOOR,
+    EB408_DOOR_FRAME,
+    EB408_MONITOR,
+    EB408_TABLE,
+    EB408_WHITEBOARD
+};
+
+/**
  * @brief Creates drawable objects and caches their models.
  */
 class DrawableObjectFactory {
@@ -52,6 +84,14 @@ class DrawableObjectFactory {
     static DrawableObjectPtr createDrawableObjectFromVerticesData(Byte id,
             const float* verticesData, size_t arrayElementsCount,
             unsigned int attributesCount, bool uses2dTextures);
+
+    /**
+     * @brief Creates drawable object from known model.
+     * @param id Assigned object ID.
+     * @param modelType Type of model to create.
+     * @return New drawable object.
+     */
+    static DrawableObjectPtr createKnownModel(Byte id, KnownModels modelType);
 
   private:
     static DrawableObjectFactory s_instance;

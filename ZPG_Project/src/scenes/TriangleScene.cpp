@@ -12,7 +12,7 @@
 #include <transformations/ITranslation.h>
 
 #include <drawables/DrawableObject.h>
-#include <resources/models/triangle.h>
+#include <drawables/DrawableObjectFactory.h>
 
 TriangleScene::TriangleScene(
         int windowWidth, int windowHeight)
@@ -21,9 +21,8 @@ TriangleScene::TriangleScene(
       m_rotation{}, m_translation{} {
     ShaderProgram& shaderProgram = this->addShaderProgramFromShaderFiles(
             "_templates\\basic.vert", "_templates\\basic.frag", false);
-    DrawableObject& triangleObj = this->addDrawableObjectFromVerticesData(
-            false, triangle, sizeof(triangle) / sizeof(triangle[0]), 2, false,
-            shaderProgram);
+    DrawableObject& triangleObj = this->addDrawableObjectFromKnownModel(
+            false, KnownModels::TRIANGLE, shaderProgram);
 
     this->m_rotation = triangleObj.getTransformation()->addNewRotation(0, 0, 1);
     this->m_translation = triangleObj.getTransformation()->addNewTranslation();

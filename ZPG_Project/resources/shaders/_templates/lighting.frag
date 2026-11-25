@@ -5,7 +5,7 @@
 #version 330 core
 
 // defines number of lights in the scene
-#define NUMBER_OF_POINT_LIGHTS 10
+#define NUMBER_OF_POINT_LIGHTS 50
 #define NUMBER_OF_SPOT_LIGHTS 1
 #define NUMBER_OF_DIRECTED_LIGHTS 1
 

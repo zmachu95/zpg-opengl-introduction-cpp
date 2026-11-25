@@ -70,6 +70,7 @@ class ForestScene : public AbstractSceneTemplate {
     ShaderProgram* m_clockShaderProgram;
     std::vector<std::reference_wrapper<ShaderProgram>> m_dynamicShaderPrograms;
     std::vector<TorchbugData> m_torchbugs;
+    TranslationPtr m_moonTranslation;
     bool m_useFlashlight;
     bool m_updatedSkyboxShader;
     bool m_initializedShaders;

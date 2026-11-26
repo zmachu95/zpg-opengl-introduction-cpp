@@ -24,6 +24,7 @@
 
 #include <constants/MouseButtonActions.h>
 #include <constants/MouseButtonCodes.h>
+#include <lighting/LightingManager.h>
 
 using namespace std::string_literals;
 
@@ -44,28 +45,26 @@ constexpr float MOON_Y_COORDINATE = 20.0f;
 
 ForestScene::ForestScene(
         int windowWidth, int windowHeight)
-    : AbstractSceneTemplate{windowWidth, windowHeight}, m_clockShaderProgram{},
-      m_dynamicShaderPrograms{}, m_torchbugs{}, m_moonTranslation{nullptr},
-      m_useFlashlight{false}, m_updatedSkyboxShader{false},
-      m_initializedShaders{false} {
+    : AbstractSceneTemplate{windowWidth, windowHeight}, m_bushShaderProgram{},
+      m_clockShaderProgram{}, m_plainShaderProgram{}, m_treeShaderProgram{},
+      m_torchbugs{}, m_moonTranslation{nullptr}, m_useFlashlight{false},
+      m_updatedSkyboxShader{false} {
     // create shader programs
-    ShaderProgram& plainShaderProgram = this->addShaderProgramFromShaderFiles(
+    this->m_plainShaderProgram = &this->addShaderProgramFromShaderFiles(
             "tree_scene\\plain.vert", "_templates\\lighting.frag", false);
-    ShaderProgram& treeShaderProgram = this->addShaderProgramFromShaderFiles(
+    this->m_treeShaderProgram = &this->addShaderProgramFromShaderFiles(
             "tree_scene\\tree.vert", "_templates\\lighting.frag", false);
-    ShaderProgram& bushShaderProgram = this->addShaderProgramFromShaderFiles(
+    this->m_bushShaderProgram = &this->addShaderProgramFromShaderFiles(
             "tree_scene\\bush.vert", "_templates\\lighting.frag", false);
     this->m_clockShaderProgram = &this->addShaderProgramFromShaderFiles(
             "wallclock_scene\\clock.vert", "_templates\\lighting.frag", false);
     ShaderProgram& torchbugAndMoonShaderProgram =
             this->addShaderProgramFromShaderFiles("_templates\\basic.vert",
                     "_templates\\lighting.frag", false);
-    this->m_dynamicShaderPrograms = {plainShaderProgram, treeShaderProgram,
-            bushShaderProgram, *this->m_clockShaderProgram};
 
     // create plain
     DrawableObject& plainObj = this->addDrawableObjectFromKnownModel(
-            false, KnownModels::PLAIN, plainShaderProgram);
+            false, KnownModels::PLAIN, *this->m_plainShaderProgram);
     ScalePtr plainScale = plainObj.getTransformation()->addNewScale();
     plainScale->setScaleTo(100.f, 100.f, 100.f);
 
@@ -80,8 +79,8 @@ ForestScene::ForestScene(
     clockScale->setScaleTo(-3.0f, 3.0f, 3.0f);
 
     // create forest
-    this->createRandomTrees(100, treeShaderProgram);
-    this->createRandomBushes(50, bushShaderProgram);
+    this->createRandomTrees(100);
+    this->createRandomBushes(50);
     this->createRandomTorchbugs(TORCHBUGS_COUNT, torchbugAndMoonShaderProgram);
 
     // create moon
@@ -96,13 +95,12 @@ void ForestScene::updateSceneContents(
     this->m_moonTranslation->translateTo(
             MOON_X_COORDINATE + cameraPos.x, MOON_Y_COORDINATE, cameraPos.z);
 
-    this->initializeShaderPrograms();
     this->drawTorchbugs(deltaT);
     this->drawClock(deltaT);
 }
 
 void ForestScene::createRandomTrees(
-        const int treesCount, ShaderProgram& treeShaderProgram) {
+        const int treesCount) {
     for (int i = 0; i < treesCount; i++) {
         float scaleXZ = (float)(rand() % 20 + 80) / 100;
         float scaleY = (float)(rand() % 20 + 80) / 100;
@@ -112,7 +110,7 @@ void ForestScene::createRandomTrees(
                           + (rand() % 5);
 
         DrawableObject& drawableTree = this->addDrawableObjectFromKnownModel(
-                true, KnownModels::TREE, treeShaderProgram);
+                true, KnownModels::TREE, *this->m_treeShaderProgram);
         TranslationPtr translation =
                 drawableTree.getTransformation()->addNewTranslation();
         ScalePtr scale = drawableTree.getTransformation()->addNewScale();
@@ -123,7 +121,7 @@ void ForestScene::createRandomTrees(
 }
 
 void ForestScene::createRandomBushes(
-        const int bushesCount, ShaderProgram& bushShaderProgram) {
+        const int bushesCount) {
     for (int i = 0; i < bushesCount; i++) {
         float scaleX = (float)(rand() % 20 + 80) / 100;
         float scaleY = (float)(rand() % 20 + 80) / 100;
@@ -133,7 +131,7 @@ void ForestScene::createRandomBushes(
                           + (rand() % 5);
 
         DrawableObject& drawableBush = this->addDrawableObjectFromKnownModel(
-                true, KnownModels::BUSH, bushShaderProgram);
+                true, KnownModels::BUSH, *this->m_bushShaderProgram);
         TranslationPtr translation =
                 drawableBush.getTransformation()->addNewTranslation();
         ScalePtr scale = drawableBush.getTransformation()->addNewScale();
@@ -173,10 +171,11 @@ void ForestScene::drawTorchbugs(
                 torchbugData.torchbug->getTransformation()->getMatrix()
                 * glm::vec4{glm::vec3{0.0f}, 1.0f};
 
-        for (ShaderProgram& shaderProgram : this->m_dynamicShaderPrograms) {
-            shaderProgram.setSupplementalUniformVector(
-                    "pointLights["s + std::to_string(i) + "].position",
-                    worldLocation);
+        for (ShaderProgram* shaderProgram : {this->m_bushShaderProgram,
+                     this->m_clockShaderProgram, this->m_plainShaderProgram,
+                     this->m_treeShaderProgram}) {
+            LightingManager::PointLights::setLightPosition(
+                    *shaderProgram, i, worldLocation);
         }
         i += 1;
     }
@@ -213,10 +212,13 @@ void ForestScene::handleMouseClick(
         switch (button) {
             case MouseButtonCodes::RIGHT_BUTTON:
                 this->m_useFlashlight = !this->m_useFlashlight;
-                for (ShaderProgram& shaderProgram :
-                        this->m_dynamicShaderPrograms) {
-                    shaderProgram.setSupplementalUniformIntValue(
-                            "spotLightsCount", (int)this->m_useFlashlight);
+
+                for (ShaderProgram* shaderProgram :
+                        {this->m_bushShaderProgram, this->m_clockShaderProgram,
+                                this->m_plainShaderProgram,
+                                this->m_treeShaderProgram}) {
+                    LightingManager::CameraSpotLight::enable(
+                            *shaderProgram, this->m_useFlashlight);
                 }
                 break;
         }
@@ -234,80 +236,52 @@ void ForestScene::updateSkyboxShaderProgram(
     }
 }
 
-void ForestScene::initializeShaderPrograms() {
-    if (!this->m_initializedShaders) {
-        for (ShaderProgram& shaderProgram : this->m_dynamicShaderPrograms) {
-            shaderProgram.setSupplementalUniformIntValue(
-                    "pointLightsCount", TORCHBUGS_COUNT);
-            shaderProgram.setSupplementalUniformIntValue(
-                    "directedLightsCount", 1);
-            shaderProgram.setSupplementalUniformIntValue(
-                    "spotLightsCount", (int)this->m_useFlashlight);
-            shaderProgram.setSupplementalUniformVector(
-                    "ambientFactors", glm::vec3{0.15f});
+void ForestScene::initializeLights() {
+    for (ShaderProgram* shaderProgram :
+            {this->m_bushShaderProgram, this->m_clockShaderProgram,
+                    this->m_plainShaderProgram, this->m_treeShaderProgram}) {
+        LightingManager::PointLights::setLightsCount(
+                *shaderProgram, TORCHBUGS_COUNT);
+        LightingManager::DirectedLights::setLightsCount(*shaderProgram, 1);
+        LightingManager::CameraSpotLight::enable(
+                *shaderProgram, this->m_useFlashlight);
+        LightingManager::setAmbientFactors(*shaderProgram, glm::vec3{0.15f});
 
-            // define torchbug lights
-            for (int i = 0; i < TORCHBUGS_COUNT; i++) {
-                shaderProgram.setSupplementalUniformFloatValue(
-                        "pointLights["s + std::to_string(i) + "].attConstant",
-                        1.0f);
-                shaderProgram.setSupplementalUniformFloatValue(
-                        "pointLights["s + std::to_string(i) + "].attLinear",
-                        0.8f);
-                shaderProgram.setSupplementalUniformFloatValue(
-                        "pointLights["s + std::to_string(i) + "].attQuadratic",
-                        0.2f);
-                shaderProgram.setSupplementalUniformVector(
-                        "pointLights["s + std::to_string(i) + "].color",
-                        glm::vec3{0.6f, 0.3f, 0.0f});
-                shaderProgram.setSupplementalUniformFloatValue(
-                        "pointLights["s + std::to_string(i)
-                                + "].shininessExponent",
-                        4.0f);
-                shaderProgram.setSupplementalUniformBoolValue(
-                        "pointLights["s + std::to_string(i) + "].useSpecular",
-                        true);
-                shaderProgram.setSupplementalUniformBoolValue(
-                        "pointLights["s + std::to_string(i) + "].useBlinn",
-                        true);
-            }
-
-            // define directed moon light
-            shaderProgram.setSupplementalUniformVector(
-                    "directedLights[0].direction",
-                    glm::vec3{-1.0f, -1.0f, 0.0f});
-            shaderProgram.setSupplementalUniformVector(
-                    "directedLights[0].color", glm::vec3{0.2f, 0.18f, 0.18f});
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "directedLights[0].shininessExponent", 128.0f);
-            shaderProgram.setSupplementalUniformBoolValue(
-                    "directedLights[0].useSpecular", false);
-            shaderProgram.setSupplementalUniformBoolValue(
-                    "directedLights[0].useBlinn", false);
-
-            // define spotlight
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].innerCosineCutOff",
-                    glm::cos(glm::radians(5.0f)));
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].outerCosineCutOff",
-                    glm::cos(glm::radians(25.0f)));
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].attConstant", 1.0f);
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].attLinear", 0.05f);
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].attQuadratic", 0.01f);
-            shaderProgram.setSupplementalUniformVector(
-                    "spotLights[0].color", glm::vec3{0.7f, 0.7f, 1.0f});
-            shaderProgram.setSupplementalUniformFloatValue(
-                    "spotLights[0].shininessExponent", 2.0f);
-            shaderProgram.setSupplementalUniformBoolValue(
-                    "spotLights[0].useSpecular", true);
-            shaderProgram.setSupplementalUniformBoolValue(
-                    "spotLights[0].useBlinn", false);
+        // define torchbug lights
+        for (int i = 0; i < TORCHBUGS_COUNT; i++) {
+            LightingManager::PointLights::setLightAttenuation(
+                    *shaderProgram, i, 1.0f, 0.8f, 0.2f);
+            LightingManager::PointLights::setLightColor(
+                    *shaderProgram, i, glm::vec3{0.6f, 0.3f, 0.0f});
+            LightingManager::PointLights::setLightShininessExponent(
+                    *shaderProgram, i, 4.0f);
+            LightingManager::PointLights::setLightSpecularFlag(*shaderProgram,
+                    i, shaderProgram != this->m_plainShaderProgram);
+            LightingManager::PointLights::setLightBlinnFlag(*shaderProgram, i,
+                    shaderProgram != this->m_plainShaderProgram);
         }
+        // define directed moon light
+        LightingManager::DirectedLights::setLightDirection(
+                *shaderProgram, 0, glm::vec3{-1.0f, -1.0f, 0.0f});
+        LightingManager::DirectedLights::setLightColor(
+                *shaderProgram, 0, glm::vec3{0.2f, 0.18f, 0.18f});
+        LightingManager::DirectedLights::setLightShininessExponent(
+                *shaderProgram, 0, 128.0f);
+        LightingManager::DirectedLights::setLightSpecularFlag(
+                *shaderProgram, 0, shaderProgram != this->m_plainShaderProgram);
+        LightingManager::DirectedLights::setLightBlinnFlag(
+                *shaderProgram, 0, false);
 
-        this->m_initializedShaders = true;
+        // define spotlight
+        LightingManager::CameraSpotLight::setCutoffAngles(
+                *shaderProgram, 5.0f, 25.0f);
+        LightingManager::CameraSpotLight::setAttenuation(
+                *shaderProgram, 1.0f, 0.05f, 0.01f);
+        LightingManager::CameraSpotLight::setColor(
+                *shaderProgram, glm::vec3{0.7f, 0.7f, 1.0f});
+        LightingManager::CameraSpotLight::setShininessExponent(
+                *shaderProgram, 2.0f);
+        LightingManager::CameraSpotLight::setSpecularFlag(*shaderProgram, true);
+        LightingManager::CameraSpotLight::setBlinnFlag(*shaderProgram, false);
     }
 }

@@ -275,6 +275,11 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
             const std::string& fragmentShaderFile, bool rendersSkybox);
 
     /**
+     * @brief Initializes scene lights.
+     */
+    virtual void initializeLights();
+
+    /**
      * @brief Updates the scene contents.
      * @param deltaT Time elapsed since the last drawn frame.
      */
@@ -290,6 +295,7 @@ class AbstractSceneTemplate : public IScene, public ISceneMediator {
     CameraPtr m_camera;
     ShaderProgram* m_highlightedObjectsProgram;
     DrawableObjectInteractionProvider m_interactionProvider;
+    bool m_initializedLights;
     SceneRepository m_repository;
     DrawableObject* m_selectedObject;
     DrawableObjectPtr m_selectedObjectClone;

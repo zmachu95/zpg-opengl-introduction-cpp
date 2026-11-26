@@ -66,28 +66,32 @@ class ForestScene : public AbstractSceneTemplate {
      */
     void updateSkyboxShaderProgram(float deltaT) override;
 
+    /**
+     * @brief Initializes scene lights.
+     */
+    void initializeLights() override;
+
   private:
+    ShaderProgram* m_bushShaderProgram;
     ShaderProgram* m_clockShaderProgram;
-    std::vector<std::reference_wrapper<ShaderProgram>> m_dynamicShaderPrograms;
+    ShaderProgram* m_plainShaderProgram;
+    ShaderProgram* m_treeShaderProgram;
     std::vector<TorchbugData> m_torchbugs;
     TranslationPtr m_moonTranslation;
     bool m_useFlashlight;
     bool m_updatedSkyboxShader;
-    bool m_initializedShaders;
 
     /**
      * @brief Creates random trees.
      * @param treesCount Number of trees to create.
      */
-    void createRandomTrees(
-            const int treesCount, ShaderProgram& treeShaderProgram);
+    void createRandomTrees(const int treesCount);
 
     /**
      * @brief Creates random bushes.
      * @param treesCount Number of bushes to create.
      */
-    void createRandomBushes(
-            const int bushesCount, ShaderProgram& bushShaderProgram);
+    void createRandomBushes(const int bushesCount);
 
     /**
      * @brief Draws clock with current system time.
@@ -107,9 +111,4 @@ class ForestScene : public AbstractSceneTemplate {
      */
     void createRandomTorchbugs(
             int count, ShaderProgram& torchbugsShaderProgram);
-
-    /**
-     * @brief Initializes uniform variables inside shader programs.
-     */
-    void initializeShaderPrograms();
 };

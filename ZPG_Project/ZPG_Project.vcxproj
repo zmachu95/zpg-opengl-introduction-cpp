@@ -147,6 +147,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\lighting\LightingManager.cpp" />
     <ClCompile Include="src\scenes\SceneRepository.cpp" />
     <ClCompile Include="src\transformations\ConstantTransformation.cpp" />
     <ClCompile Include="src\scenes\DrawableObjectInteractionProvider.cpp" />
@@ -193,6 +194,7 @@
     <ClCompile Include="src\textures\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\lighting\LightingManager.h" />
     <ClInclude Include="src\scenes\SceneRepository.h" />
     <ClInclude Include="src\transformations\ConstantTransformation.h" />
     <ClInclude Include="include\application\ApplicationFactory.h" />

@@ -9,6 +9,7 @@
 #include <cameras/PerspectiveCamera.h>
 #include <drawables/DrawableObject.h>
 #include <drawables/DrawableObjectFactory.h>
+#include <lighting/LightingManager.h>
 #include <memory>
 #include <shaders/ShaderProgram.h>
 #include <transformations/IGroupedTransformation.h>
@@ -131,8 +132,6 @@ SolarSystemScene::SolarSystemScene(
 
 void SolarSystemScene::updateSceneContents(
         float deltaT) {
-    this->initializeShaderPrograms();
-
     this->m_sunOwnAxisRotation->incrementAngle(sunOwnAxisOmega * deltaT);
     this->m_earthAroundSunRotation->incrementAngle(
             earthAroundSunOmega * deltaT);
@@ -151,30 +150,20 @@ CameraPtr SolarSystemScene::createCamera(
             (float)windowWidth / windowHeight, glm::vec3{0.0f, 0.0f, 2.0f});
 }
 
-void SolarSystemScene::initializeShaderPrograms() {
-    if (!this->m_initializedShaders) {
-        for (ShaderProgram* shaderProgram : {this->m_planetsShaderProgram,
-                     this->m_satelliteShaderProgram}) {
-            shaderProgram->setSupplementalUniformIntValue(
-                    "pointLightsCount", 1);
-            shaderProgram->setSupplementalUniformVector(
-                    "ambientFactors", glm::vec3{0.3f});
-            shaderProgram->setSupplementalUniformVector(
-                    "pointLights[0].color", glm::vec3{1.0f, 0.8f, 0.8f});
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "pointLights[0].shininessExponent", 6.0f);
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "pointLights[0].attConstant", 1.0f);
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "pointLights[0].attLinear", 0.05f);
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "pointLights[0].attQuadratic", 0.001f);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "pointLights[0].useSpecular", true);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "pointLights[0].useBlinn", true);
-        }
-
-        this->m_initializedShaders = true;
+void SolarSystemScene::initializeLights() {
+    for (ShaderProgram* shaderProgram :
+            {this->m_planetsShaderProgram, this->m_satelliteShaderProgram}) {
+        LightingManager::PointLights::setLightsCount(*shaderProgram, 1);
+        LightingManager::setAmbientFactors(*shaderProgram, glm::vec3{0.3f});
+        LightingManager::PointLights::setLightColor(
+                *shaderProgram, 0, glm::vec3{1.0f, 0.8f, 0.8f});
+        LightingManager::PointLights::setLightShininessExponent(
+                *shaderProgram, 0, 6.0f);
+        LightingManager::PointLights::setLightAttenuation(
+                *shaderProgram, 0, 1.0f, 0.05f, 0.001f);
+        LightingManager::PointLights::setLightSpecularFlag(
+                *shaderProgram, 0, true);
+        LightingManager::PointLights::setLightBlinnFlag(
+                *shaderProgram, 0, true);
     }
 }

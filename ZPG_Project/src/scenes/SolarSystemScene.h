@@ -50,6 +50,11 @@ class SolarSystemScene : public AbstractSceneTemplate {
      */
     void updateSceneContents(float deltaT) override;
 
+    /**
+     * @brief Initializes scene lights.
+     */
+    void initializeLights() override;
+
   private:
     RotationPtr m_sunOwnAxisRotation;
     RotationPtr m_earthAroundSunRotation;
@@ -98,9 +103,4 @@ class SolarSystemScene : public AbstractSceneTemplate {
      */
     void createSatelliteTransformations(
             GroupedTransformationPtr satelliteModelRootTransformation);
-
-    /**
-     * @brief Initializes uniform variables inside shader programs.
-     */
-    void initializeShaderPrograms();
 };

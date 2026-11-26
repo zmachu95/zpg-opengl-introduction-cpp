@@ -30,9 +30,9 @@ constexpr float HIGHLIGHTED_OBJECT_SCALE = 1.05f;
 AbstractSceneTemplate::AbstractSceneTemplate(
         CameraPtr&& camera, DrawableObjectPtr&& skybox)
     : m_camera{std::move(camera)}, m_highlightedObjectsProgram{nullptr},
-      m_interactionProvider{*this}, m_repository{}, m_selectedObject{nullptr},
-      m_selectedObjectClone{}, m_skybox{std::move(skybox)},
-      m_skyboxShaderProgram{nullptr} {
+      m_interactionProvider{*this}, m_initializedLights{false}, m_repository{},
+      m_selectedObject{nullptr}, m_selectedObjectClone{},
+      m_skybox{std::move(skybox)}, m_skyboxShaderProgram{nullptr} {
     if (this->m_skybox.get()) {
         this->m_skyboxShaderProgram = &this->addShaderProgramFromShaderFiles(
                 "_templates\\skybox.vert", "_templates\\skybox.frag", true);
@@ -60,6 +60,11 @@ AbstractSceneTemplate::AbstractSceneTemplate(
 
 void AbstractSceneTemplate::draw(
         float deltaT, void (*stencilModifier)(Byte)) {
+    if (!this->m_initializedLights) {
+        this->initializeLights();
+        this->m_initializedLights = true;
+    }
+
     if (deltaT > 0) {
         this->updateSceneContents(deltaT);
         this->m_interactionProvider.animateObjects(deltaT);
@@ -265,3 +270,5 @@ void AbstractSceneTemplate::updateSkyboxShaderProgram(
         float deltaT) {
     /* do nothing */
 }
+
+void AbstractSceneTemplate::initializeLights() { /* do nothing */ }

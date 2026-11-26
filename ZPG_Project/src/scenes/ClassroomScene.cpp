@@ -13,6 +13,7 @@
 #include <drawables/DrawableObjectFactory.h>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/trigonometric.hpp>
+#include <lighting/LightingManager.h>
 #include <memory>
 #include <others/WallclockUtils.h>
 #include <shaders/ShaderProgram.h>
@@ -28,8 +29,7 @@ ClassroomScene::ClassroomScene(
     : AbstractSceneTemplate{
               ClassroomScene::createCamera(windowWidth, windowHeight)},
       m_clockShaderProgram{nullptr}, m_shaderProgram{nullptr},
-      m_useFlashlight{false}, m_updatedSkyboxShader{false},
-      m_initializedShaders{false} {
+      m_useFlashlight{false}, m_updatedSkyboxShader{false} {
     this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
             "_templates\\basic.vert", "_templates\\lighting.frag", false);
     this->m_clockShaderProgram = &this->addShaderProgramFromShaderFiles(
@@ -52,8 +52,6 @@ ClassroomScene::ClassroomScene(
 
 void ClassroomScene::updateSceneContents(
         float deltaT) {
-    this->initializeShaderPrograms();
-
     time_t currentTime = getCurrentTime();
     int seconds = convertTimeTtoSeconds(currentTime);
     int minutes = convertTimeTtoMinutes(currentTime);
@@ -344,8 +342,8 @@ void ClassroomScene::handleMouseClick(
                 this->m_useFlashlight = !this->m_useFlashlight;
                 for (ShaderProgram* shaderProgram :
                         {this->m_clockShaderProgram, this->m_shaderProgram}) {
-                    shaderProgram->setSupplementalUniformIntValue(
-                            "spotLightsCount", (int)this->m_useFlashlight);
+                    LightingManager::CameraSpotLight::enable(
+                            *shaderProgram, this->m_useFlashlight);
                 }
                 break;
         }
@@ -357,59 +355,42 @@ void ClassroomScene::handleMouseClick(
 void ClassroomScene::updateSkyboxShaderProgram(
         float deltaT) {
     if (!this->m_updatedSkyboxShader) {
-        this->getSkyboxShaderProgram()->setSupplementalUniformVector(
-                "ambientFactors", glm::vec3{0.1f});
+        LightingManager::setAmbientFactors(
+                *this->getSkyboxShaderProgram(), glm::vec3{0.1f});
         this->m_updatedSkyboxShader = true;
     }
 }
 
-void ClassroomScene::initializeShaderPrograms() {
-    if (!this->m_initializedShaders) {
-        for (ShaderProgram* shaderProgram :
-                {this->m_clockShaderProgram, this->m_shaderProgram}) {
-            shaderProgram->setSupplementalUniformIntValue(
-                    "directedLightsCount", 1);
-            shaderProgram->setSupplementalUniformIntValue(
-                    "spotLightsCount", (int)this->m_useFlashlight);
-            shaderProgram->setSupplementalUniformVector(
-                    "ambientFactors", glm::vec3{0.01f});
+void ClassroomScene::initializeLights() {
+    for (ShaderProgram* shaderProgram :
+            {this->m_clockShaderProgram, this->m_shaderProgram}) {
+        LightingManager::DirectedLights::setLightsCount(*shaderProgram, 1);
+        LightingManager::CameraSpotLight::enable(
+                *shaderProgram, this->m_useFlashlight);
+        LightingManager::setAmbientFactors(*shaderProgram, glm::vec3{0.01f});
 
-            // define directed light
-            shaderProgram->setSupplementalUniformVector(
-                    "directedLights[0].direction",
-                    glm::vec3{-0.8f, -0.5f, -0.2f});
-            shaderProgram->setSupplementalUniformVector(
-                    "directedLights[0].color", glm::vec3{0.1f, 0.08f, 0.08f});
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "directedLights[0].shininessExponent", 128.0f);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "directedLights[0].useSpecular", false);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "directedLights[0].useBlinn", false);
+        // set directed light
+        LightingManager::DirectedLights::setLightDirection(
+                *shaderProgram, 0, glm::vec3{-0.8f, -0.5f, -0.2f});
+        LightingManager::DirectedLights::setLightColor(
+                *shaderProgram, 0, glm::vec3{0.1f, 0.08f, 0.08f});
+        LightingManager::DirectedLights::setLightShininessExponent(
+                *shaderProgram, 0, 128.0f);
+        LightingManager::DirectedLights::setLightSpecularFlag(
+                *shaderProgram, 0, false);
+        LightingManager::DirectedLights::setLightBlinnFlag(
+                *shaderProgram, 0, false);
 
-            // define spotlight
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].innerCosineCutOff",
-                    glm::cos(glm::radians(5.0f)));
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].outerCosineCutOff",
-                    glm::cos(glm::radians(15.0f)));
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].attConstant", 1.0f);
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].attLinear", 0.3f);
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].attQuadratic", 0.01f);
-            shaderProgram->setSupplementalUniformVector(
-                    "spotLights[0].color", glm::vec3{0.7f, 0.7f, 1.0f});
-            shaderProgram->setSupplementalUniformFloatValue(
-                    "spotLights[0].shininessExponent", 2.0f);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "spotLights[0].useSpecular", true);
-            shaderProgram->setSupplementalUniformBoolValue(
-                    "spotLights[0].useBlinn", true);
-        }
-
-        this->m_initializedShaders = true;
+        // set camera spot light
+        LightingManager::CameraSpotLight::setCutoffAngles(
+                *shaderProgram, 5.0f, 15.0f);
+        LightingManager::CameraSpotLight::setAttenuation(
+                *shaderProgram, 1.0f, 0.3f, 0.01f);
+        LightingManager::CameraSpotLight::setColor(
+                *shaderProgram, glm::vec3{0.7f, 0.7f, 1.0f});
+        LightingManager::CameraSpotLight::setShininessExponent(
+                *shaderProgram, 2.0f);
+        LightingManager::CameraSpotLight::setSpecularFlag(*shaderProgram, true);
+        LightingManager::CameraSpotLight::setBlinnFlag(*shaderProgram, true);
     }
 }

@@ -44,9 +44,13 @@ class LightingTestScene : public AbstractSceneTemplate {
      */
     void updateSceneContents(float deltaT) override;
 
+    /**
+     * @brief Initializes scene lights.
+     */
+    void initializeLights() override;
+
   private:
     ShaderProgram* m_shaderProgram;
-    bool m_initializedPointLight;
 
     /**
      * @brief Creates camera in the scene.
@@ -55,9 +59,4 @@ class LightingTestScene : public AbstractSceneTemplate {
      * @return Pointer to camera object.
      */
     static CameraPtr createCamera(int windowWidth, int windowHeight);
-
-    /**
-     * @brief Initializes uniform variables inside shader programs.
-     */
-    void initializeShaderPrograms();
 };

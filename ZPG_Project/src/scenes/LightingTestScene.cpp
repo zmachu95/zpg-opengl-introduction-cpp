@@ -20,6 +20,7 @@
 #include <constants/KeyCodes.h>
 #include <constants/KeyModifiers.h>
 #include <glm/ext/vector_float3.hpp>
+#include <lighting/LightingManager.h>
 #include <transformations/IGroupedTransformation.h>
 
 LightingTestScene::LightingTestScene(
@@ -27,7 +28,7 @@ LightingTestScene::LightingTestScene(
     : AbstractSceneTemplate{
               LightingTestScene::createCamera(windowWidth, windowHeight),
               std::unique_ptr<DrawableObject>{}},
-      m_shaderProgram{}, m_initializedPointLight{false} {
+      m_shaderProgram{} {
     this->m_shaderProgram = &this->addShaderProgramFromShaderFiles(
             "lighting_test_scene\\spheres.vert", "_templates\\lighting.frag",
             false);
@@ -60,45 +61,43 @@ LightingTestScene::LightingTestScene(
 }
 
 void LightingTestScene::updateSceneContents(
-        float deltaT) {
-    this->initializeShaderPrograms();
-}
+        float deltaT) {}
 
 void LightingTestScene::handleKeyPresses(
         KeyCodes button, KeyActions action, KeyModifierFlags mode) {
     if ((char)mode & (char)KeyModifierFlags::CTRL) {
         switch (button) {
             case KeyCodes::KEY_KP_1:
-                this->m_shaderProgram->setSupplementalUniformVector(
-                        "pointLights[0].color", glm::vec3{0.0f});
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useSpecular", false);
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useBlinn", false);
+                LightingManager::PointLights::setLightColor(
+                        *this->m_shaderProgram, 0, glm::vec3{0.0f});
+                LightingManager::PointLights::setLightSpecularFlag(
+                        *this->m_shaderProgram, 0, false);
+                LightingManager::PointLights::setLightBlinnFlag(
+                        *this->m_shaderProgram, 0, false);
                 return;
             case KeyCodes::KEY_KP_2:
-                this->m_shaderProgram->setSupplementalUniformVector(
-                        "pointLights[0].color", glm::vec3{1.0f});
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useSpecular", false);
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useBlinn", false);
+                LightingManager::PointLights::setLightColor(
+                        *this->m_shaderProgram, 0, glm::vec3{1.0f});
+                LightingManager::PointLights::setLightSpecularFlag(
+                        *this->m_shaderProgram, 0, false);
+                LightingManager::PointLights::setLightBlinnFlag(
+                        *this->m_shaderProgram, 0, false);
                 return;
             case KeyCodes::KEY_KP_3:
-                this->m_shaderProgram->setSupplementalUniformVector(
-                        "pointLights[0].color", glm::vec3{1.0f});
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useSpecular", true);
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useBlinn", false);
+                LightingManager::PointLights::setLightColor(
+                        *this->m_shaderProgram, 0, glm::vec3{1.0f});
+                LightingManager::PointLights::setLightSpecularFlag(
+                        *this->m_shaderProgram, 0, true);
+                LightingManager::PointLights::setLightBlinnFlag(
+                        *this->m_shaderProgram, 0, false);
                 return;
             case KeyCodes::KEY_KP_4:
-                this->m_shaderProgram->setSupplementalUniformVector(
-                        "pointLights[0].color", glm::vec3{1.0f});
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useSpecular", true);
-                this->m_shaderProgram->setSupplementalUniformBoolValue(
-                        "pointLights[0].useBlinn", true);
+                LightingManager::PointLights::setLightColor(
+                        *this->m_shaderProgram, 0, glm::vec3{1.0f});
+                LightingManager::PointLights::setLightSpecularFlag(
+                        *this->m_shaderProgram, 0, true);
+                LightingManager::PointLights::setLightBlinnFlag(
+                        *this->m_shaderProgram, 0, true);
                 return;
         }
     }
@@ -113,23 +112,13 @@ CameraPtr LightingTestScene::createCamera(
             (float)windowWidth / windowHeight, glm::vec3{0.0f, 0.0f, 1.0f});
 }
 
-void LightingTestScene::initializeShaderPrograms() {
-    if (!this->m_initializedPointLight) {
-        this->m_shaderProgram->setSupplementalUniformIntValue(
-                "pointLightsCount", 1);
-        this->m_shaderProgram->setSupplementalUniformVector(
-                "ambientFactors", glm::vec3{0.1f});
-        this->m_shaderProgram->setSupplementalUniformVector(
-                "pointLights[0].color", glm::vec3{0.0f});
-        this->m_shaderProgram->setSupplementalUniformFloatValue(
-                "pointLights[0].shininessExponent", 4.0f);
-        this->m_shaderProgram->setSupplementalUniformFloatValue(
-                "pointLights[0].attConstant", 1.0f);
-        this->m_shaderProgram->setSupplementalUniformFloatValue(
-                "pointLights[0].attLinear", 0.0f);
-        this->m_shaderProgram->setSupplementalUniformFloatValue(
-                "pointLights[0].attQuadratic", 0.0f);
-
-        this->m_initializedPointLight = true;
-    }
+void LightingTestScene::initializeLights() {
+    LightingManager::setAmbientFactors(*this->m_shaderProgram, glm::vec3{0.1f});
+    LightingManager::PointLights::setLightsCount(*this->m_shaderProgram, 1);
+    LightingManager::PointLights::setLightColor(
+            *this->m_shaderProgram, 0, glm::vec3{0.0f});
+    LightingManager::PointLights::setLightShininessExponent(
+            *this->m_shaderProgram, 0, 4.0f);
+    LightingManager::PointLights::setLightAttenuation(
+            *this->m_shaderProgram, 0, 1.0f, 0.0f, 0.0f);
 }

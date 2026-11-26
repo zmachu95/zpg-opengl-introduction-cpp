@@ -48,12 +48,16 @@ class ClassroomScene : public AbstractSceneTemplate {
      */
     void updateSkyboxShaderProgram(float deltaT) override;
 
+    /**
+     * @brief Initializes scene lights.
+     */
+    void initializeLights() override;
+
   private:
     ShaderProgram* m_shaderProgram;
     ShaderProgram* m_clockShaderProgram;
     bool m_useFlashlight;
     bool m_updatedSkyboxShader;
-    bool m_initializedShaders;
 
     /**
      * @brief Creates camera in the scene.
@@ -75,9 +79,4 @@ class ClassroomScene : public AbstractSceneTemplate {
      * @brief Initializes classroom items.
      */
     void initializeClassroom();
-
-    /**
-     * @brief Initializes uniform variables inside shader programs.
-     */
-    void initializeShaderPrograms();
 };
